@@ -425,12 +425,13 @@ void CALL HGE_Impl::System_SetStateFunc(hgeFuncState state, hgeCallback value)
 {
 	switch(state)
 	{
-		case HGE_FRAMEFUNC:		 procFrameFunc=value; break;
-		case HGE_RENDERFUNC:	 procRenderFunc=value; break;
-		case HGE_FOCUSLOSTFUNC:	 procFocusLostFunc=value; break;
-		case HGE_FOCUSGAINFUNC:	 procFocusGainFunc=value; break;
-		case HGE_GFXRESTOREFUNC: procGfxRestoreFunc=value; break;
-		case HGE_EXITFUNC:		 procExitFunc=value; break;
+		case HGE_FRAMEFUNC:			procFrameFunc=value; break;
+		case HGE_RENDERFUNC:		procRenderFunc=value; break;
+		case HGE_FOCUSLOSTFUNC:		procFocusLostFunc=value; break;
+		case HGE_FOCUSGAINFUNC:		procFocusGainFunc=value; break;
+		case HGE_GFXRESTOREFUNC:	procGfxRestoreFunc=value; break;
+		case HGE_EXITFUNC:			procExitFunc=value; break;
+		case HGE_RESIZE:			procResizeFunc=value; break;
 	}
 }
 
@@ -697,6 +698,7 @@ HGE_Impl::HGE_Impl()
 	procFocusGainFunc=0;
 	procGfxRestoreFunc=0;
 	procExitFunc=0;
+	procResizeFunc=0;
 	szIcon=0;
 	wcscpy(szWinTitle,L"HGE");
 	nScreenWidth=800;
@@ -856,6 +858,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 
 		case WM_SIZE:
 			if(pHGE->pD3D && wparam==SIZE_RESTORED) pHGE->_Resize(LOWORD(lparam), HIWORD(lparam));
+			if(pHGE->procResizeFunc)pHGE->procResizeFunc();
 			//return FALSE;
 			break;
 

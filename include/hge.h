@@ -12,7 +12,7 @@
 
 #include <windows.h>
 
-#define HGE_VERSION 0x180
+#define HGE_VERSION 0x181
 
 #define W2C(s, buf, cnt) (WideCharToMultiByte(CP_ACP, 0, s, wcslen(s)+1, buf, cnt, NULL, NULL))
 #define C2W(s, buf, cnt) (MultiByteToWideChar(CP_ACP, 0, s, strlen(s)+1, buf, cnt))
@@ -168,7 +168,8 @@ enum hgeFuncState
 	HGE_FOCUSGAINFUNC	= 11,   // bool*()	focus gain function	(default: NULL)
 	HGE_GFXRESTOREFUNC	= 12,   // bool*()	exit function		(default: NULL)
 	HGE_EXITFUNC		= 13,   // bool*()	exit function		(default: NULL)
-	
+	HGE_RESIZE			= 14,	// bool*()	window resize function (default: NULL)
+
 	HGEFUNCSTATE_FORCE_DWORD = 0x7FFFFFFF
 };
 
@@ -420,7 +421,7 @@ public:
 	virtual bool		CALL	Input_KeyDown(int key) = 0;
 	virtual bool		CALL	Input_KeyUp(int key) = 0;
 	virtual bool		CALL	Input_GetKeyState(int key) = 0;
-	virtual wchar_t*		CALL	Input_GetKeyName(int key) = 0;
+	virtual wchar_t*	CALL	Input_GetKeyName(int key) = 0;
 	virtual int			CALL	Input_GetKey() = 0;
 	virtual int			CALL	Input_GetChar() = 0;
 	virtual bool		CALL	Input_GetEvent(hgeInputEvent *event) = 0;

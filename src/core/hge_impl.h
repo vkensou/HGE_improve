@@ -79,20 +79,23 @@ public:
 	virtual bool		CALL	System_Initiate();
 	virtual void		CALL	System_Shutdown();
 	virtual bool		CALL	System_Start();
+	virtual wchar_t*	CALL	System_GetErrorMessage();
+	virtual	void		CALL	System_Log(const wchar_t *format, ...);
+	virtual bool		CALL	System_Launch(const wchar_t *url);
+	virtual void		CALL	System_Snapshot(const wchar_t *filename=0);
+
+
 	virtual void		CALL	System_SetStateBool  (hgeBoolState   state, bool        value);
 	virtual void		CALL	System_SetStateFunc  (hgeFuncState   state, hgeCallback value);
 	virtual void		CALL	System_SetStateHwnd  (hgeHwndState   state, HWND        value);
 	virtual void		CALL	System_SetStateInt   (hgeIntState    state, int         value);
 	virtual void		CALL	System_SetStateString(hgeStringState state, const wchar_t *value);
-	virtual bool		CALL	System_GetStateBool  (hgeBoolState  );
-	virtual hgeCallback	CALL	System_GetStateFunc  (hgeFuncState  );
-	virtual HWND		CALL	System_GetStateHwnd  (hgeHwndState  );
-	virtual int			CALL	System_GetStateInt   (hgeIntState   );
-	virtual const wchar_t*	CALL	System_GetStateString(hgeStringState);
-	virtual wchar_t*	CALL	System_GetErrorMessage();
-	virtual	void		CALL	System_Log(const wchar_t *format, ...);
-	virtual bool		CALL	System_Launch(const wchar_t *url);
-	virtual void		CALL	System_Snapshot(const wchar_t *filename=0);
+	virtual bool		CALL	System_GetStateBool  (hgeBoolState   state);
+	virtual hgeCallback	CALL	System_GetStateFunc  (hgeFuncState   state);
+	virtual HWND		CALL	System_GetStateHwnd  (hgeHwndState   state);
+	virtual int			CALL	System_GetStateInt   (hgeIntState    state);
+	virtual const wchar_t*	CALL	System_GetStateString(hgeStringState state);
+
 
 	virtual void*		CALL	Resource_Load(const wchar_t *filename, DWORD *size=0);
 	virtual void		CALL	Resource_Free(void *res);
@@ -113,7 +116,9 @@ public:
 	virtual void		CALL	Random_Seed(int seed=0);
 	virtual int			CALL	Random_Int(int min, int max);
 	virtual float		CALL	Random_Float(float min, float max);
+
 	virtual float		CALL	Random_Guss(float avrgvalue ,float standdeviation);
+
 	virtual float		CALL	Timer_GetTime();
 	virtual float		CALL	Timer_GetDelta();
 	virtual int			CALL	Timer_GetFPS();
@@ -235,7 +240,8 @@ public:
 	bool				(*procFocusGainFunc)();
 	bool				(*procGfxRestoreFunc)();
 	bool				(*procExitFunc)();
-	const wchar_t*			szIcon;
+	bool				(*procResizeFunc)();
+	const wchar_t*		szIcon;
 	wchar_t				szWinTitle[256];
 	int					nScreenWidth;
 	int					nScreenHeight;

@@ -786,8 +786,12 @@ bool HGE_Impl::_GfxInit()
 // Get adapter info
 
 	pD3D->GetAdapterIdentifier(D3DADAPTER_DEFAULT, 0/*D3DENUM_WHQL_LEVEL*//*D3DENUM_NO_WHQL_LEVEL*/, &AdID);
-	System_Log(L"D3D Driver: %s",AdID.Driver);
-	System_Log(L"Description: %s",AdID.Description);
+	wchar_t wstr[512];
+	wstr[511]=L'\0';
+	C2W(AdID.Driver,wstr,511);
+	System_Log(L"D3D Driver: %s",wstr);
+	C2W(AdID.Description,wstr,511);
+	System_Log(L"Description: %s",wstr);
 	System_Log(L"Version: %d.%d.%d.%d",
 			HIWORD(AdID.DriverVersion.HighPart),
 			LOWORD(AdID.DriverVersion.HighPart),
