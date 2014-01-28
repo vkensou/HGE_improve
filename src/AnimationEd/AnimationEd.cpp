@@ -10,6 +10,9 @@
 #include "AnimationEdDoc.h"
 #include "AnimationEdView.h"
 
+#include "globaldata_animall.h"
+#include "globaldata_view.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -22,6 +25,10 @@ BEGIN_MESSAGE_MAP(CAnimationEdApp, CWinAppEx)
 	// 基于文件的标准文档命令
 	ON_COMMAND(ID_FILE_NEW, &CWinAppEx::OnFileNew)
 	ON_COMMAND(ID_FILE_OPEN, &CWinAppEx::OnFileOpen)
+	ON_COMMAND(ID_NEW_ANIM, &CAnimationEdApp::OnNewAnim)
+	ON_COMMAND(ID_NEW_SKELETON, &CAnimationEdApp::OnNewSkeleton)
+	ON_COMMAND(ID_NEW_BONE, &CAnimationEdApp::OnNewBone)
+	ON_COMMAND(ID_NEW_JOINT, &CAnimationEdApp::OnNewJoint)
 END_MESSAGE_MAP()
 
 
@@ -184,4 +191,33 @@ BOOL CAnimationEdApp::OnIdle(LONG lCount)
 	// TODO: 在此添加专用代码和/或调用基类
 	if(hge)hge->System_Start();
 	return CWinAppEx::OnIdle(lCount);
+}
+
+void CAnimationEdApp::OnNewAnim()
+{
+	// TODO: 在此添加命令处理程序代码
+}
+
+void CAnimationEdApp::OnNewSkeleton()
+{
+	// TODO: 在此添加命令处理程序代码
+	
+}
+
+void CAnimationEdApp::OnNewBone()
+{
+	// TODO: 在此添加命令处理程序代码
+	hgeBone *nb = new hgeBone();
+	nb->head.x = 100;
+	nb->head.y = 100;
+	nb->tail.x = 200;
+	nb->tail.y = 200;
+
+	bones.push_back(nb);
+	g_leftview->RefreshBoneList();
+}
+
+void CAnimationEdApp::OnNewJoint()
+{
+	// TODO: 在此添加命令处理程序代码
 }

@@ -8,6 +8,7 @@
 #include "AnimationEdDoc.h"
 #include "AnimationEdView.h"
 
+#include "globaldata_animall.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -89,6 +90,13 @@ CAnimationEdDoc* CAnimationEdView::GetDocument() const // 非调试版本是内联的
 bool FrameFunc()
 {
 	// Continue execution
+	hge->Gfx_BeginScene();
+	hge->Gfx_Clear(0);
+	for(int i = 0;i<bones.size();i++)
+	{
+		hge->Gfx_RenderLine(bones[i]->head.x,bones[i]->head.y,bones[i]->tail.x,bones[i]->tail.y,0xffffffff);
+	}
+	hge->Gfx_EndScene();
 	return false;
 }
 

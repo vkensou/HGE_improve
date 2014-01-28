@@ -4,7 +4,7 @@
 
 
 #pragma once
-
+#include "animationeddoc.h"
 
 class CAnimationEdView : public CView
 {

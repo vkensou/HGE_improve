@@ -3,18 +3,18 @@
 
 
 
-// CLeftView 窗体视图
+// CLeftView2 窗体视图
 
-class CLeftView : public CFormView
+class CLeftView2 : public CFormView
 {
-	DECLARE_DYNCREATE(CLeftView)
+	DECLARE_DYNCREATE(CLeftView2)
 
 protected:
-	CLeftView();           // 动态创建所使用的受保护的构造函数
-	virtual ~CLeftView();
+	CLeftView2();           // 动态创建所使用的受保护的构造函数
+	virtual ~CLeftView2();
 
 public:
-	enum { IDD = IDD_LEFTVIEW };
+	enum { IDD = IDD_LEFTVIEW2 };
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 #ifndef _WIN32_WCE
@@ -28,10 +28,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-	CListBox bonelist;
+	CListBox jointlist;
 	virtual void OnInitialUpdate();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	int RefreshBoneList();
 };
 
 

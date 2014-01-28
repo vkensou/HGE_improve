@@ -7,6 +7,7 @@
 #include "animationeddoc.h"
 #include "animationedview.h"
 #include "leftview.h"
+#include "leftview2.h"
 #include "downview.h"
 #include "rightview.h"
 
@@ -41,6 +42,7 @@ protected:  // 控件条嵌入成员
 	CMFCStatusBar     m_wndStatusBar;
 	CSplitterWnd		m_splitter;
 	CSplitterWnd		m_splitter1;
+
 // 生成的消息映射函数
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

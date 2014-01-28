@@ -208,7 +208,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\globaldata_animall.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\globaldata_view.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\hgeSkeleton.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LeftView.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LeftView2.cpp"
 				>
 			</File>
 			<File
@@ -262,7 +278,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\globaldata_animall.h"
+				>
+			</File>
+			<File
+				RelativePath=".\globaldata_view.h"
+				>
+			</File>
+			<File
+				RelativePath=".\hgeSkeleton.h"
+				>
+			</File>
+			<File
 				RelativePath=".\LeftView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LeftView2.h"
 				>
 			</File>
 			<File

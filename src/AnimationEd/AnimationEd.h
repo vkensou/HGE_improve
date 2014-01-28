@@ -2,13 +2,13 @@
 // AnimationEd.h : AnimationEd 应用程序的主头文件
 //
 #pragma once
-#include "hge.h"
 
 #ifndef __AFXWIN_H__
 	#error "在包含此文件之前包含“stdafx.h”以生成 PCH 文件"
 #endif
 
 #include "resource.h"       // 主符号
+#include "hge.h"
 
 
 // CAnimationEdApp:
@@ -35,6 +35,10 @@ public:
 	afx_msg void OnAppAbout();
 	DECLARE_MESSAGE_MAP()
 	virtual BOOL OnIdle(LONG lCount);
+	afx_msg void OnNewSkeleton();
+	afx_msg void OnNewAnim();
+	afx_msg void OnNewBone();
+	afx_msg void OnNewJoint();
 };
 
 extern CAnimationEdApp theApp;
