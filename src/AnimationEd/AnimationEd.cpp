@@ -7,6 +7,8 @@
 #include "AnimationEd.h"
 #include "MainFrm.h"
 
+#include "AnimationEdDoc.h"
+#include "AnimationEdView.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -17,6 +19,9 @@
 
 BEGIN_MESSAGE_MAP(CAnimationEdApp, CWinAppEx)
 	ON_COMMAND(ID_APP_ABOUT, &CAnimationEdApp::OnAppAbout)
+	// 基于文件的标准文档命令
+	ON_COMMAND(ID_FILE_NEW, &CWinAppEx::OnFileNew)
+	ON_COMMAND(ID_FILE_OPEN, &CWinAppEx::OnFileOpen)
 END_MESSAGE_MAP()
 
 
@@ -34,7 +39,7 @@ CAnimationEdApp::CAnimationEdApp()
 // 唯一的一个 CAnimationEdApp 对象
 
 CAnimationEdApp theApp;
-
+HGE *hge = 0;
 
 // CAnimationEdApp 初始化
 
@@ -67,6 +72,7 @@ BOOL CAnimationEdApp::InitInstance()
 	// TODO: 应适当修改该字符串，
 	// 例如修改为公司或组织名
 	SetRegistryKey(_T("应用程序向导生成的本地应用程序"));
+	LoadStdProfileSettings(4);  // 加载标准 INI 文件选项(包括 MRU)
 
 	InitContextMenuManager();
 
@@ -78,33 +84,37 @@ BOOL CAnimationEdApp::InitInstance()
 	theApp.GetTooltipManager()->SetTooltipParams(AFX_TOOLTIP_TYPE_ALL,
 		RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
 
-	// 若要创建主窗口，此代码将创建新的框架窗口
-	// 对象，然后将其设置为应用程序的主窗口对象
-	CMainFrame* pFrame = new CMainFrame;
-	if (!pFrame)
+	// 注册应用程序的文档模板。文档模板
+	// 将用作文档、框架窗口和视图之间的连接
+	CSingleDocTemplate* pDocTemplate;
+	pDocTemplate = new CSingleDocTemplate(
+		IDR_MAINFRAME,
+		RUNTIME_CLASS(CAnimationEdDoc),
+		RUNTIME_CLASS(CMainFrame),       // 主 SDI 框架窗口
+		RUNTIME_CLASS(CAnimationEdView));
+	if (!pDocTemplate)
 		return FALSE;
-	m_pMainWnd = pFrame;
-	// 创建并加载框架及其资源
-	pFrame->LoadFrame(IDR_MAINFRAME,
-		WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE, NULL,
-		NULL);
+	AddDocTemplate(pDocTemplate);
 
 
 
+	// 分析标准外壳命令、DDE、打开文件操作的命令行
+	CCommandLineInfo cmdInfo;
+	ParseCommandLine(cmdInfo);
 
 
+	// 调度在命令行中指定的命令。如果
+	// 用 /RegServer、/Register、/Unregserver 或 /Unregister 启动应用程序，则返回 FALSE。
+	if (!ProcessShellCommand(cmdInfo))
+		return FALSE;
 
 	// 唯一的一个窗口已初始化，因此显示它并对其进行更新
-	pFrame->ShowWindow(SW_SHOW);
-	pFrame->UpdateWindow();
+	m_pMainWnd->ShowWindow(SW_SHOW);
+	m_pMainWnd->UpdateWindow();
 	// 仅当具有后缀时才调用 DragAcceptFiles
 	//  在 SDI 应用程序中，这应在 ProcessShellCommand 之后发生
 	return TRUE;
 }
-
-
-// CAnimationEdApp 消息处理程序
-
 
 
 
@@ -168,3 +178,10 @@ void CAnimationEdApp::SaveCustomState()
 
 
 
+
+BOOL CAnimationEdApp::OnIdle(LONG lCount)
+{
+	// TODO: 在此添加专用代码和/或调用基类
+	if(hge)hge->System_Start();
+	return CWinAppEx::OnIdle(lCount);
+}

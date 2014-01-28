@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9.00"
 	Name="AnimationEd"
-	ProjectGUID="{E4B41F67-3488-4677-9DC6-460080CC5022}"
+	ProjectGUID="{450B20A0-6F52-4993-ACF0-DFF81E5C4338}"
 	RootNamespace="AnimationEd"
 	Keyword="MFCProj"
 	TargetFrameworkVersion="196613"
@@ -45,6 +45,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="..\..\include"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -67,7 +68,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="hge_d.lib"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="..\..\lib\vc"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -125,6 +128,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="..\..\include"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG"
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
@@ -147,7 +151,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="hge.lib"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="..\..\lib\vc"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -190,11 +196,27 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ChildView.cpp"
+				RelativePath=".\AnimationEdDoc.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\AnimationEdView.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DownView.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LeftView.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\MainFrm.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\RightView.cpp"
 				>
 			</File>
 			<File
@@ -228,7 +250,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ChildView.h"
+				RelativePath=".\AnimationEdDoc.h"
+				>
+			</File>
+			<File
+				RelativePath=".\AnimationEdView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DownView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LeftView.h"
 				>
 			</File>
 			<File
@@ -237,6 +271,10 @@
 			</File>
 			<File
 				RelativePath=".\Resource.h"
+				>
+			</File>
+			<File
+				RelativePath=".\RightView.h"
 				>
 			</File>
 			<File
@@ -266,6 +304,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\AnimationEdDoc.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Toolbar.bmp"
 				>
 			</File>
@@ -276,5 +318,9 @@
 		</Filter>
 	</Files>
 	<Globals>
+		<Global
+			Name="RESOURCE_FILE"
+			Value="AnimationEd.rc"
+		/>
 	</Globals>
 </VisualStudioProject>

@@ -13,15 +13,12 @@
 
 // CMainFrame
 
-IMPLEMENT_DYNAMIC(CMainFrame, CFrameWndEx)
+IMPLEMENT_DYNCREATE(CMainFrame, CFrameWndEx)
 
 BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_WM_CREATE()
-	ON_WM_SETFOCUS()
 	ON_COMMAND(ID_VIEW_CUSTOMIZE, &CMainFrame::OnViewCustomize)
 	ON_REGISTERED_MESSAGE(AFX_WM_CREATETOOLBAR, &CMainFrame::OnToolbarCreateNew)
-	ON_COMMAND_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_OFF_2007_AQUA, &CMainFrame::OnApplicationLook)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_OFF_2007_AQUA, &CMainFrame::OnUpdateApplicationLook)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -37,7 +34,6 @@ static UINT indicators[] =
 CMainFrame::CMainFrame()
 {
 	// TODO: 在此添加成员初始化代码
-	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_VS_2005);
 }
 
 CMainFrame::~CMainFrame()
@@ -50,8 +46,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	BOOL bNameValid;
-	// 基于持久值设置视觉管理器和样式
-	OnApplicationLook(theApp.m_nAppLook);
+
+	// 设置用于绘制所有用户界面元素的视觉管理器
+	CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerVS2005));
 
 	if (!m_wndMenuBar.Create(this))
 	{
@@ -63,13 +60,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// 防止菜单栏在激活时获得焦点
 	CMFCPopupMenu::SetForceMenuFocus(FALSE);
-
-	// 创建一个视图以占用框架的工作区
-	if (!m_wndView.Create(NULL, NULL, AFX_WS_DEFAULT_VIEW, CRect(0, 0, 0, 0), this, AFX_IDW_PANE_FIRST, NULL))
-	{
-		TRACE0("未能创建视图窗口\n");
-		return -1;
-	}
 
 	if (!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC) ||
 		!m_wndToolBar.LoadToolBar(theApp.m_bHiColorIcons ? IDR_MAINFRAME_256 : IDR_MAINFRAME))
@@ -124,8 +114,6 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 	// TODO: 在此处通过修改
 	//  CREATESTRUCT cs 来修改窗口类或样式
 
-	cs.dwExStyle &= ~WS_EX_CLIENTEDGE;
-	cs.lpszClass = AfxRegisterWndClass(0);
 	return TRUE;
 }
 
@@ -145,22 +133,6 @@ void CMainFrame::Dump(CDumpContext& dc) const
 
 
 // CMainFrame 消息处理程序
-
-void CMainFrame::OnSetFocus(CWnd* /*pOldWnd*/)
-{
-	// 将焦点前移到视图窗口
-	m_wndView.SetFocus();
-}
-
-BOOL CMainFrame::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
-{
-	// 让视图第一次尝试该命令
-	if (m_wndView.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
-		return TRUE;
-
-	// 否则，执行默认处理
-	return CFrameWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
-}
 
 void CMainFrame::OnViewCustomize()
 {
@@ -188,67 +160,30 @@ LRESULT CMainFrame::OnToolbarCreateNew(WPARAM wp,LPARAM lp)
 	return lres;
 }
 
-void CMainFrame::OnApplicationLook(UINT id)
+BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 {
-	CWaitCursor wait;
+	// TODO: 在此添加专用代码和/或调用基类
 
-	theApp.m_nAppLook = id;
-
-	switch (theApp.m_nAppLook)
-	{
-	case ID_VIEW_APPLOOK_WIN_2000:
-		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManager));
-		break;
-
-	case ID_VIEW_APPLOOK_OFF_XP:
-		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOfficeXP));
-		break;
-
-	case ID_VIEW_APPLOOK_WIN_XP:
-		CMFCVisualManagerWindows::m_b3DTabsXPTheme = TRUE;
-		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows));
-		break;
-
-	case ID_VIEW_APPLOOK_OFF_2003:
-		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2003));
-		CDockingManager::SetDockingMode(DT_SMART);
-		break;
-
-	case ID_VIEW_APPLOOK_VS_2005:
-		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerVS2005));
-		CDockingManager::SetDockingMode(DT_SMART);
-		break;
-
-	default:
-		switch (theApp.m_nAppLook)
-		{
-		case ID_VIEW_APPLOOK_OFF_2007_BLUE:
-			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_LunaBlue);
-			break;
-
-		case ID_VIEW_APPLOOK_OFF_2007_BLACK:
-			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_ObsidianBlack);
-			break;
-
-		case ID_VIEW_APPLOOK_OFF_2007_SILVER:
-			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Silver);
-			break;
-
-		case ID_VIEW_APPLOOK_OFF_2007_AQUA:
-			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Aqua);
-			break;
-		}
-
-		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
-		CDockingManager::SetDockingMode(DT_SMART);
-	}
-
-	RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW | RDW_FRAME | RDW_ERASE);
-
-	theApp.WriteInt(_T("ApplicationLook"), theApp.m_nAppLook);
-}
-
-void CMainFrame::OnUpdateApplicationLook(CCmdUI* pCmdUI)
-{
-	pCmdUI->SetRadio(theApp.m_nAppLook == pCmdUI->m_nID);
+	//return CFrameWndEx::OnCreateClient(lpcs, pContext);
+	if(m_splitter.CreateStatic(this,1,3)==NULL) 
+		return FALSE;
+	//将CCSplitterWndView连接到0行0列窗格上
+	m_splitter.CreateView(0,0,RUNTIME_CLASS(CLeftView),CSize(200,600), pContext);
+	if(m_splitter1.CreateStatic(&m_splitter,2,1,WS_CHILD|WS_VISIBLE, 
+		m_splitter.IdFromRowCol(0, 1))==NULL) 
+		return FALSE; //将第0行1列再分开2行1列 
+	//将FormView1类连接到第二个分栏对象的0行0列
+	m_splitter1.CreateView(0,0,RUNTIME_CLASS(CAnimationEdView),CSize(600,400),pContext); 
+	//将FormView2类连接到第二个分栏对象的1行0列
+	m_splitter1.CreateView(1,0,RUNTIME_CLASS(CDownView),CSize(200,200),pContext); 
+	m_splitter.CreateView(0,2,RUNTIME_CLASS(CRightView),CSize(200,600), pContext);
+    CRect r;
+    GetClientRect(&r);
+	m_splitter1.SetRowInfo(0,r.Height()*2/3,50);
+	m_splitter1.SetRowInfo(1,r.Height()/3,50);
+	m_splitter.SetColumnInfo(0,r.Width()/4,50);
+	m_splitter.SetColumnInfo(1,r.Width()/2,50);
+	m_splitter.SetColumnInfo(2,r.Width()/4,50);
+	m_splitter.RecalcLayout();
+	return TRUE;
 }
