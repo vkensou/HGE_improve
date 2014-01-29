@@ -32,6 +32,8 @@ public:
 	virtual void OnInitialUpdate();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	int RefreshBoneList();
+	void SetIndex(UINT index);
+	afx_msg void OnLbnSelchangeList1();
 };
 
 

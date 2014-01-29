@@ -31,6 +31,8 @@ public:
 	CListBox jointlist;
 	virtual void OnInitialUpdate();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
+
+	int RefreshJointList();
 };
 
 

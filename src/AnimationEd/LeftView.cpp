@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "AnimationEd.h"
 #include "LeftView.h"
-#include "globaldata_animall.h"
+#include "globaldata_view.h"
 
 // CLeftView
 
@@ -29,6 +29,7 @@ void CLeftView::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CLeftView, CFormView)
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
+	ON_LBN_SELCHANGE(IDC_LIST1, &CLeftView::OnLbnSelchangeList1)
 END_MESSAGE_MAP()
 
 
@@ -101,20 +102,32 @@ void CLeftView::OnSetFocus(CWnd* pOldWnd)
 
 int CLeftView::RefreshBoneList()
 {
-	int m = bonelist.GetCount();
+	UINT m = bonelist.GetCount();
 	if(m>bones.size())
 	{
-		for(int i = 0;i<m-bones.size();i++)
+		for(UINT i = 0;i<m-bones.size();i++)
 			bonelist.DeleteString(bonelist.GetCount()-1);
 	}
 	else if(m<bones.size())
 	{
 		CString l;
-		for(int i = 0;i<bones.size()-m;i++)
+		for(UINT i = 0;i<bones.size()-m;i++)
 		{
 			l.Format(L"%d",bonelist.GetCount());
 			bonelist.AddString(l);
 		}
 	}
 	return bones.size();
+}
+
+void CLeftView::SetIndex(UINT index)
+{
+	if(index<0 || index>=bones.size())return ;
+	bonelist.SetCurSel(index);
+}
+
+void CLeftView::OnLbnSelchangeList1()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	SelectBone(bonelist.GetCurSel());
 }

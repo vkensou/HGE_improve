@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "AnimationEd.h"
 #include "LeftView2.h"
-
+#include "globaldata_view.h"
 
 // CLeftView2
 
@@ -95,4 +95,20 @@ void CLeftView2::OnSetFocus(CWnd* pOldWnd)
 		pSubMenu->SetMenuItemInfo(4, &MenuItemInfo, TRUE);//start from 0
 	}
 
+}
+
+int CLeftView2::RefreshJointList()
+{
+	if(hotbone==0)return 0;
+	jointlist.ResetContent();
+	CString cont;
+	cont = L"头结点";
+	jointlist.AddString(cont);
+	cont = L"尾结点";
+	jointlist.AddString(cont);
+	cont = L"绑定结点";
+	jointlist.AddString(cont);
+	cont = L"控制结点";
+	jointlist.AddString(cont);
+	return 0;
 }

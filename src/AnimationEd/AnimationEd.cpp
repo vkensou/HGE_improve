@@ -207,14 +207,10 @@ void CAnimationEdApp::OnNewSkeleton()
 void CAnimationEdApp::OnNewBone()
 {
 	// TODO: 在此添加命令处理程序代码
-	hgeBone *nb = new hgeBone();
-	nb->head.x = 100;
-	nb->head.y = 100;
-	nb->tail.x = 200;
-	nb->tail.y = 200;
-
+	hgeBone *nb = new hgeBone(100,100,200,200);
 	bones.push_back(nb);
 	g_leftview->RefreshBoneList();
+	SelectBone(bones.size()-1,true);
 }
 
 void CAnimationEdApp::OnNewJoint()

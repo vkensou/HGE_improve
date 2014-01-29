@@ -92,9 +92,9 @@ bool FrameFunc()
 	// Continue execution
 	hge->Gfx_BeginScene();
 	hge->Gfx_Clear(0);
-	for(int i = 0;i<bones.size();i++)
+	for(UINT i = 0;i<bones.size();i++)
 	{
-		hge->Gfx_RenderLine(bones[i]->head.x,bones[i]->head.y,bones[i]->tail.x,bones[i]->tail.y,0xffffffff);
+		hge->Gfx_RenderLine(bones[i]->GetHeadX(),bones[i]->GetHeadY(),bones[i]->GetTailX(),bones[i]->GetTailY(),0xffffffff);
 	}
 	hge->Gfx_EndScene();
 	return false;
