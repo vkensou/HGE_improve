@@ -193,9 +193,5 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 	g_animview = (CAnimationEdView*)m_splitter1.GetPane(0,0);
 	g_downview = (CDownView*)m_splitter1.GetPane(1,0);
 	g_rightview = (CRightView*)m_splitter.GetPane(0,3);
-
-
-
-
 	return TRUE;
 }

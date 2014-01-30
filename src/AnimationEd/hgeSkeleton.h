@@ -11,6 +11,8 @@ public:
 	float x,y;
 	hgePoint(float _x,float _y){x = _x;y = _y;}
 	hgePoint(){x = y = 0;};
+	float GetDistanceToPoint(float _x,float _y){return sqrt((x-_x)*(x-_x)+(y-_y)*(y-_y));}
+	float GetDistanceToPoint(hgePoint point){GetDistanceToPoint(point.x,point.y);};
 };
 //有向线段，头尾节点，长度，倾角
 class hgeLine
@@ -55,6 +57,7 @@ public:
 	float GetTailX(){return tail.x;};
 	float GetTailY(){return tail.y;};
 	float GetLength(){return length;};
+	float GetRotate(){return rotate;};
 protected:
 	hgePoint head,tail;
 	float length;
@@ -64,10 +67,10 @@ protected:
 class hgeLinePoint:public hgePoint
 {
 public:
-	float o;
-	hgeLinePoint(float _x,float _y,float _o):hgePoint(_x,_y){o = _o;};
-	hgeLinePoint(float _o):hgePoint(){o = _o;};
-	hgeLinePoint():hgePoint(){o = 0;};
+	float r,a;//r是相对位置，a是绝对位置
+	bool k;//表示位置是根据头结点(true)还是尾结点(false)决定
+	bool tra;//目前使用的是相对位置(true)还是绝对位置(false)
+	hgeLinePoint():hgePoint(){r = a = 0;k = tra = true;};
 };
 
 class hgeJoint:public hgeLinePoint
@@ -87,11 +90,36 @@ public:
 	hgeBone(float x1,float y1,float x2,float y2):hgeLine(x1,y1,x2,y2){bx = by = 0;};
 	hgeBone(hgePoint point1,hgePoint point2):hgeLine(point1,point2){bx = by = 0;};
 	~hgeBone(){};
-private:
 	hgePoint bind;//用于绑定图片的节点
 	float bx,by;//绑定的图片的偏移量
-	hgePoint control;
-	std::list<hgeJoint*> joints;
+	hgeLinePoint control;
+	void SetPosition(float x,float y);
+	void SetPosition(hgePoint point){SetPosition(point.x,point.y);};
+	float GetX();
+	float GetY();
+	//设置控制点相对位置
+	void SetControlRelative(float r);
+	//设置控制点绝对位置
+	void SetControlAbsolute(float a);
+	//设置控制点是相对头结点还是尾结点
+	void SetControlBasis(bool);
+	float GetControlRelative(){return control.r;}
+	float GetControlAbsolute(){return control.a;}
+	bool GetControlBasis(){return control.k;}
+	void SetRotate(float r);
+	std::vector<hgeJoint*> joints;
+	//设置关节相对位置
+	void SetJointRelative(hgeJoint *joint, float r);
+	//设置关节绝对位置
+	void SetJointAbsolute(hgeJoint *joint,float a);
+	//设置关节是相对头结点还是尾结点
+	void SetJointBasis(hgeJoint *joint,bool);
+	float GetJointRelative(hgeJoint *joint){return joint->r;}
+	float GetJointAbsolute(hgeJoint *joint){return joint->a;}
+	bool GetJointBasis(hgeJoint *joint){return joint->k;}
+	float GetJointX(hgeJoint *joint);
+	float GetJointY(hgeJoint *joint);
+private:
 };
 
 //骨骼类

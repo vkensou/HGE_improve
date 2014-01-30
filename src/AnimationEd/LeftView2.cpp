@@ -29,6 +29,7 @@ void CLeftView2::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CLeftView2, CFormView)
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
+	ON_LBN_SELCHANGE(IDC_LIST1, &CLeftView2::OnLbnSelchangeList1)
 END_MESSAGE_MAP()
 
 
@@ -110,5 +111,23 @@ int CLeftView2::RefreshJointList()
 	jointlist.AddString(cont);
 	cont = L"控制结点";
 	jointlist.AddString(cont);
+	for(int i = 0;i<hotbone->joints.size();i++)
+	{
+		cont.Format(L"关节%d",i+1);
+		jointlist.AddString(cont);
+	}
 	return 0;
+}
+
+void CLeftView2::SetIndex(UINT index)
+{
+	if(hotbone==0)return ;
+	if(index<0 || index>=hotbone->joints.size()+4)return ;
+	jointlist.SetCurSel(index);
+}
+
+void CLeftView2::OnLbnSelchangeList1()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	SelectJoint(jointlist.GetCurSel());
 }

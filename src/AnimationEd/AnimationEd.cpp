@@ -216,4 +216,9 @@ void CAnimationEdApp::OnNewBone()
 void CAnimationEdApp::OnNewJoint()
 {
 	// TODO: 在此添加命令处理程序代码
+	if(hotbone==0)return ;
+	hgeJoint *nj = new hgeJoint();
+	hotbone->joints.push_back(nj);
+	g_leftview2->RefreshJointList();
+	SelectJoint(hotbone->joints.size()+3,true);
 }

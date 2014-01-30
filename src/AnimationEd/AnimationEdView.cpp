@@ -13,6 +13,7 @@
 #define new DEBUG_NEW
 #endif
 
+hgeBone *over=0;
 
 // CAnimationEdView
 
@@ -92,10 +93,64 @@ bool FrameFunc()
 	// Continue execution
 	hge->Gfx_BeginScene();
 	hge->Gfx_Clear(0);
+
 	for(UINT i = 0;i<bones.size();i++)
 	{
 		hge->Gfx_RenderLine(bones[i]->GetHeadX(),bones[i]->GetHeadY(),bones[i]->GetTailX(),bones[i]->GetTailY(),0xffffffff);
 	}
+	if(hotbone)
+	{
+		//画头结点
+		int x = hotbone->GetHeadX(),y = hotbone->GetHeadY();
+		hge->Gfx_RenderLine(x-5,y-4,x+4,y-4,0xffffffff);
+		hge->Gfx_RenderLine(x-4,y-5,x-4,y+4,0xffffffff);
+		hge->Gfx_RenderLine(x+4,y+4,x+4,y-4,0xffffffff);
+		hge->Gfx_RenderLine(x+4,y+4,x-4,y+4,0xffffffff);
+		//画尾结点
+		x = hotbone->GetTailX(),y = hotbone->GetTailY();
+		hge->Gfx_RenderLine(x-5,y-4,x+4,y-4,0xffffffff);
+		hge->Gfx_RenderLine(x-4,y-5,x-4,y+4,0xffffffff);
+		hge->Gfx_RenderLine(x+4,y+4,x+4,y-4,0xffffffff);
+		hge->Gfx_RenderLine(x+4,y+4,x-4,y+4,0xffffffff);
+		//画控制结点
+		x = hotbone->GetX(),y = hotbone->GetY();
+		hge->Gfx_RenderLine(x,y-3,x+3,y,0xffffffff);
+		hge->Gfx_RenderLine(x,y-3,x-3,y,0xffffffff);
+		hge->Gfx_RenderLine(x,y+3,x+3,y,0xffffffff);
+		hge->Gfx_RenderLine(x,y+3,x-3,y,0xffffffff);
+		for(int i= 0 ;i<hotbone->joints.size();i++)
+		{
+			x = hotbone->GetJointX(hotbone->joints[i]),y = hotbone->GetJointY(hotbone->joints[i]);
+			hge->Gfx_RenderLine(x,y-4,x-4,y+4,0xffffffff);
+			hge->Gfx_RenderLine(x,y-4,x+4,y+4,0xffffffff);
+			hge->Gfx_RenderLine(x-4,y+4,x+4,y+4,0xffffffff);
+		}
+	}
+	if(hotjoint)
+	{
+		int x = hotbone->GetJointX(hotjoint),y = hotbone->GetJointY(hotjoint);
+		hge->Gfx_RenderLine(x,y-4,x-4,y+4,0xffff0000);
+		hge->Gfx_RenderLine(x,y-4,x+4,y+4,0xffff0000);
+		hge->Gfx_RenderLine(x-4,y+4,x+4,y+4,0xffff0000);
+	}
+	float mx=0,my=0;
+	hge->Input_GetMousePos(&mx,&my);
+	over = 0;
+	for(UINT i = 0;i<bones.size();i++)
+	{
+		float d1 = bones[i]->GetHead().GetDistanceToPoint(mx,my);
+		float d2 = bones[i]->GetTail().GetDistanceToPoint(mx,my);
+		if(d1+d2==bones[i]->GetLength())
+		{
+			over = bones[i];
+			break;
+		}
+	}	
+	
+
+
+	if(over)
+		hge->Gfx_RenderLine(over->GetHeadX(),over->GetHeadY(),over->GetTailX(),over->GetTailY(),0xff0000ff);
 	hge->Gfx_EndScene();
 	return false;
 }

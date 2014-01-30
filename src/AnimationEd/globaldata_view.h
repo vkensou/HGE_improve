@@ -15,3 +15,5 @@ extern CDownView *g_downview;
 extern CRightView *g_rightview;
 
 void SelectBone(UINT index,bool s = false);
+
+void SelectJoint(UINT index,bool s = false);
