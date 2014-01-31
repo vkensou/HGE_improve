@@ -14,6 +14,8 @@ extern CLeftView2 *g_leftview2;
 extern CDownView *g_downview;
 extern CRightView *g_rightview;
 
+extern int mode;//模式，0-普通，1-关节绑定模式
+
 void SelectBone(UINT index,bool s = false);
 
 void SelectJoint(UINT index,bool s = false);

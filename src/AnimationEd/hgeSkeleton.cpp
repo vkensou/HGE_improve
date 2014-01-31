@@ -27,6 +27,7 @@ void hgeBone::SetPosition(float x,float y)
 	}
 	control.x = x;
 	control.y = y;
+	MoveBindBone();
 	return ;
 }
 
@@ -165,4 +166,78 @@ float hgeBone::GetJointY(hgeJoint *joint)
 		joint->y = tail.y - l * sin(rotate);
 	}
 	return joint->y;
+}
+
+float hgeLine::GetDistanceFromPoint(float _x,float _y)
+{
+	float r = (tail.x - head.x) * (_x - head.x) + (tail.y - head.y) * (_y - head.y);
+	r /= length * length;
+	if(r<0)
+		return head.GetDistanceToPoint(_x,_y);
+	else if(r>1)
+		return tail.GetDistanceToPoint(_x,_y);
+	hgePoint d(tail.x - head.x,tail.y - head.y);
+	d.x *= r;
+	d.y *= r;
+	d.x += head.x ;
+	d.y += head.y ;
+	return d.GetDistanceToPoint(_x,_y);
+}
+
+void hgeBone::SetPositionByJoint(hgeJoint *joint)
+{
+	if(!joint)return;
+	if(joint->k== true)
+	{
+		head.x = joint->x - joint->a * cos(rotate);
+		head.y = joint->y - joint->a * sin(rotate);
+		tail.x = head.x + length * cos(rotate);
+		tail.y = head.y + length * sin(rotate);
+	}
+	else
+	{
+		tail.x = joint->x + joint->a * cos(rotate);
+		tail.y = joint->y + joint->a * sin(rotate);
+		head.x = tail.x - length * cos(rotate);
+		head.y = tail.y - length * sin(rotate);
+	}
+	MoveBindBone(joint);
+	return ;
+}
+
+float hgeJoint::GetX()
+{
+	return bone->GetJointX(this);
+}
+float hgeJoint::GetY()
+{
+	return bone->GetJointY(this);
+}
+
+bool hgeBone::BoneBinded(hgeBone *bone,hgeJoint* s)
+{
+	for(UINT i = 0;i<joints.size();i++)
+	{
+		if(joints[i]->bindbone!=0 && joints[i]!=s)
+		{
+			if(joints[i]->bindbone == bone)
+				return true;
+			else if(joints[i]->bindbone->BoneBinded(bone,joints[i]->bindjoint))
+				return true;
+		}
+	}
+	return false;
+}
+
+void hgeBone::MoveBindBone(hgeJoint* s)
+{
+	for(UINT i = 0; i< joints.size();i++)
+	{
+		if(joints[i]->bindbone != 0 && joints[i]!=s)
+		{
+			joints[i]->bindjoint->x = joints[i]->GetX();
+			joints[i]->bindjoint->y = joints[i]->GetY();
+			joints[i]->bindbone->SetPositionByJoint(joints[i]->bindjoint);
+		}
+	}
 }

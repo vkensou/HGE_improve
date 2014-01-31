@@ -9,11 +9,13 @@
 #include "AnimationEdView.h"
 
 #include "globaldata_animall.h"
+#include "globaldata_view.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-hgeBone *over=0;
+UINT overi=0,overji=0;
 
 // CAnimationEdView
 
@@ -91,6 +93,46 @@ CAnimationEdDoc* CAnimationEdView::GetDocument() const // 非调试版本是内联的
 bool FrameFunc()
 {
 	// Continue execution
+
+	float mx=0,my=0;
+	hge->Input_GetMousePos(&mx,&my);
+	overi = overji = -1;
+	over = 0;overj = 0;
+
+	for(UINT i = 0;i<bones.size();i++)
+	{
+		if(bones[i]->GetDistanceFromPoint(mx,my)<2)
+		{
+			overi = i;
+			over = bones[i];
+			break;
+		}
+	}
+
+	if(hge->Input_KeyDown(HGEK_LBUTTON))
+	{
+		if(over)
+			SelectBone(overi,true);
+		else
+			SelectBone(-1,true);
+	}
+
+	if(over!=0)
+	{
+		for(UINT i = 0;i<over->joints.size();i++)
+		{
+			if(mx>over->joints[i]->x-4 && mx<over->joints[i]->x+4 && my>over->joints[i]->y-4 && my<over->joints[i]->y+4)
+			{
+				overji = i;
+				overj = over->joints[i];
+				break;
+			}
+		}
+	}
+
+	if(hge->Input_KeyDown(HGEK_LBUTTON) && overj)
+		SelectJoint(overji+4,true);
+
 	hge->Gfx_BeginScene();
 	hge->Gfx_Clear(0);
 
@@ -101,7 +143,7 @@ bool FrameFunc()
 	if(hotbone)
 	{
 		//画头结点
-		int x = hotbone->GetHeadX(),y = hotbone->GetHeadY();
+		float x = hotbone->GetHeadX(),y = hotbone->GetHeadY();
 		hge->Gfx_RenderLine(x-5,y-4,x+4,y-4,0xffffffff);
 		hge->Gfx_RenderLine(x-4,y-5,x-4,y+4,0xffffffff);
 		hge->Gfx_RenderLine(x+4,y+4,x+4,y-4,0xffffffff);
@@ -118,39 +160,43 @@ bool FrameFunc()
 		hge->Gfx_RenderLine(x,y-3,x-3,y,0xffffffff);
 		hge->Gfx_RenderLine(x,y+3,x+3,y,0xffffffff);
 		hge->Gfx_RenderLine(x,y+3,x-3,y,0xffffffff);
-		for(int i= 0 ;i<hotbone->joints.size();i++)
+		for(UINT i= 0 ;i<hotbone->joints.size();i++)
 		{
 			x = hotbone->GetJointX(hotbone->joints[i]),y = hotbone->GetJointY(hotbone->joints[i]);
 			hge->Gfx_RenderLine(x,y-4,x-4,y+4,0xffffffff);
 			hge->Gfx_RenderLine(x,y-4,x+4,y+4,0xffffffff);
 			hge->Gfx_RenderLine(x-4,y+4,x+4,y+4,0xffffffff);
+			if(hotbone->joints[i]->bindbone )
+			{
+				hge->Gfx_RenderLine(hotbone->joints[i]->bindbone->GetHeadX(),hotbone->joints[i]->bindbone->GetHeadY(),hotbone->joints[i]->bindbone->GetTailX(),hotbone->joints[i]->bindbone->GetTailY(),0xff0000ff);
+			}
 		}
 	}
 	if(hotjoint)
 	{
-		int x = hotbone->GetJointX(hotjoint),y = hotbone->GetJointY(hotjoint);
+		float x = hotbone->GetJointX(hotjoint),y = hotbone->GetJointY(hotjoint);
 		hge->Gfx_RenderLine(x,y-4,x-4,y+4,0xffff0000);
 		hge->Gfx_RenderLine(x,y-4,x+4,y+4,0xffff0000);
 		hge->Gfx_RenderLine(x-4,y+4,x+4,y+4,0xffff0000);
 	}
-	float mx=0,my=0;
-	hge->Input_GetMousePos(&mx,&my);
-	over = 0;
-	for(UINT i = 0;i<bones.size();i++)
-	{
-		float d1 = bones[i]->GetHead().GetDistanceToPoint(mx,my);
-		float d2 = bones[i]->GetTail().GetDistanceToPoint(mx,my);
-		if(d1+d2==bones[i]->GetLength())
-		{
-			over = bones[i];
-			break;
-		}
-	}	
-	
-
-
 	if(over)
-		hge->Gfx_RenderLine(over->GetHeadX(),over->GetHeadY(),over->GetTailX(),over->GetTailY(),0xff0000ff);
+	{
+		hge->Gfx_RenderLine(over->GetHeadX(),over->GetHeadY(),over->GetTailX(),over->GetTailY(),0xffffff00);
+		for(UINT i= 0 ;i<over->joints.size();i++)
+		{
+			float x = over->GetJointX(over->joints[i]),y = over->GetJointY(over->joints[i]);
+			hge->Gfx_RenderLine(x,y-4,x-4,y+4,0xffffffff);
+			hge->Gfx_RenderLine(x,y-4,x+4,y+4,0xffffffff);
+			hge->Gfx_RenderLine(x-4,y+4,x+4,y+4,0xffffffff);
+		}
+	}
+	if(overj)
+	{
+		float x = over->GetJointX(overj),y = over->GetJointY(overj);
+		hge->Gfx_RenderLine(x,y-4,x-4,y+4,0xffffff00);
+		hge->Gfx_RenderLine(x,y-4,x+4,y+4,0xffffff00);
+		hge->Gfx_RenderLine(x-4,y+4,x+4,y+4,0xffffff00);
+	}
 	hge->Gfx_EndScene();
 	return false;
 }

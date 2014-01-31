@@ -162,6 +162,8 @@ BEGIN
     POPUP "骨头"
     BEGIN
         MENUITEM "创建关节",                        ID_NEW_JOINT
+        MENUITEM "绑定骨头",                        ID_BindBone
+        MENUITEM "解除绑定",                        ID_ReleaseBind
     END
     POPUP "帮助(&H)"
     BEGIN

@@ -98,6 +98,8 @@ void CLeftView::OnSetFocus(CWnd* pOldWnd)
 		MenuItemInfo.fState = MFS_DISABLED;
 		pSubMenu->SetMenuItemInfo(5, &MenuItemInfo, TRUE);//start from 0
 	}
+	hotbone=0;
+	SelectBone(bonelist.GetCurSel());
 }
 
 int CLeftView::RefreshBoneList()
@@ -120,14 +122,15 @@ int CLeftView::RefreshBoneList()
 	return bones.size();
 }
 
-void CLeftView::SetIndex(UINT index)
+void CLeftView::SetIndex(int index)
 {
-	if(index<0 || index>=bones.size())return ;
+	if(index < -1 || index >= (int)bones.size())return ;
 	bonelist.SetCurSel(index);
 }
 
 void CLeftView::OnLbnSelchangeList1()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	mode = 0;
 	SelectBone(bonelist.GetCurSel());
 }

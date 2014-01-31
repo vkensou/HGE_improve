@@ -4,7 +4,6 @@
 #include <list>
 #include <cmath>
 
-class hgeBone;
 class hgePoint
 {
 public:
@@ -12,7 +11,7 @@ public:
 	hgePoint(float _x,float _y){x = _x;y = _y;}
 	hgePoint(){x = y = 0;};
 	float GetDistanceToPoint(float _x,float _y){return sqrt((x-_x)*(x-_x)+(y-_y)*(y-_y));}
-	float GetDistanceToPoint(hgePoint point){GetDistanceToPoint(point.x,point.y);};
+	float GetDistanceToPoint(hgePoint point){return GetDistanceToPoint(point.x,point.y);};
 };
 //有向线段，头尾节点，长度，倾角
 class hgeLine
@@ -58,6 +57,9 @@ public:
 	float GetTailY(){return tail.y;};
 	float GetLength(){return length;};
 	float GetRotate(){return rotate;};
+	float GetDistanceFromPoint(float _x,float _y);
+	float GetDistanceFromPoint(hgePoint point){return GetDistanceFromPoint(point.x,point.y);};
+
 protected:
 	hgePoint head,tail;
 	float length;
@@ -72,14 +74,17 @@ public:
 	bool tra;//目前使用的是相对位置(true)还是绝对位置(false)
 	hgeLinePoint():hgePoint(){r = a = 0;k = tra = true;};
 };
-
+class hgeBone;
 class hgeJoint:public hgeLinePoint
 {
 public:
-	hgeJoint():hgeLinePoint(){};
+	hgeJoint(hgeBone *father):hgeLinePoint(){bone = father;bindbone = 0;bindjoint = 0;};
 	~hgeJoint(){};
-	hgeBone *body;//表明所属的骨头
-	hgeJoint *bind;//绑定的关节
+	float GetX();
+	float GetY();
+	hgeBone *bone;//表明所属的骨头
+	hgeBone *bindbone;//绑定的关节所属的骨头
+	hgeJoint *bindjoint;//绑定的关节
 	float rotate;//两个骨头的夹角
 };
 
@@ -119,8 +124,14 @@ public:
 	bool GetJointBasis(hgeJoint *joint){return joint->k;}
 	float GetJointX(hgeJoint *joint);
 	float GetJointY(hgeJoint *joint);
+	//通过关节设置骨头位置
+	void SetPositionByJoint(hgeJoint *joint);
+	bool BoneBinded(hgeBone *bone,hgeJoint* s = 0);
 private:
+	void MoveBindBone(hgeJoint* s=0);
 };
+
+
 
 //骨骼类
 class hgeSkeleton

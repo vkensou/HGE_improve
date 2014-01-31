@@ -100,8 +100,8 @@ void CLeftView2::OnSetFocus(CWnd* pOldWnd)
 
 int CLeftView2::RefreshJointList()
 {
-	if(hotbone==0)return 0;
 	jointlist.ResetContent();
+	if(hotbone==0)return 0;
 	CString cont;
 	cont = L"头结点";
 	jointlist.AddString(cont);
@@ -111,7 +111,7 @@ int CLeftView2::RefreshJointList()
 	jointlist.AddString(cont);
 	cont = L"控制结点";
 	jointlist.AddString(cont);
-	for(int i = 0;i<hotbone->joints.size();i++)
+	for(UINT i = 0;i<hotbone->joints.size();i++)
 	{
 		cont.Format(L"关节%d",i+1);
 		jointlist.AddString(cont);

@@ -39,6 +39,8 @@ public:
 	afx_msg void OnNewAnim();
 	afx_msg void OnNewBone();
 	afx_msg void OnNewJoint();
+	afx_msg void OnBindbone();
+	afx_msg void OnReleasebind();
 };
 
 extern CAnimationEdApp theApp;

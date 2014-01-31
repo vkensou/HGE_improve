@@ -29,6 +29,8 @@ BEGIN_MESSAGE_MAP(CAnimationEdApp, CWinAppEx)
 	ON_COMMAND(ID_NEW_SKELETON, &CAnimationEdApp::OnNewSkeleton)
 	ON_COMMAND(ID_NEW_BONE, &CAnimationEdApp::OnNewBone)
 	ON_COMMAND(ID_NEW_JOINT, &CAnimationEdApp::OnNewJoint)
+	ON_COMMAND(ID_BindBone, &CAnimationEdApp::OnBindbone)
+	ON_COMMAND(ID_ReleaseBind, &CAnimationEdApp::OnReleasebind)
 END_MESSAGE_MAP()
 
 
@@ -217,8 +219,26 @@ void CAnimationEdApp::OnNewJoint()
 {
 	// TODO: 在此添加命令处理程序代码
 	if(hotbone==0)return ;
-	hgeJoint *nj = new hgeJoint();
+	hgeJoint *nj = new hgeJoint(hotbone);
 	hotbone->joints.push_back(nj);
 	g_leftview2->RefreshJointList();
 	SelectJoint(hotbone->joints.size()+3,true);
+}
+
+void CAnimationEdApp::OnBindbone()
+{
+	// TODO: 在此添加命令处理程序代码
+	if(hotjoint==0)return;
+	if(hotjoint->bindbone)return;
+	mode = 1;
+}
+
+void CAnimationEdApp::OnReleasebind()
+{
+	// TODO: 在此添加命令处理程序代码
+	if(hotjoint==0)return;
+	hotjoint->bindjoint->bindbone = 0;
+	hotjoint->bindjoint->bindjoint = 0;
+	hotjoint->bindbone = 0;
+	hotjoint->bindjoint = 0;
 }

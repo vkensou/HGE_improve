@@ -30,13 +30,17 @@
 #define ID_32776                        32776
 #define ID_NEW_BONE                     32777
 #define ID_NEW_JOINT                    32778
+#define ID_32779                        32779
+#define ID_BindBone                     32780
+#define ID_32781                        32781
+#define ID_ReleaseBind                  32782
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        315
-#define _APS_NEXT_COMMAND_VALUE         32779
+#define _APS_NEXT_COMMAND_VALUE         32783
 #define _APS_NEXT_CONTROL_VALUE         1002
 #define _APS_NEXT_SYMED_VALUE           314
 #endif
