@@ -107,9 +107,9 @@ int CLeftView2::RefreshJointList()
 	jointlist.AddString(cont);
 	cont = L"尾结点";
 	jointlist.AddString(cont);
-	cont = L"绑定结点";
+	cont = L"绑定节点";
 	jointlist.AddString(cont);
-	cont = L"控制结点";
+	cont = L"控制节点";
 	jointlist.AddString(cont);
 	for(UINT i = 0;i<hotbone->joints.size();i++)
 	{

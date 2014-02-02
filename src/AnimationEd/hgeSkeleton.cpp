@@ -150,7 +150,7 @@ void hgeBone::SetJointBasis(hgeJoint *joint,bool k)
 	return ;
 }
 
-float hgeBone::GetJointX(hgeJoint *joint)
+float hgeBone::GetJointX(hgeLinePoint *joint)
 {
 	float l = joint->tra ==true ? joint->r * length :joint->a;
 	if(joint->k== true)
@@ -164,7 +164,7 @@ float hgeBone::GetJointX(hgeJoint *joint)
 	return joint->x;
 }
 
-float hgeBone::GetJointY(hgeJoint *joint)
+float hgeBone::GetJointY(hgeLinePoint *joint)
 {
 	float l = joint->tra ==true ? joint->r * length :joint->a;
 	if(joint->k== true)
@@ -252,4 +252,70 @@ void hgeBone::MoveBindBone(hgeJoint* s)
 			//joints[i]->bindbone->SetRotate(bone->GetRotate()+joints[i]->angle);
 		}
 	}
+}
+
+float hgeBindPoint::GetX()
+{
+	return bone->GetJointX(this);
+}
+float hgeBindPoint::GetY()
+{
+	return bone->GetJointY(this);
+}
+
+void hgeBone::SetBindRelative(float r)
+{
+	bind.r = r;
+	bind.a = length * bind.r;
+	bind.tra = true;
+	return ;
+}
+
+void hgeBone::SetBindAbsolute(float a)
+{
+	bind.a = a;
+	if(length !=0)
+		bind.r = a / length;
+	else
+		bind.r = 0;
+	bind.tra = false;
+}
+
+void hgeBone::SetBindBasis(bool k)
+{
+	if(bind.k != k)
+	{
+		bind.k = k;
+		bind.r = 1 - bind.r;
+		bind.a = length * bind.r;
+	}
+	return ;
+}
+
+float hgeBone::GetBindX()
+{
+	float l = bind.tra ==true ? bind.r * length :bind.a;
+	if(bind.k== true)
+	{
+		bind.x = head.x + l * cos(rotate);
+	}
+	else
+	{
+		bind.x = tail.x - l * cos(rotate);
+	}
+	return bind.x;
+}
+
+float hgeBone::GetBindY()
+{
+	float l = bind.tra ==true ? bind.r * length :bind.a;
+	if(bind.k== true)
+	{
+		bind.y = head.y + l * sin(rotate);
+	}
+	else
+	{
+		bind.y = tail.y - l * sin(rotate);
+	}
+	return bind.y;
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "hge.h"
+#include "hgeanim2.h"
 #include <vector>
 #include <list>
 #include <cmath>
@@ -79,6 +80,7 @@ public:
 	bool tra;//目前使用的是相对位置(true)还是绝对位置(false)
 	hgeLinePoint():hgePoint(){r = a = 0;k = tra = true;};
 };
+
 class hgeBone;
 class hgeJoint:public hgeLinePoint
 {
@@ -93,15 +95,28 @@ public:
 	float angle;//两个骨头的夹角
 };
 
+class hgeBindPoint:public hgeLinePoint
+{
+public:
+	hgeBindPoint(){}
+	hgeAnimation2 *anim;
+	hgeBone *bone;//表明所属的骨头
+	float GetX();
+	float GetY();
+	float scalex,scaley;//缩放系数，可用于镜像
+	float ox,oy;//偏移
+	float rotate;//旋转
+	void Update(){if(anim)anim->Render(GetX(),GetY());};
+};
+
 class hgeBone:public hgeLine
 {
 public:
-	hgeBone():hgeLine(){bx = by = 0;};
-	hgeBone(float x1,float y1,float x2,float y2):hgeLine(x1,y1,x2,y2){bx = by = 0;};
-	hgeBone(hgePoint point1,hgePoint point2):hgeLine(point1,point2){bx = by = 0;};
+	hgeBone():hgeLine(){bind.bone = this;};
+	hgeBone(float x1,float y1,float x2,float y2):hgeLine(x1,y1,x2,y2){bind.bone = this;};
+	hgeBone(hgePoint point1,hgePoint point2):hgeLine(point1,point2){bind.bone = this;};
 	~hgeBone(){};
-	hgePoint bind;//用于绑定图片的节点
-	float bx,by;//绑定的图片的偏移量
+	hgeBindPoint bind;//用于绑定图片的节点
 	hgeLinePoint control;
 	void SetPosition(float x,float y);
 	void SetPosition(hgePoint point){SetPosition(point.x,point.y);};
@@ -127,11 +142,23 @@ public:
 	float GetJointRelative(hgeJoint *joint){return joint->r;}
 	float GetJointAbsolute(hgeJoint *joint){return joint->a;}
 	bool GetJointBasis(hgeJoint *joint){return joint->k;}
-	float GetJointX(hgeJoint *joint);
-	float GetJointY(hgeJoint *joint);
+	float GetJointX(hgeLinePoint *joint);
+	float GetJointY(hgeLinePoint *joint);
 	//通过关节设置骨头位置
 	void SetPositionByJoint(hgeJoint *joint);
 	bool BoneBinded(hgeBone *bone,hgeJoint* s = 0);
+
+	//设置绑定节点相对位置
+	void SetBindRelative(float r);
+	//设置绑定节点绝对位置
+	void SetBindAbsolute(float a);
+	//设置关节是相对头结点还是尾结点
+	void SetBindBasis(bool b);
+	float GetBindRelative(){return bind.r;}
+	float GetBindAbsolute(){return bind.a;}
+	bool GetBindBasis(){return bind.k;}
+	float GetBindX();
+	float GetBindY();
 private:
 	void MoveBindBone(hgeJoint* s=0);
 };
