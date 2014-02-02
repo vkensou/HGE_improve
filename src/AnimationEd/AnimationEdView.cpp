@@ -133,6 +133,11 @@ bool FrameFunc()
 	if(hge->Input_KeyDown(HGEK_LBUTTON) && overj)
 		SelectJoint(overji+4,true);
 
+	if(hge->Input_KeyDown(HGEK_RBUTTON))
+	{
+		mode = 0;
+	}
+
 	hge->Gfx_BeginScene();
 	hge->Gfx_Clear(0);
 
@@ -144,14 +149,14 @@ bool FrameFunc()
 	{
 		//画头结点
 		float x = hotbone->GetHeadX(),y = hotbone->GetHeadY();
-		hge->Gfx_RenderLine(x-5,y-4,x+4,y-4,0xffffffff);
-		hge->Gfx_RenderLine(x-4,y-5,x-4,y+4,0xffffffff);
+		hge->Gfx_RenderLine(x-4,y-4,x+4,y-4,0xffffffff);
+		hge->Gfx_RenderLine(x-4,y-4,x-4,y+4,0xffffffff);
 		hge->Gfx_RenderLine(x+4,y+4,x+4,y-4,0xffffffff);
 		hge->Gfx_RenderLine(x+4,y+4,x-4,y+4,0xffffffff);
 		//画尾结点
 		x = hotbone->GetTailX(),y = hotbone->GetTailY();
-		hge->Gfx_RenderLine(x-5,y-4,x+4,y-4,0xffffffff);
-		hge->Gfx_RenderLine(x-4,y-5,x-4,y+4,0xffffffff);
+		hge->Gfx_RenderLine(x-4,y-4,x+4,y-4,0xffffffff);
+		hge->Gfx_RenderLine(x-4,y-4,x-4,y+4,0xffffffff);
 		hge->Gfx_RenderLine(x+4,y+4,x+4,y-4,0xffffffff);
 		hge->Gfx_RenderLine(x+4,y+4,x-4,y+4,0xffffffff);
 		//画控制结点

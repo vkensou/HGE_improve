@@ -1,6 +1,15 @@
 #include "StdAfx.h"
 #include "hgeSkeleton.h"
 
+float hgeLine::NeedRotateFrom(hgeLine *line)
+{
+	float jj= rotate - line->rotate;
+	float x = (line->dx * dy) - (line->dy - dx);
+	if(x<=0)
+		jj = M_2PI - jj;
+	return jj;
+}
+
 hgeSkeleton::hgeSkeleton(void)
 {
 }
@@ -108,6 +117,7 @@ void hgeBone::SetRotate(float r)
 			head.y = tail.y - length * sin(rotate);
 		}
 	}
+	MoveBindBone();
 	return ;
 }
 
@@ -187,6 +197,7 @@ float hgeLine::GetDistanceFromPoint(float _x,float _y)
 void hgeBone::SetPositionByJoint(hgeJoint *joint)
 {
 	if(!joint)return;
+	rotate=joint->bindbone->rotate + joint->angle ;
 	if(joint->k== true)
 	{
 		head.x = joint->x - joint->a * cos(rotate);
@@ -238,6 +249,7 @@ void hgeBone::MoveBindBone(hgeJoint* s)
 			joints[i]->bindjoint->x = joints[i]->GetX();
 			joints[i]->bindjoint->y = joints[i]->GetY();
 			joints[i]->bindbone->SetPositionByJoint(joints[i]->bindjoint);
+			//joints[i]->bindbone->SetRotate(bone->GetRotate()+joints[i]->angle);
 		}
 	}
 }

@@ -115,7 +115,7 @@ int CLeftView::RefreshBoneList()
 		CString l;
 		for(UINT i = 0;i<bones.size()-m;i++)
 		{
-			l.Format(L"%d",bonelist.GetCount());
+			l.Format(L"%d",bonelist.GetCount()+1);
 			bonelist.AddString(l);
 		}
 	}

@@ -77,11 +77,13 @@ void SelectJoint(UINT index,bool s)
 				//½ûÖ¹Ìí¼Ó³É±Õ»·
 				hotjoint->x = overj->GetX();
 				hotjoint->y = overj->GetY();
-				hotbone->SetPositionByJoint(hotjoint);
 				hotjoint->bindbone = over;
 				hotjoint->bindjoint = overj;
+				hotjoint->angle = hotbone->NeedRotateFrom((hgeLine*)over);
 				overj->bindbone = hotbone;
 				overj->bindjoint = hotjoint;
+				overj->angle = -hotjoint->angle;
+				hotbone->SetPositionByJoint(hotjoint);
 			}
 		}
 		mode = 0;

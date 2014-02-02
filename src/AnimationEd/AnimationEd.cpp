@@ -239,6 +239,8 @@ void CAnimationEdApp::OnReleasebind()
 	if(hotjoint==0)return;
 	hotjoint->bindjoint->bindbone = 0;
 	hotjoint->bindjoint->bindjoint = 0;
+	hotjoint->bindjoint->angle = 0;
 	hotjoint->bindbone = 0;
 	hotjoint->bindjoint = 0;
+	hotjoint->angle = 0;
 }

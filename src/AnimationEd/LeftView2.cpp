@@ -129,5 +129,6 @@ void CLeftView2::SetIndex(UINT index)
 void CLeftView2::OnLbnSelchangeList1()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	mode = 0;
 	SelectJoint(jointlist.GetCurSel());
 }

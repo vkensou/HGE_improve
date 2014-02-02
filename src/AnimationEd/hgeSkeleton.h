@@ -17,7 +17,7 @@ public:
 class hgeLine
 {
 public:
-	hgeLine(){head = tail = hgePoint(0,0);length = 0;}
+	hgeLine(){head = tail = hgePoint(0,0);length = 0;dx = dy = 0;}
 	hgeLine(float x1,float y1,float x2,float y2){SetPosition(x1,y1,x2,y2);}
 	hgeLine(hgePoint point1,hgePoint point2){SetPosition(point1,point2);}
 	void SetPosition(float x1,float y1,float x2,float y2)
@@ -43,6 +43,8 @@ public:
 			else if(ly<0)rotate = M_PI_4 * 3;
 			else rotate = 0;
 		}
+		dx = tail.x - head.x ;
+		dy = tail.y - head.y;
 	}
 	void SetPosition(hgePoint point1,hgePoint point2){SetPosition(point1.x,point1.y,point2.x,point2.y);};
 	void SetHead(float x1,float y1){SetPosition(x1,y1,tail.x,tail.y);};
@@ -59,9 +61,12 @@ public:
 	float GetRotate(){return rotate;};
 	float GetDistanceFromPoint(float _x,float _y);
 	float GetDistanceFromPoint(hgePoint point){return GetDistanceFromPoint(point.x,point.y);};
+	//从参数线段开始旋转
+	float NeedRotateFrom(hgeLine *line);
 
 protected:
 	hgePoint head,tail;
+	float dx,dy;
 	float length;
 	float rotate;
 };
@@ -78,14 +83,14 @@ class hgeBone;
 class hgeJoint:public hgeLinePoint
 {
 public:
-	hgeJoint(hgeBone *father):hgeLinePoint(){bone = father;bindbone = 0;bindjoint = 0;};
+	hgeJoint(hgeBone *father):hgeLinePoint(){bone = father;bindbone = 0;bindjoint = 0;angle = 0;};
 	~hgeJoint(){};
 	float GetX();
 	float GetY();
 	hgeBone *bone;//表明所属的骨头
 	hgeBone *bindbone;//绑定的关节所属的骨头
 	hgeJoint *bindjoint;//绑定的关节
-	float rotate;//两个骨头的夹角
+	float angle;//两个骨头的夹角
 };
 
 class hgeBone:public hgeLine
