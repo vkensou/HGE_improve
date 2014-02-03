@@ -2,3 +2,5 @@
 *.suo
 *.aps
 *.obj
+*.user
+*.manifest
