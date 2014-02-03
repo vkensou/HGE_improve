@@ -1,6 +1,5 @@
 #pragma once
 #include "hge.h"
-#include "hgeanim2.h"
 #include <vector>
 #include <list>
 #include <cmath>
@@ -99,14 +98,13 @@ class hgeBindPoint:public hgeLinePoint
 {
 public:
 	hgeBindPoint(){}
-	hgeAnimation2 *anim;
 	hgeBone *bone;//表明所属的骨头
 	float GetX();
 	float GetY();
 	float scalex,scaley;//缩放系数，可用于镜像
 	float ox,oy;//偏移
 	float rotate;//旋转
-	void Update(){if(anim)anim->Render(GetX(),GetY());};
+	void Update(){};
 };
 
 class hgeBone:public hgeLine

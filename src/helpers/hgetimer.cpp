@@ -92,3 +92,17 @@ void hgeTimer::SetBaseTimer(hgeTimer* b)
 {
 	t = b;
 }
+
+void hgeTimer::Resume(void)
+{
+	if((UTick == true) &&(ZT == true))
+	{
+		if(t)
+			TempTick = t->NowTick ();
+		else
+			TempTick = hge->Timer_NowTick();
+		//TempTick = GetTickCount();
+		YanChi = TempTick - YanChiA + YanChi;
+		ZT = false;
+	}
+}
