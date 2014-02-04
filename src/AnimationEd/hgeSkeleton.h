@@ -88,8 +88,10 @@ public:
 	void UpdatePosition();
 	float GetX(){return x;};
 	float GetY(){return y;};
+	//此函数一般不可用
+	void SetXY(float _x,float _y){x = _x;y = _y;}
 
-	hgeLinePoint(hgeLine *hostline):hgePoint(){r = a = 0;k = tra = true;line = hostline;};
+	hgeLinePoint(hgeLine *hostline){r = a = 0;k = tra = true;line = hostline;};
 protected:
 	float x,y;
 	float r,a;//r是相对位置，a是绝对位置
@@ -134,60 +136,28 @@ public:
 class hgeBone:public hgeLine
 {
 public:
-	hgeBone():hgeLine(){bind.bone = this;};
-	hgeBone(float x1,float y1,float x2,float y2):hgeLine(x1,y1,x2,y2){bind.bone = this;};
-	hgeBone(hgePoint point1,hgePoint point2):hgeLine(point1,point2){bind.bone = this;};
+	hgeBone():hgeLine(),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();};
+	hgeBone(float x1,float y1,float x2,float y2):hgeLine(x1,y1,x2,y2),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();};
+	hgeBone(hgePoint point1,hgePoint point2):hgeLine(point1,point2),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();};
 	~hgeBone(){};
-	hgeBindPoint bind(this);//用于绑定图片的节点
-	hgeLinePoint control(this);
+	hgeBindPoint bind;//用于绑定图片的节点
+	hgeLinePoint control;
 	void SetPosition(float x,float y);
 	void SetPosition(hgePoint point){SetPosition(point.x,point.y);};
+	void SetRotate(float r);
 	float GetX(){return control.GetX();};
 	float GetY(){return control.GetY();};
-
-	const hgeLinePoint& ControlPoint(){return control;}
-	const hgeBindPoint& BindPoint(){return bind;}
-
-	////设置控制点相对位置
-	//void SetControlRelative(float r);
-	////设置控制点绝对位置
-	//void SetControlAbsolute(float a);
-	////设置控制点是相对头结点还是尾结点
-	//void SetControlBasis(bool);
-	//float GetControlRelative(){return control.r;}
-	//float GetControlAbsolute(){return control.a;}
-	//bool GetControlBasis(){return control.k;}
-
-
-	void SetRotate(float r);
+	hgeLinePoint& ControlPoint(){return control;}
+	hgeBindPoint& BindPoint(){return bind;}
 	std::vector<hgeJoint*> joints;
-
-	////设置关节相对位置
-	//void SetJointRelative(hgeJoint *joint, float r);
-	////设置关节绝对位置
-	//void SetJointAbsolute(hgeJoint *joint,float a);
-	////设置关节是相对头结点还是尾结点
-	//void SetJointBasis(hgeJoint *joint,bool);
-	//float GetJointRelative(hgeJoint *joint){return joint->r;}
-	//float GetJointAbsolute(hgeJoint *joint){return joint->a;}
-	//bool GetJointBasis(hgeJoint *joint){return joint->k;}
-	//float GetJointX(hgeLinePoint *joint);
-	//float GetJointY(hgeLinePoint *joint);
-	//通过关节设置骨头位置
+	hgeJoint* AddJoint();
 	void SetPositionByJoint(hgeJoint *joint);
 	bool BoneBinded(hgeBone *bone,hgeJoint* s = 0);
-
-	////设置绑定节点相对位置
-	//void SetBindRelative(float r);
-	////设置绑定节点绝对位置
-	//void SetBindAbsolute(float a);
-	////设置关节是相对头结点还是尾结点
-	//void SetBindBasis(bool b);
-	//float GetBindRelative(){return bind.r;}
-	//float GetBindAbsolute(){return bind.a;}
-	//bool GetBindBasis(){return bind.k;}
-	//float GetBindX();
-	//float GetBindY();
+protected:
+	void AfterSetPosition(){
+		bind.UpdatePosition();control.UpdatePosition();
+		MoveBindBone();
+	};
 private:
 	void MoveBindBone(hgeJoint* s=0);
 };

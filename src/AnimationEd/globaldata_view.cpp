@@ -78,8 +78,7 @@ void SelectJoint(UINT index,bool s)
 			if(!overj->bindbone && !hotbone->BoneBinded(over))
 			{
 				//½ûÖ¹Ìí¼Ó³É±Õ»·
-				hotjoint->x = overj->GetX();
-				hotjoint->y = overj->GetY();
+				hotjoint->SetXY(overj->GetX(),overj->GetY());
 				hotjoint->bindbone = over;
 				hotjoint->bindjoint = overj;
 				hotjoint->angle = hotbone->NeedRotateFrom((hgeLine*)over);

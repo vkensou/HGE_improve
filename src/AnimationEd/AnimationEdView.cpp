@@ -121,7 +121,7 @@ bool FrameFunc()
 	{
 		for(UINT i = 0;i<over->joints.size();i++)
 		{
-			if(mx>over->joints[i]->x-4 && mx<over->joints[i]->x+4 && my>over->joints[i]->y-4 && my<over->joints[i]->y+4)
+			if(mx>over->joints[i]->GetX()-4 && mx<over->joints[i]->GetX()+4 && my>over->joints[i]->GetY()-4 && my<over->joints[i]->GetY()+4)
 			{
 				overji = i;
 				overj = over->joints[i];
@@ -168,7 +168,8 @@ bool FrameFunc()
 		hge->Gfx_RenderLine(x,y+3,x-3,y,0xffffffff);
 		for(UINT i= 0 ;i<hotbone->joints.size();i++)
 		{
-			x = hotbone->GetJointX(hotbone->joints[i]),y = hotbone->GetJointY(hotbone->joints[i]);
+
+			x = hotbone->joints[i]->GetX(),y = hotbone->joints[i]->GetY();
 			hge->Gfx_RenderLine(x,y-4,x-4,y+4,0xffffffff);
 			hge->Gfx_RenderLine(x,y-4,x+4,y+4,0xffffffff);
 			hge->Gfx_RenderLine(x-4,y+4,x+4,y+4,0xffffffff);
@@ -180,7 +181,7 @@ bool FrameFunc()
 	}
 	if(hotjoint)
 	{
-		float x = hotbone->GetJointX(hotjoint),y = hotbone->GetJointY(hotjoint);
+		float x = hotjoint->GetX(),y = hotjoint->GetY();
 		hge->Gfx_RenderLine(x,y-4,x-4,y+4,0xffff0000);
 		hge->Gfx_RenderLine(x,y-4,x+4,y+4,0xffff0000);
 		hge->Gfx_RenderLine(x-4,y+4,x+4,y+4,0xffff0000);
@@ -190,7 +191,7 @@ bool FrameFunc()
 		hge->Gfx_RenderLine(over->GetHeadX(),over->GetHeadY(),over->GetTailX(),over->GetTailY(),0xffffff00);
 		for(UINT i= 0 ;i<over->joints.size();i++)
 		{
-			float x = over->GetJointX(over->joints[i]),y = over->GetJointY(over->joints[i]);
+			float x = over->joints[i]->GetX(),y = over->joints[i]->GetY();
 			hge->Gfx_RenderLine(x,y-4,x-4,y+4,0xffffffff);
 			hge->Gfx_RenderLine(x,y-4,x+4,y+4,0xffffffff);
 			hge->Gfx_RenderLine(x-4,y+4,x+4,y+4,0xffffffff);
@@ -198,7 +199,7 @@ bool FrameFunc()
 	}
 	if(overj)
 	{
-		float x = over->GetJointX(overj),y = over->GetJointY(overj);
+		float x = overj->GetX(),y = overj->GetX();
 		hge->Gfx_RenderLine(x,y-4,x-4,y+4,0xffffff00);
 		hge->Gfx_RenderLine(x,y-4,x+4,y+4,0xffffff00);
 		hge->Gfx_RenderLine(x-4,y+4,x+4,y+4,0xffffff00);
