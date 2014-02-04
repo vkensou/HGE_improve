@@ -31,6 +31,7 @@ BEGIN_MESSAGE_MAP(CAnimationEdApp, CWinAppEx)
 	ON_COMMAND(ID_NEW_JOINT, &CAnimationEdApp::OnNewJoint)
 	ON_COMMAND(ID_BindBone, &CAnimationEdApp::OnBindbone)
 	ON_COMMAND(ID_ReleaseBind, &CAnimationEdApp::OnReleasebind)
+	ON_COMMAND(ID_32783, &CAnimationEdApp::On32783)
 END_MESSAGE_MAP()
 
 
@@ -243,4 +244,10 @@ void CAnimationEdApp::OnReleasebind()
 	hotjoint->bindbone = 0;
 	hotjoint->bindjoint = 0;
 	hotjoint->angle = 0;
+}
+
+void CAnimationEdApp::On32783()
+{
+	// TODO: 在此添加命令处理程序代码
+	g_bindshow->ShowWindow(SW_SHOW);
 }

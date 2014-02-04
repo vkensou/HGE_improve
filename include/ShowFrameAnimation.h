@@ -33,8 +33,8 @@ namespace Show
 		int			GetFrame() const { return nCurFrame; }
 		int			GetFrames() const { return nFrames; }
 
-	private:
-		FrameAnimation();
+	protected:
+		FrameAnimation(){_type = FRAMEANIMATION;};
 
 		int			orig_width;
 

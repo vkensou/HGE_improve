@@ -164,6 +164,7 @@ BEGIN
         MENUITEM "创建关节",                        ID_NEW_JOINT
         MENUITEM "绑定骨头",                        ID_BindBone
         MENUITEM "解除绑定",                        ID_ReleaseBind
+        MENUITEM "绑定图形元件",                      ID_32783
     END
     POPUP "帮助(&H)"
     BEGIN
@@ -247,6 +248,21 @@ BEGIN
     LISTBOX         IDC_LIST1,0,0,126,150,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
 END
 
+IDD_DIALOG1 DIALOGEX 0, 0, 316, 183
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    COMBOBOX        IDC_COMBO1,6,42,78,24,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "绑定元件类型：",IDC_STATIC,6,30,72,8
+    LTEXT           "未选择",IDC_BONENAME,6,6,78,12
+    LTEXT           "序号",IDC_STATIC,6,114,78,12
+    COMBOBOX        IDC_COMBO2,6,132,78,18,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "应用",IDC_BUTTON1,30,156,54,18
+    LTEXT           "静态",IDC_FILENAME,6,60,78,12
+    PUSHBUTTON      "选择文件",IDC_BUTTON2,42,84,42,18
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -328,6 +344,14 @@ BEGIN
     END
 
     IDD_LEFTVIEW2, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 176
+    END
+
+    IDD_DIALOG1, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 309

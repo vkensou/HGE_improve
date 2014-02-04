@@ -1,6 +1,50 @@
 #include "StdAfx.h"
 #include "hgeSkeleton.h"
 
+void hgeLinePoint::UpdatePosition()
+{
+	float l = tra ==true ? r * line->length :a;
+	if(k)
+	{
+		x = line->head.x + l * cos(line->rotate);
+		y = line->head.y + l * sin(line->rotate);
+	}
+	else
+	{
+		x = line->tail.x - l * cos(line->rotate);
+		y = line->tail.y - l * sin(line->rotate);
+	}
+}
+
+void hgeLinePoint::SetControlRelative(float _r)
+{
+	r = _r;
+	a = line->length * r;
+	tra = true;
+	return ;
+}
+
+void hgeLinePoint::SetControlAbsolute(float _a)
+{
+	a = _a;
+	if(line->length !=0)
+		r = a / line->length;
+	else
+		r = 0;
+	tra = false;
+}
+
+void hgeLinePoint::SetControlBasis(bool _k)
+{
+	if(k != _k)
+	{
+		k = _k;
+		r = 1 - r;
+		a = line->length * r;
+	}
+	return ;
+}
+
 float hgeLine::NeedRotateFrom(hgeLine *line)
 {
 	float jj= rotate - line->rotate;
@@ -10,62 +54,41 @@ float hgeLine::NeedRotateFrom(hgeLine *line)
 	return jj;
 }
 
-hgeSkeleton::hgeSkeleton(void)
+float hgeLine::GetDistanceFromPoint(float _x,float _y)
 {
-}
-
-hgeSkeleton::~hgeSkeleton(void)
-{
+	float r = (tail.x - head.x) * (_x - head.x) + (tail.y - head.y) * (_y - head.y);
+	r /= length * length;
+	if(r<0)
+		return head.GetDistanceToPoint(_x,_y);
+	else if(r>1)
+		return tail.GetDistanceToPoint(_x,_y);
+	hgePoint d(tail.x - head.x,tail.y - head.y);
+	d.x *= r;
+	d.y *= r;
+	d.x += head.x ;
+	d.y += head.y ;
+	return d.GetDistanceToPoint(_x,_y);
 }
 
 void hgeBone::SetPosition(float x,float y)
 {
-	if(control.k== true)
+	if(control.GetBasis())
 	{
-		head.x = x - control.a * cos(rotate);
-		head.y = y - control.a * sin(rotate);
+		head.x = x - control.GetAbsolute() * cos(rotate);
+		head.y = y - control.GetAbsolute() * sin(rotate);
 		tail.x = head.x + length * cos(rotate);
 		tail.y = head.y + length * sin(rotate);
 	}
 	else
 	{
-		tail.x = x + control.a * cos(rotate);
-		tail.y = y + control.a * sin(rotate);
+		tail.x = x + control.GetAbsolute() * cos(rotate);
+		tail.y = y + control.GetAbsolute() * sin(rotate);
 		head.x = tail.x - length * cos(rotate);
 		head.y = tail.y - length * sin(rotate);
 	}
-	control.x = x;
-	control.y = y;
+	control.UpdatePosition();
 	MoveBindBone();
 	return ;
-}
-
-float hgeBone::GetX()
-{
-	float l = control.tra ==true ? control.r * length :control.a;
-	if(control.k== true)
-	{
-		control.x = head.x + l * cos(rotate);
-	}
-	else
-	{
-		control.x = tail.x - l * cos(rotate);
-	}
-	return control.x;
-}
-
-float hgeBone::GetY()
-{
-	float l = control.tra ==true ? control.r * length :control.a;
-	if(control.k== true)
-	{
-		control.y = head.y + l * sin(rotate);
-	}
-	else
-	{
-		control.y = tail.y - l * sin(rotate);
-	}
-	return control.y;
 }
 
 void hgeBone::SetControlRelative(float r)
@@ -178,22 +201,6 @@ float hgeBone::GetJointY(hgeLinePoint *joint)
 	return joint->y;
 }
 
-float hgeLine::GetDistanceFromPoint(float _x,float _y)
-{
-	float r = (tail.x - head.x) * (_x - head.x) + (tail.y - head.y) * (_y - head.y);
-	r /= length * length;
-	if(r<0)
-		return head.GetDistanceToPoint(_x,_y);
-	else if(r>1)
-		return tail.GetDistanceToPoint(_x,_y);
-	hgePoint d(tail.x - head.x,tail.y - head.y);
-	d.x *= r;
-	d.y *= r;
-	d.x += head.x ;
-	d.y += head.y ;
-	return d.GetDistanceToPoint(_x,_y);
-}
-
 void hgeBone::SetPositionByJoint(hgeJoint *joint)
 {
 	if(!joint)return;
@@ -216,14 +223,6 @@ void hgeBone::SetPositionByJoint(hgeJoint *joint)
 	return ;
 }
 
-float hgeJoint::GetX()
-{
-	return bone->GetJointX(this);
-}
-float hgeJoint::GetY()
-{
-	return bone->GetJointY(this);
-}
 
 bool hgeBone::BoneBinded(hgeBone *bone,hgeJoint* s)
 {

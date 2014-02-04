@@ -204,6 +204,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\BindShow.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DownView.cpp"
 				>
 			</File>
@@ -271,6 +275,10 @@
 			</File>
 			<File
 				RelativePath=".\AnimationEdView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BindShow.h"
 				>
 			</File>
 			<File

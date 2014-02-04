@@ -9,6 +9,7 @@ namespace Show
 		_ax = _ay = 0;
 		bPlaying = false;
 		time.StopTick();
+		_type = SLICEDANIMATION;
 	}
 
 	void SlicedAnimation::Play()

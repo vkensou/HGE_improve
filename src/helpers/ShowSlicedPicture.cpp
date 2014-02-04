@@ -5,6 +5,7 @@ namespace Show
 	SlicedPicture::SlicedPicture(PictureData *data,UINT index)
 		:Picture()
 	{
+		_type = SLICEDPICTURE;
 		SetPictureData(data);
 		SetSliceIndex(index);
 	}

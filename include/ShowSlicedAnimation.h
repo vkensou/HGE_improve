@@ -8,7 +8,7 @@ namespace Show
 	class SlicedAnimation:public SlicedFrame
 	{
 	public:
-		SlicedAnimation():SlicedFrame(){_aidx = 0;_ax = _ay = 0;bPlaying = false;time.StopTick();};
+		SlicedAnimation():SlicedFrame(){_aidx = 0;_ax = _ay = 0;bPlaying = false;time.StopTick();_type = SLICEDANIMATION;};
 		SlicedAnimation(PictureData *data,UINT index=0);
 		virtual ~SlicedAnimation(){};
 

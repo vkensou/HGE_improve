@@ -39,6 +39,7 @@ CMainFrame::CMainFrame()
 
 CMainFrame::~CMainFrame()
 {
+	delete m_bindshow;
 }
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -193,5 +194,9 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 	g_animview = (CAnimationEdView*)m_splitter1.GetPane(0,0);
 	g_downview = (CDownView*)m_splitter1.GetPane(1,0);
 	g_rightview = (CRightView*)m_splitter.GetPane(0,3);
+
+	m_bindshow = new CBindShow();
+	g_bindshow = m_bindshow;
+	m_bindshow->Create(IDD_DIALOG1,this);
 	return TRUE;
 }

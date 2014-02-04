@@ -7,7 +7,7 @@ namespace Show
 	class SlicedFrame:public SlicedPicture
 	{
 	public:
-		SlicedFrame():SlicedPicture(){_fidx = 0;_fx = _fy = 0;};
+		SlicedFrame():SlicedPicture(){_fidx = 0;_fx = _fy = 0;_type = SLICEDFRAME;};
 		SlicedFrame(PictureData *data,UINT index=0);
 		virtual ~SlicedFrame(){};
 

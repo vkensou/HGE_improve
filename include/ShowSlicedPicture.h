@@ -8,7 +8,7 @@ namespace Show
 	class SlicedPicture:public Picture
 	{
 	public:
-		SlicedPicture():Picture(){_data = 0;_sidx = 0;};
+		SlicedPicture():Picture(){_data = 0;_sidx = 0;_type = SLICEDPICTURE;};
 		SlicedPicture(PictureData *data,UINT index=0);
 		virtual ~SlicedPicture(){};
 		void SetPictureData(PictureData *data);

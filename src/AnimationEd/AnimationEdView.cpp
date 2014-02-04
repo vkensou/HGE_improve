@@ -144,6 +144,7 @@ bool FrameFunc()
 	for(UINT i = 0;i<bones.size();i++)
 	{
 		hge->Gfx_RenderLine(bones[i]->GetHeadX(),bones[i]->GetHeadY(),bones[i]->GetTailX(),bones[i]->GetTailY(),0xffffffff);
+		bones[i]->bind.Render();
 	}
 	if(hotbone)
 	{

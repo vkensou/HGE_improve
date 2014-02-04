@@ -10,6 +10,7 @@
 #include "leftview2.h"
 #include "downview.h"
 #include "rightview.h"
+#include "bindshow.h"
 
 class CMainFrame : public CFrameWndEx
 {
@@ -42,7 +43,7 @@ protected:  // 控件条嵌入成员
 	CMFCStatusBar     m_wndStatusBar;
 	CSplitterWnd		m_splitter;
 	CSplitterWnd		m_splitter1;
-
+	CBindShow		*m_bindshow;
 // 生成的消息映射函数
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

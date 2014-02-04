@@ -7,6 +7,7 @@ CLeftView *g_leftview = 0;
 CLeftView2 *g_leftview2 = 0;
 CDownView *g_downview = 0;
 CRightView *g_rightview = 0;
+CBindShow *g_bindshow = 0;
 
 int mode=0;
 void SelectBone(UINT index,bool s)
@@ -22,6 +23,7 @@ void SelectBone(UINT index,bool s)
 			g_leftview2->RefreshJointList();
 			g_rightview->SetPropertyPage(0);
 			g_rightview->RefreshProperty();
+			g_bindshow->ResfreshData(index);
 		}
 		else
 		{
@@ -35,6 +37,7 @@ void SelectBone(UINT index,bool s)
 			g_leftview2->RefreshJointList();
 			g_rightview->SetPropertyPage(1);
 			g_rightview->RefreshProperty();
+			g_bindshow->ResfreshData(index);
 		}
 	}
 }

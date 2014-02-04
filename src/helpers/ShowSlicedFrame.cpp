@@ -7,6 +7,7 @@ namespace Show
 	{
 		_fx = _fy = 0;
 		SetFrameIndex(index);
+		_type = SLICEDFRAME;
 	}
 
 	void SlicedFrame::SetFrameIndex(UINT index)

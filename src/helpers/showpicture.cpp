@@ -24,6 +24,7 @@ namespace Show
 		_alpha = 0xff;
 
 		quad.blend=BLEND_DEFAULT;
+		_type = PICTURE;
 	}
 
 	Picture::Picture()

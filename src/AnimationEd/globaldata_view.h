@@ -7,12 +7,14 @@
 #include "rightview.h"
 #include "AnimationEdView.h"
 #include "globaldata_animall.h"
+#include "bindshow.h"
 
 extern CAnimationEdView *g_animview;
 extern CLeftView *g_leftview;
 extern CLeftView2 *g_leftview2;
 extern CDownView *g_downview;
 extern CRightView *g_rightview;
+extern CBindShow *g_bindshow;
 
 extern int mode;//模式，0-普通，1-关节绑定模式
 

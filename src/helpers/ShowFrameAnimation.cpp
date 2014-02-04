@@ -15,6 +15,7 @@ namespace Show
 		Mode=ANIM_FWD | ANIM_LOOP;
 		nDelta=1;
 		SetFrame(0);
+		_type = FRAMEANIMATION;
 	}
 
 	void FrameAnimation::SetMode(int mode)
