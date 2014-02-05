@@ -16,26 +16,23 @@ IMPLEMENT_DYNAMIC(CBindShow, CDialog)
 
 CBindShow::CBindShow(CWnd* pParent /*=NULL*/)
 	: CDialog(CBindShow::IDD, pParent)
-	, bindtype(0)
 	, bonename(_T(""))
 	, filename(_T(""))
+	, picname(_T(""))
 {
-	tempdata = 0;
 }
 
 CBindShow::~CBindShow()
 {
-	delete tempdata;
 }
 
 void CBindShow::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	DDX_CBIndex(pDX, IDC_COMBO1, bindtype);
-	DDX_Control(pDX, IDC_COMBO1, cbbindtype);
 	DDX_Text(pDX, IDC_BONENAME, bonename);
 	DDX_Text(pDX, IDC_FILENAME, filename);
-	DDX_Control(pDX, IDC_COMBO2, cbindex);
+	DDX_Control(pDX, IDC_COMBO1, cbindex);
+	DDX_Text(pDX, IDC_PICNAME, picname);
 }
 
 
@@ -44,6 +41,7 @@ BEGIN_MESSAGE_MAP(CBindShow, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON2, &CBindShow::OnBnClickedButton2)
 	ON_BN_CLICKED(IDC_BUTTON1, &CBindShow::OnBnClickedButton1)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &CBindShow::OnCbnSelchangeCombo1)
+	ON_BN_CLICKED(IDC_BUTTON3, &CBindShow::OnBnClickedButton3)
 END_MESSAGE_MAP()
 
 
@@ -54,13 +52,13 @@ BOOL CBindShow::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
-	cbbindtype.AddString(L"无");
-	cbbindtype.AddString(L"PICTURE");
-	cbbindtype.AddString(L"SLICEDPICTURE");
-	cbbindtype.AddString(L"SLICEDFRAME");
-	cbbindtype.AddString(L"FRAMEANIMATION");
-	cbbindtype.AddString(L"SLICEDANIMATION");
-	cbbindtype.SetCurSel(0);
+	//cbbindtype.AddString(L"无");
+	//cbbindtype.AddString(L"PICTURE");
+	//cbbindtype.AddString(L"SLICEDPICTURE");
+	//cbbindtype.AddString(L"SLICEDFRAME");
+	//cbbindtype.AddString(L"FRAMEANIMATION");
+	//cbbindtype.AddString(L"SLICEDANIMATION");
+	//cbbindtype.SetCurSel(0);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 异常: OCX 属性页应返回 FALSE
@@ -86,41 +84,16 @@ void CBindShow::ResfreshData(int index)
 void CBindShow::OnBnClickedButton2()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	CString strFile = L"";
-
     CFileDialog dlgFile(TRUE, NULL, NULL, OFN_HIDEREADONLY, L"图片信息文件(*.dat)|*.dat", NULL);
 
     if (dlgFile.DoModal())
 	{
 		UpdateData(TRUE);
         filename = dlgFile.GetFileName();
-
-		wchar_t path_buffer[_MAX_PATH];
-		wchar_t drive[_MAX_DRIVE];
-		wchar_t dir[_MAX_DIR];
-		wchar_t fname[_MAX_FNAME];
-		wchar_t ext[_MAX_EXT];
-		_wsplitpath(dlgFile.GetPathName(),drive,dir,fname,ext);
-		_wmakepath( path_buffer, drive, dir, fname, L"png" );
-		picfile = path_buffer;
-		tempdata = new PictureData();
-		tempdata->LoadData(dlgFile.GetPathName());
+		dat->LoadData(dlgFile.GetPathName());
 		cbindex.ResetContent();
-		int s=0;
-		switch (bindtype)
-		{
-		case 2:
-			s = tempdata->slices.size();
-			break;
-		case 3:
-			s = tempdata->frames.size();
-			break;
-		case 5:
-			s = tempdata->animations.size();
-			break;
-		}
 		CString k;
-		for(int i = 0 ;i < s;i++)
+		for(UINT i = 0 ;i < dat->slices.size();i++)
 		{
 			k.Format(L"%d",i+1);
 			cbindex.AddString(k);
@@ -128,44 +101,60 @@ void CBindShow::OnBnClickedButton2()
 	}
 	UpdateData(FALSE);
 }
+
+void CBindShow::OnBnClickedButton3()
+{
+	// TODO: 在此添加控件通知处理程序代码
+    CFileDialog dlgFile(TRUE, NULL, NULL, OFN_HIDEREADONLY, L"图片文件(*.png)|*.png", NULL);
+
+    if (dlgFile.DoModal())
+	{
+		UpdateData(TRUE);
+		picname = dlgFile.GetFileName();
+		if(dat->tex)hge->Texture_Free(dat->tex);
+		dat->tex = hge->Texture_Load(dlgFile.GetPathName());
+	}
+	UpdateData(FALSE);
+}
+
+
 void CBindShow::OnBnClickedButton1()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	if(!hotbone)return ;
-	HGE* hge = hgeCreate(HGE_VERSION);
-	tempdata->tex = hge->Texture_Load(picfile);
-	switch (bindtype)
-	{
-	case SLICEDPICTURE:
-		{
-			hotbone->bind.part = new SlicedPicture();
+	if(hotbone->BindPoint().part)
+		delete hotbone->BindPoint().part;
+	//switch (bindtype)
+	//{
+	//case SLICEDPICTURE:
+	//	{
+			hotbone->BindPoint().part = new SlicedPicture();
 			SlicedPicture* p = (SlicedPicture*)hotbone->bind.part;
-			p->SetPictureData(tempdata);
+			p->SetPictureData(dat);
 			p->SetSliceIndex(cbindex.GetCurSel()+1);
-			break;
-		}
-	case SLICEDFRAME:
-		{
-			SlicedFrame* p = (SlicedFrame*)hotbone->bind.part;
-			p->SetPictureData(tempdata);
-			p->SetFrameIndex(cbindex.GetCurSel()+1);
-			break;
-		}
-	case SLICEDANIMATION:
-		{
-			SlicedAnimation* p = (SlicedAnimation*)hotbone->bind.part;
-			p->SetPictureData(tempdata);
-			p->SetAnimationIndex(cbindex.GetCurSel()+1);
-			break;
-		}
-	}
+	//		break;
+	//	}
+	//case SLICEDFRAME:
+	//	{
+	//		SlicedFrame* p = (SlicedFrame*)hotbone->bind.part;
+	//		p->SetPictureData(dat);
+	//		p->SetFrameIndex(cbindex.GetCurSel()+1);
+	//		break;
+	//	}
+	//case SLICEDANIMATION:
+	//	{
+	//		SlicedAnimation* p = (SlicedAnimation*)hotbone->bind.part;
+	//		p->SetPictureData(dat);
+	//		p->SetAnimationIndex(cbindex.GetCurSel()+1);
+	//		break;
+	//	}
+	//}
 	if(hotbone->BindPoint().part)
 	{
 		hotbone->BindPoint().part->SetPosition(hotbone->BindPoint().GetX(),hotbone->BindPoint().GetY());
 		hotbone->BindPoint().part->SetRotation(hotbone->GetRotate() + hotbone->BindPoint().GetRotation());
 		hotbone->BindPoint().part->SetScale(hotbone->BindPoint().GetHScale(),hotbone->BindPoint().GetVScale());
 	}
-	hge->Release();
 }
 
 void CBindShow::OnCbnSelchangeCombo1()
@@ -177,3 +166,4 @@ void CBindShow::OnCbnSelchangeCombo1()
 	//	
 	//}
 }
+

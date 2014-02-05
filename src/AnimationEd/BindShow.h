@@ -21,8 +21,6 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	int bindtype;
-	CComboBox cbbindtype;
 	virtual BOOL OnInitDialog();
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	void ResfreshData(int index);
@@ -32,7 +30,6 @@ public:
 	CComboBox cbindex;
 	afx_msg void OnBnClickedButton1();
 	afx_msg void OnCbnSelchangeCombo1();
-	PictureData *tempdata;
-	CString picfile;
-	
+	CString picname;
+	afx_msg void OnBnClickedButton3();
 };

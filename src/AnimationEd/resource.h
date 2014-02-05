@@ -25,10 +25,12 @@
 #define IDC_LIST1                       1000
 #define IDC_COMBO1                      1002
 #define IDC_BONENAME                    1003
-#define IDC_COMBO2                      1004
+#define IDC_PICNAME                     1004
 #define IDC_BUTTON1                     1005
 #define IDC_BUTTON2                     1006
 #define IDC_FILENAME                    1007
+#define IDC_BUTTON3                     1008
+
 #define ID_Menu                         32771
 #define ID_32772                        32772
 #define ID_NEW_SKELETON                 32773
