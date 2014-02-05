@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "hgeSkeleton.h"
 
-void hgeLinePoint::UpdatePosition()
+void hgeLinePoint::UpdatePosition(bool w)
 {
 	float l = tra ==true ? r * line->GetLength() :a;
 	if(k)
@@ -14,6 +14,8 @@ void hgeLinePoint::UpdatePosition()
 		x = line->GetTailX() - l * cos(line->GetRotate());
 		y = line->GetTailY() - l * sin(line->GetRotate());
 	}
+	if(w)
+		PositionChanged();
 }
 
 void hgeLinePoint::SetRelative(float _r)
@@ -47,7 +49,37 @@ void hgeLinePoint::SetBasis(bool _k)
 	return ;
 }
 
+void hgeBindPoint::PositionChanged()
+{
+	if(part)
+	{
+		part->SetPosition(GetX(),GetY());
+		part->SetRotation(rotate+line->GetRotate());
+	}
+}
 
+void hgeBindPoint::SetScale(float _h, float _v)
+{
+	hscale = _h;vscale = _v;
+	if(part)
+		part->SetScale(hscale,vscale);
+}
+
+void hgeBindPoint::SetRotation(float rot)
+{
+	rotate = rot;
+	if(part)
+		part->SetRotation(line->GetRotate()+rotate);
+}
+
+void hgeJoint::PositionChanged()
+{
+	if(bindbone)
+	{
+		bindjoint->SetXY(x,y);
+		bindbone->SetPositionByJoint(bindjoint);
+	}
+}
 
 float hgeLine::NeedRotateFrom(hgeLine *line)
 {
@@ -90,9 +122,7 @@ void hgeBone::SetPosition(float x,float y)
 		head.x = tail.x - length * cos(rotate);
 		head.y = tail.y - length * sin(rotate);
 	}
-	bind.UpdatePosition();
-	control.UpdatePosition();
-	MoveBindBone();
+	PositionChanged();
 	return ;
 }
 
@@ -116,7 +146,7 @@ void hgeBone::SetRotate(float r)
 			head.y = tail.y - length * sin(rotate);
 		}
 	}
-	MoveBindBone();
+	PositionChanged();
 	return ;
 }
 
@@ -138,6 +168,8 @@ void hgeBone::SetPositionByJoint(hgeJoint *joint)
 		head.x = tail.x - length * cos(rotate);
 		head.y = tail.y - length * sin(rotate);
 	}
+	bind.UpdatePosition();
+	control.UpdatePosition();
 	MoveBindBone(joint);
 	return ;
 }
@@ -162,7 +194,7 @@ void hgeBone::MoveBindBone(hgeJoint* s)
 {
 	for(UINT i = 0; i< joints.size();i++)
 	{
-		joints[i]->UpdatePosition();
+		joints[i]->UpdatePosition(false);
 		if(joints[i]->bindbone != 0 && joints[i]!=s)
 		{	
 			joints[i]->bindjoint->SetXY(joints[i]->GetX(),joints[i]->GetY());
@@ -171,6 +203,13 @@ void hgeBone::MoveBindBone(hgeJoint* s)
 		}
 	}
 }
+
+void hgeBone::PositionChanged()
+{
+	bind.UpdatePosition();
+	control.UpdatePosition();
+	MoveBindBone();
+};
 
 hgeJoint* hgeBone::AddJoint()
 {

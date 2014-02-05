@@ -117,7 +117,7 @@ bool FrameFunc()
 			SelectBone(-1,true);
 	}
 
-	if(over!=0)
+	if(over)
 	{
 		for(UINT i = 0;i<over->joints.size();i++)
 		{
@@ -199,7 +199,7 @@ bool FrameFunc()
 	}
 	if(overj)
 	{
-		float x = overj->GetX(),y = overj->GetX();
+		float x = overj->GetX(),y = overj->GetY();
 		hge->Gfx_RenderLine(x,y-4,x-4,y+4,0xffffff00);
 		hge->Gfx_RenderLine(x,y-4,x+4,y+4,0xffffff00);
 		hge->Gfx_RenderLine(x-4,y+4,x+4,y+4,0xffffff00);

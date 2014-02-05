@@ -48,7 +48,7 @@ public:
 		}
 		dx = tail.x - head.x ;
 		dy = tail.y - head.y;
-		AfterSetPosition();
+		PositionChanged();
 	}
 	void SetPosition(hgePoint point1,hgePoint point2){SetPosition(point1.x,point1.y,point2.x,point2.y);};
 	void SetHead(float x1,float y1){SetPosition(x1,y1,tail.x,tail.y);};
@@ -69,7 +69,7 @@ public:
 	float NeedRotateFrom(hgeLine *line);
 
 protected:
-	virtual void AfterSetPosition(){};
+	virtual void PositionChanged(){};
 	hgePoint head,tail;
 	float dx,dy;
 	float length;
@@ -85,7 +85,7 @@ public:
 	float GetRelative(){return r;}
 	float GetAbsolute(){return a;}
 	bool GetBasis(){return k;}
-	void UpdatePosition();
+	void UpdatePosition(bool w= true);
 	float GetX(){return x;};
 	float GetY(){return y;};
 	//此函数一般不可用
@@ -98,6 +98,7 @@ protected:
 	bool k;//表示位置是根据头结点(true)还是尾结点(false)决定
 	bool tra;//目前使用的是相对位置(true)还是绝对位置(false)
 	hgeLine *line;
+	virtual void PositionChanged(){};
 };
 
 class hgeBone;
@@ -110,27 +111,35 @@ public:
 	hgeBone *bindbone;//绑定的关节所属的骨头
 	hgeJoint *bindjoint;//绑定的关节
 	float angle;//两个骨头的夹角
+protected:
+	void PositionChanged();
 };
 
 class hgeBindPoint:public hgeLinePoint
 {
 public:
-	hgeBindPoint(hgeLine *hostline):hgeLinePoint(hostline){part = 0;}
+	hgeBindPoint(hgeLine *hostline):hgeLinePoint(hostline){part = 0;hscale = vscale = 1.f;rotate = 0;}
 	~hgeBindPoint(){delete part;}
 	hgeBone *bone;//表明所属的骨头
-	float scalex,scaley;//缩放系数，可用于镜像
-	float ox,oy;//偏移
-	float rotate;//旋转
+	void SetScale(float hscale=1.0f, float vscale=0.0f);
+	void SetRotation(float rot =0);
+	float GetRotation(){return rotate;}
+	float GetHScale(){return hscale;}
+	float GetVScale(){return vscale;}
 	void Update(){}
 	void Render()
 	{
 		if(part)
 		{
-			part->SetPosition(GetX(),GetY());
 			part->Render();
 		}
 	}
 	Base *part;
+	void PositionChanged();
+protected:
+	float hscale,vscale;//缩放系数，可用于镜像
+	float ox,oy;//偏移
+	float rotate;//旋转
 };
 
 class hgeBone:public hgeLine
@@ -154,10 +163,7 @@ public:
 	void SetPositionByJoint(hgeJoint *joint);
 	bool BoneBinded(hgeBone *bone,hgeJoint* s = 0);
 protected:
-	void AfterSetPosition(){
-		bind.UpdatePosition();control.UpdatePosition();
-		MoveBindBone();
-	};
+	void PositionChanged();
 private:
 	void MoveBindBone(hgeJoint* s=0);
 };

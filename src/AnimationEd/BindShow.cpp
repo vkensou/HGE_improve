@@ -159,6 +159,12 @@ void CBindShow::OnBnClickedButton1()
 			break;
 		}
 	}
+	if(hotbone->BindPoint().part)
+	{
+		hotbone->BindPoint().part->SetPosition(hotbone->BindPoint().GetX(),hotbone->BindPoint().GetY());
+		hotbone->BindPoint().part->SetRotation(hotbone->GetRotate() + hotbone->BindPoint().GetRotation());
+		hotbone->BindPoint().part->SetScale(hotbone->BindPoint().GetHScale(),hotbone->BindPoint().GetVScale());
+	}
 	hge->Release();
 }
 
