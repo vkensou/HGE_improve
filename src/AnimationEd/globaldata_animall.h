@@ -4,7 +4,8 @@
 #include "hgeSkeleton.h"
 #include "showpicturedata.h"
 
-extern std::vector<hgeBone*> bones;
+//extern std::vector<hgeBone*> bones;
+extern hgeSkeleton *nowskt;
 //当前选择的
 extern hgeBone *hotbone;
 extern hgeJoint *hotjoint;

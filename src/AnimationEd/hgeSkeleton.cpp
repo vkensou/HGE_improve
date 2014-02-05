@@ -1,6 +1,8 @@
 #include "StdAfx.h"
 #include "hgeSkeleton.h"
 
+int hgeBone::cid::nid = 0;
+
 void hgeLinePoint::UpdatePosition(bool w)
 {
 	float l = tra ==true ? r * line->GetLength() :a;
@@ -217,4 +219,11 @@ hgeJoint* hgeBone::AddJoint()
 	joints.push_back(nj);
 	nj->UpdatePosition();
 	return nj;
+}
+
+int hgeSkeleton::AddBone()
+{
+	hgeBone*  nb = new hgeBone(100,100,200,200);
+	bones.insert(std::pair<int,hgeBone*>(nb->GetID(),nb));
+	return nb->GetID();
 }

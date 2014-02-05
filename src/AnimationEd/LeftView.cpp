@@ -99,38 +99,62 @@ void CLeftView::OnSetFocus(CWnd* pOldWnd)
 		pSubMenu->SetMenuItemInfo(5, &MenuItemInfo, TRUE);//start from 0
 	}
 	hotbone=0;
-	SelectBone(bonelist.GetCurSel());
+	CString a;
+	if(bonelist.GetCount()>0)
+	{
+		bonelist.GetText(bonelist.GetCurSel(),a);
+		SelectBone(_ttoi(a));
+	}
+	else
+		SelectBone(-1);
 }
 
 int CLeftView::RefreshBoneList()
 {
-	UINT m = bonelist.GetCount();
-	if(m>bones.size())
+	bonelist.ResetContent();
+	CString ss;
+	std::map<int,hgeBone*>::iterator m1_Iter;
+	for ( m1_Iter = nowskt->bones.begin( ); m1_Iter != nowskt->bones.end( ); m1_Iter++ )
 	{
-		for(UINT i = 0;i<m-bones.size();i++)
-			bonelist.DeleteString(bonelist.GetCount()-1);
+		ss.Format(L"%d",m1_Iter->first );
+		bonelist.AddString(ss);
 	}
-	else if(m<bones.size())
-	{
-		CString l;
-		for(UINT i = 0;i<bones.size()-m;i++)
-		{
-			l.Format(L"%d",bonelist.GetCount()+1);
-			bonelist.AddString(l);
-		}
-	}
-	return bones.size();
+	//for(UINT i = 0;i<bones.size();i++)
+	//{
+	//	ss.Format(L"%d",bones[i]->GetID());
+	//	bonelist.AddString(ss);
+	//}
+	return nowskt->bones.size();
 }
 
 void CLeftView::SetIndex(int index)
 {
-	if(index < -1 || index >= (int)bones.size())return ;
-	bonelist.SetCurSel(index);
+	//if(index < -1 || index >= (int)bones.size())return ;
+	//bonelist.SetCurSel(index);
+
+	if(index < -1 || index >= (int)nowskt->bones.size())return ;
+	if(index>-1)
+	{
+		CString a1;
+		for(int i = 0;i<bonelist.GetCount();i++)
+		{
+			bonelist.GetText(i,a1);
+			if(index == _ttoi(a1))
+			{
+				bonelist.SetCurSel(i);
+				break;
+			}
+		}
+	}
+	else
+		bonelist.SetCurSel(-1);
 }
 
 void CLeftView::OnLbnSelchangeList1()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	mode = 0;
-	SelectBone(bonelist.GetCurSel());
+	CString a;
+	bonelist.GetText(bonelist.GetCurSel(),a);
+	SelectBone(_ttoi(a));
 }

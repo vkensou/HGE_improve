@@ -99,15 +99,28 @@ bool FrameFunc()
 	overi = overji = -1;
 	over = 0;overj = 0;
 
-	for(UINT i = 0;i<bones.size();i++)
+	std::map<int,hgeBone*>::iterator m1_Iter;
+	hgeBone* xb;
+	for ( m1_Iter = nowskt->bones.begin( ); m1_Iter != nowskt->bones.end( ); m1_Iter++ )
 	{
-		if(bones[i]->GetDistanceFromPoint(mx,my)<2)
+		xb = m1_Iter->second;
+		if(xb->GetDistanceFromPoint(mx,my)<2)
 		{
-			overi = i;
-			over = bones[i];
+			overi = m1_Iter->first;
+			over = xb;
 			break;
 		}
 	}
+
+	//for(UINT i = 0;i<bones.size();i++)
+	//{
+	//	if(bones[i]->GetDistanceFromPoint(mx,my)<2)
+	//	{
+	//		overi = i;
+	//		over = bones[i];
+	//		break;
+	//	}
+	//}
 
 	if(hge->Input_KeyDown(HGEK_LBUTTON))
 	{
@@ -141,11 +154,22 @@ bool FrameFunc()
 	hge->Gfx_BeginScene();
 	hge->Gfx_Clear(0);
 
-	for(UINT i = 0;i<bones.size();i++)
+	//for(UINT i = 0;i<bones.size();i++)
+	//{
+	//	hge->Gfx_RenderLine(bones[i]->GetHeadX(),bones[i]->GetHeadY(),bones[i]->GetTailX(),bones[i]->GetTailY(),0xffffffff);
+	//	bones[i]->bind.Render();
+	//}
+
+	for ( m1_Iter = nowskt->bones.begin( ); m1_Iter != nowskt->bones.end( ); m1_Iter++ )
 	{
-		hge->Gfx_RenderLine(bones[i]->GetHeadX(),bones[i]->GetHeadY(),bones[i]->GetTailX(),bones[i]->GetTailY(),0xffffffff);
-		bones[i]->bind.Render();
+		xb = m1_Iter->second;
+		hge->Gfx_RenderLine(xb->GetHeadX(),xb->GetHeadY(),xb->GetTailX(),xb->GetTailY(),0xffffffff);
+		xb->bind.Render();
 	}
+
+
+
+
 	if(hotbone)
 	{
 		//»­Í·½áµã

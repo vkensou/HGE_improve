@@ -4,6 +4,7 @@
 #include <vector>
 #include <list>
 #include <cmath>
+#include <map>
 
 using namespace Show;
 
@@ -162,10 +163,23 @@ public:
 	hgeJoint* AddJoint();
 	void SetPositionByJoint(hgeJoint *joint);
 	bool BoneBinded(hgeBone *bone,hgeJoint* s = 0);
+	int GetID(){return mid.getid();}
 protected:
 	void PositionChanged();
 private:
 	void MoveBindBone(hgeJoint* s=0);
+	class cid
+	{
+	public:
+		cid():_id(nid++){};
+		virtual ~cid(){};
+		int getid(){return _id;}
+	private:
+		static int nid;//现在用到的编号
+		int _id;
+	};
+	cid mid;
+
 };
 
 
@@ -174,9 +188,10 @@ private:
 class hgeSkeleton
 {
 public:
-	hgeSkeleton(void){};
+	hgeSkeleton(void){mainbone = 0;x = y = 0;rotate = 0;ox = oy = 0;};
 	virtual ~hgeSkeleton(void){};
-	std::list<hgeBone*>bones;
+	int AddBone();
+	std::map<int,hgeBone*>bones;
 	hgeBone *mainbone;//主骨头
 	//骨骼中心点的位置
 	float x,y;

@@ -123,6 +123,9 @@ BOOL CAnimationEdApp::InitInstance()
 	m_pMainWnd->UpdateWindow();
 	// 仅当具有后缀时才调用 DragAcceptFiles
 	//  在 SDI 应用程序中，这应在 ProcessShellCommand 之后发生
+
+	nowskt = new hgeSkeleton;
+
 	return TRUE;
 }
 
@@ -210,10 +213,11 @@ void CAnimationEdApp::OnNewSkeleton()
 void CAnimationEdApp::OnNewBone()
 {
 	// TODO: 在此添加命令处理程序代码
-	hgeBone *nb = new hgeBone(100,100,200,200);
-	bones.push_back(nb);
+	//hgeBone *nb = new hgeBone(100,100,200,200);
+	//bones.push_back(nb);
+	int a = nowskt->AddBone();
 	g_leftview->RefreshBoneList();
-	SelectBone(bones.size()-1,true);
+	SelectBone(a,true);
 }
 
 void CAnimationEdApp::OnNewJoint()
