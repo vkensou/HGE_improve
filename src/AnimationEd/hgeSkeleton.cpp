@@ -85,7 +85,7 @@ void hgeJoint::PositionChanged()
 
 float hgeLine::NeedRotateFrom(hgeLine *line)
 {
-	float jj= rotate - line->rotate;
+	float jj= abs(rotate - line->rotate);
 	float x = (line->dx * dy) - (line->dy - dx);
 	if(x<=0)
 		jj = M_2PI - jj;
@@ -198,10 +198,18 @@ void hgeBone::MoveBindBone(hgeJoint* s)
 	{
 		joints[i]->UpdatePosition(false);
 		if(joints[i]->bindbone != 0 && joints[i]!=s)
-		{	
-			joints[i]->bindjoint->SetXY(joints[i]->GetX(),joints[i]->GetY());
-			joints[i]->bindbone->SetPositionByJoint(joints[i]->bindjoint);
-			//joints[i]->bindbone->SetRotate(bone->GetRotate()+joints[i]->angle);
+		{
+			if(joints[i]->bindbone == ftrb)
+			{
+				joints[i]->angle = NeedRotateFrom(joints[i]->bindbone);
+				joints[i]->bindjoint->angle = -joints[i]->angle;
+			}
+			else
+			{	
+				joints[i]->bindjoint->SetXY(joints[i]->GetX(),joints[i]->GetY());
+				joints[i]->bindbone->SetPositionByJoint(joints[i]->bindjoint);
+				//joints[i]->bindbone->SetRotate(bone->GetRotate()+joints[i]->angle);
+			}
 		}
 	}
 }
@@ -221,9 +229,56 @@ hgeJoint* hgeBone::AddJoint()
 	return nj;
 }
 
+bool hgeBone::fathered(hgeBone* w)
+{
+	//没有爹
+	if(!ftrb)
+		return false;
+	//爹正好是
+	else if(ftrb == w)
+		return true;
+	//祖宗里有
+	else if(ftrb->fathered(w))
+		return true;
+	else
+		return false;
+}
+
+bool hgeBone::SetFather(int index,hgeBone* fabone)
+{
+	if(index == -1 || fabone == this)
+	{
+		father = -1;
+		fabone = 0;
+		return false;
+	}
+	if(!fabone->fathered(this))
+	{
+		father = index;
+		ftrb = fabone;
+		return true;
+	}
+	return false;
+}
+
+
 int hgeSkeleton::AddBone()
 {
 	hgeBone*  nb = new hgeBone(100,100,200,200);
-	bones.insert(std::pair<int,hgeBone*>(nb->GetID(),nb));
+	bones.push_back(nb);
+	newestbi = nb->GetID();
 	return nb->GetID();
+}
+
+hgeBone* hgeSkeleton::GetBoneFromID(int id)
+{
+	std::list<hgeBone*>::iterator itor;
+	hgeBone* vv;
+	for(itor = bones.begin();itor != bones.end();itor++)
+	{
+		vv = *itor;
+		if(id == vv->GetID())
+			return vv;
+	}
+	return 0;
 }

@@ -215,9 +215,10 @@ void CAnimationEdApp::OnNewBone()
 	// TODO: 在此添加命令处理程序代码
 	//hgeBone *nb = new hgeBone(100,100,200,200);
 	//bones.push_back(nb);
-	int a = nowskt->AddBone();
-	g_leftview->RefreshBoneList();
-	SelectBone(a,true);
+	mode = 2;
+	//int a = nowskt->AddBone();
+	//g_leftview->RefreshBoneList();
+	//SelectBone(a,true);
 }
 
 void CAnimationEdApp::OnNewJoint()

@@ -92,83 +92,136 @@ CAnimationEdDoc* CAnimationEdView::GetDocument() const // 非调试版本是内联的
 
 bool FrameFunc()
 {
-	// Continue execution
-
 	float mx=0,my=0;
 	hge->Input_GetMousePos(&mx,&my);
 	overi = overji = -1;
 	over = 0;overj = 0;
 
 	std::map<int,hgeBone*>::iterator m1_Iter;
-	hgeBone* xb;
-	for ( m1_Iter = nowskt->bones.begin( ); m1_Iter != nowskt->bones.end( ); m1_Iter++ )
+	if(mode == 0 || mode == 1)
 	{
-		xb = m1_Iter->second;
-		if(xb->GetDistanceFromPoint(mx,my)<2)
+		std::list<hgeBone*>::iterator itor;
+		hgeBone* vv;
+		for(itor = nowskt->bones.begin();itor != nowskt->bones.end();itor++)
 		{
-			overi = m1_Iter->first;
-			over = xb;
-			break;
-		}
-	}
-
-	//for(UINT i = 0;i<bones.size();i++)
-	//{
-	//	if(bones[i]->GetDistanceFromPoint(mx,my)<2)
-	//	{
-	//		overi = i;
-	//		over = bones[i];
-	//		break;
-	//	}
-	//}
-
-	if(hge->Input_KeyDown(HGEK_LBUTTON))
-	{
-		if(over)
-			SelectBone(overi,true);
-		else
-			SelectBone(-1,true);
-	}
-
-	if(over)
-	{
-		for(UINT i = 0;i<over->joints.size();i++)
-		{
-			if(mx>over->joints[i]->GetX()-4 && mx<over->joints[i]->GetX()+4 && my>over->joints[i]->GetY()-4 && my<over->joints[i]->GetY()+4)
+			vv = *itor;
+			if(vv->GetDistanceFromPoint(mx,my)<2)
 			{
-				overji = i;
-				overj = over->joints[i];
+				overi = vv->GetID();
+				over = vv;
 				break;
 			}
 		}
+
+		if(hge->Input_KeyDown(HGEK_LBUTTON))
+		{
+			if(over)
+				SelectBone(overi,true);
+			else
+				SelectBone(-1,true);
+		}
+		
+		if(over)
+		{
+			for(UINT i = 0;i<over->joints.size();i++)
+			{
+				if(mx>over->joints[i]->GetX()-4 && mx<over->joints[i]->GetX()+4 && my>over->joints[i]->GetY()-4 && my<over->joints[i]->GetY()+4)
+				{
+					overji = i;
+					overj = over->joints[i];
+					break;
+				}
+			}
+		}
+
+		if(hge->Input_KeyDown(HGEK_LBUTTON))
+		{
+			if(mode == 0 && over && mx >= over->GetHeadX()-4 && mx <= over->GetHeadX()+4 && my >= over->GetHeadY()-4 && my <= over->GetHeadY()+4)
+			{
+				mode = 4;
+			}
+			else if(mode == 0 && over && mx >= over->GetTailX()-4 && mx <= over->GetTailX()+4 && my >= over->GetTailY()-4 && my <= over->GetTailY()+4)
+			{
+				mode = 5;
+			}
+			else if(overj)
+			{
+				SelectJoint(overji+4,true);
+			}
+		}
+
+		if(hge->Input_KeyDown(HGEK_RBUTTON))
+		{
+			mode = 0;
+		}
 	}
-
-	if(hge->Input_KeyDown(HGEK_LBUTTON) && overj)
-		SelectJoint(overji+4,true);
-
-	if(hge->Input_KeyDown(HGEK_RBUTTON))
+	else if(mode == 2)
 	{
-		mode = 0;
+		if(hge->Input_KeyDown(HGEK_RBUTTON))
+		{
+			mode = 0;
+		}
+		else if(hge->Input_KeyDown(HGEK_LBUTTON))
+		{
+			hotbone = nowskt->GetBoneFromID(nowskt->AddBone());
+			hotbone->SetHead(mx,my);
+			hotbone->SetTail(mx,my);
+			mode = 3;
+		}
 	}
+	else if(mode == 3)
+	{
+		if(hge->Input_GetKeyState(HGEK_LBUTTON))
+		{
+			hotbone->SetTail(mx,my);
+		}
+		else
+		{
+			mode = 0;
+			hotbone = 0;
+			g_leftview->RefreshBoneList();
+			SelectBone(nowskt->newestbi,true);
+		}
+	}
+	else if(mode == 4)
+	{
+		if(hge->Input_GetKeyState(HGEK_LBUTTON))
+		{
+			hotbone->SetHead(mx,my);
+		}
+		else
+		{
+			mode = 0;
+			g_rightview->RefreshProperty();
+		}
+	}
+	else if(mode == 5)
+	{
+		if(hge->Input_GetKeyState(HGEK_LBUTTON))
+		{
+			hotbone->SetTail(mx,my);
+		}
+		else
+		{
+			mode = 0;
+			g_rightview->RefreshProperty();
+		}
+	}
+
+
+
 
 	hge->Gfx_BeginScene();
 	hge->Gfx_Clear(0);
 
-	//for(UINT i = 0;i<bones.size();i++)
-	//{
-	//	hge->Gfx_RenderLine(bones[i]->GetHeadX(),bones[i]->GetHeadY(),bones[i]->GetTailX(),bones[i]->GetTailY(),0xffffffff);
-	//	bones[i]->bind.Render();
-	//}
-
-	for ( m1_Iter = nowskt->bones.begin( ); m1_Iter != nowskt->bones.end( ); m1_Iter++ )
+	std::list<hgeBone*>::iterator itor;
+	hgeBone* vv;
+	for(itor = nowskt->bones.begin();itor != nowskt->bones.end();itor++)
 	{
-		xb = m1_Iter->second;
-		hge->Gfx_RenderLine(xb->GetHeadX(),xb->GetHeadY(),xb->GetTailX(),xb->GetTailY(),0xffffffff);
-		xb->bind.Render();
+		vv = *itor;
+		hge->Gfx_RenderLine(vv->GetHeadX(),vv->GetHeadY(),vv->GetTailX(),vv->GetTailY(),0xffffffff);
+		vv->bind.Render();
 	}
-
-
-
 
 	if(hotbone)
 	{

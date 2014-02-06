@@ -146,9 +146,9 @@ protected:
 class hgeBone:public hgeLine
 {
 public:
-	hgeBone():hgeLine(),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();};
-	hgeBone(float x1,float y1,float x2,float y2):hgeLine(x1,y1,x2,y2),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();};
-	hgeBone(hgePoint point1,hgePoint point2):hgeLine(point1,point2),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();};
+	hgeBone():hgeLine(),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;};
+	hgeBone(float x1,float y1,float x2,float y2):hgeLine(x1,y1,x2,y2),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;};
+	hgeBone(hgePoint point1,hgePoint point2):hgeLine(point1,point2),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;};
 	~hgeBone(){};
 	hgeBindPoint bind;//用于绑定图片的节点
 	hgeLinePoint control;
@@ -164,8 +164,13 @@ public:
 	void SetPositionByJoint(hgeJoint *joint);
 	bool BoneBinded(hgeBone *bone,hgeJoint* s = 0);
 	int GetID(){return mid.getid();}
+	bool SetFather(int index,hgeBone* fabone);
+	int GetFather(){return father;}
 protected:
 	void PositionChanged();
+	int father;
+	hgeBone* ftrb;
+	bool fathered(hgeBone*);
 private:
 	void MoveBindBone(hgeJoint* s=0);
 	class cid
@@ -179,7 +184,6 @@ private:
 		int _id;
 	};
 	cid mid;
-
 };
 
 
@@ -188,14 +192,17 @@ private:
 class hgeSkeleton
 {
 public:
-	hgeSkeleton(void){mainbone = 0;x = y = 0;rotate = 0;ox = oy = 0;};
+	hgeSkeleton(void){mainbone = 0;x = y = 0;rotate = 0;ox = oy = 0;newestbi = -1;};
 	virtual ~hgeSkeleton(void){};
 	int AddBone();
-	std::map<int,hgeBone*>bones;
+	//std::map<int,hgeBone*>bones;
+	std::list<hgeBone*>bones;
+	hgeBone* GetBoneFromID(int id);
 	hgeBone *mainbone;//主骨头
 	//骨骼中心点的位置
 	float x,y;
 	float rotate;
 	//主骨头的控制点与中心点的偏移量
 	float ox,oy;
+	int newestbi;
 };

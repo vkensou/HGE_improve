@@ -28,11 +28,11 @@ void SelectBone(UINT index,bool s)
 		else
 		{
 			if(index<0 || index>=nowskt->bones.size())return ;
-			if(hotbone == nowskt->bones[index])return; 
+			if(hotbone == nowskt->GetBoneFromID(index))return; 
 			//g_leftview->RefreshBoneList();
 			if(s)
 				g_leftview->SetIndex(index);
-			hotbone = nowskt->bones[index];
+			hotbone = nowskt->GetBoneFromID(index);
 			//hotbone = bones[index];
 			hotjoint = 0;
 			g_leftview2->RefreshJointList();

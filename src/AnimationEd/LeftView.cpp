@@ -100,7 +100,7 @@ void CLeftView::OnSetFocus(CWnd* pOldWnd)
 	}
 	hotbone=0;
 	CString a;
-	if(bonelist.GetCount()>0)
+	if(bonelist.GetCount()>0 && bonelist.GetCurSel()>-1)
 	{
 		bonelist.GetText(bonelist.GetCurSel(),a);
 		SelectBone(_ttoi(a));
@@ -113,17 +113,14 @@ int CLeftView::RefreshBoneList()
 {
 	bonelist.ResetContent();
 	CString ss;
-	std::map<int,hgeBone*>::iterator m1_Iter;
-	for ( m1_Iter = nowskt->bones.begin( ); m1_Iter != nowskt->bones.end( ); m1_Iter++ )
+	std::list<hgeBone*>::iterator itor;
+	hgeBone* vv;
+	for(itor = nowskt->bones.begin();itor != nowskt->bones.end();itor++)
 	{
-		ss.Format(L"%d",m1_Iter->first );
+		vv = *itor;
+		ss.Format(L"%d",vv->GetID() );
 		bonelist.AddString(ss);
 	}
-	//for(UINT i = 0;i<bones.size();i++)
-	//{
-	//	ss.Format(L"%d",bones[i]->GetID());
-	//	bonelist.AddString(ss);
-	//}
 	return nowskt->bones.size();
 }
 
@@ -155,6 +152,12 @@ void CLeftView::OnLbnSelchangeList1()
 	// TODO: 在此添加控件通知处理程序代码
 	mode = 0;
 	CString a;
-	bonelist.GetText(bonelist.GetCurSel(),a);
-	SelectBone(_ttoi(a));
+	if(bonelist.GetCount()>0 && bonelist.GetCurSel()>-1)
+	{
+		bonelist.GetText(bonelist.GetCurSel(),a);
+		SelectBone(_ttoi(a));
+	}
+	else
+		SelectBone(-1);
+
 }
