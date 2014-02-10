@@ -83,6 +83,19 @@ void hgeJoint::PositionChanged()
 	}
 }
 
+void hgeJoint::ReleaseBind()
+{
+	if(bindbone)
+	{
+		bindjoint->bindbone = 0;
+		bindjoint->bindjoint = 0;
+		bindjoint->angle = 0;
+		bindbone = 0;
+		bindjoint = 0;
+		angle = 0;
+	}
+}
+
 float hgeLine::NeedRotateFrom(hgeLine *line)
 {
 	float jj= abs(rotate - line->rotate);
@@ -106,6 +119,16 @@ float hgeLine::GetDistanceFromPoint(float _x,float _y)
 	d.x += head.x ;
 	d.y += head.y ;
 	return d.GetDistanceToPoint(_x,_y);
+}
+
+hgeBone::~hgeBone()
+{
+	std::vector<hgeJoint*>::iterator itor;
+	for(itor = joints.begin();itor != joints.end();itor++)
+	{
+		delete *itor;
+	}
+	joints.clear();
 }
 
 void hgeBone::SetPosition(float x,float y)
@@ -229,6 +252,23 @@ hgeJoint* hgeBone::AddJoint()
 	return nj;
 }
 
+bool hgeBone::DelJoint(hgeJoint* joint)
+{
+	if(!joint)return false;
+	std::vector<hgeJoint*>::iterator itor;
+	for(itor = joints.begin();itor != joints.end();itor++)
+	{
+		if(*itor == joint)
+		{
+			joints.erase(itor);
+			//joint->ReleaseBind();
+			delete joint;
+			return true;
+		}
+	}
+	return false;
+}
+
 bool hgeBone::fathered(hgeBone* w)
 {
 	//Ã»ÓÐµù
@@ -272,6 +312,7 @@ int hgeSkeleton::AddBone()
 
 hgeBone* hgeSkeleton::GetBoneFromID(int id)
 {
+	if(id<0)return 0;
 	std::list<hgeBone*>::iterator itor;
 	hgeBone* vv;
 	for(itor = bones.begin();itor != bones.end();itor++)
@@ -281,4 +322,99 @@ hgeBone* hgeSkeleton::GetBoneFromID(int id)
 			return vv;
 	}
 	return 0;
+}
+
+bool hgeSkeleton::BoneTop(hgeBone* bone)
+{
+	if(!bone)return false;
+	std::list<hgeBone*>::iterator itor;
+	for(itor = bones.begin();itor != bones.end();itor++)
+	{
+		if(*itor == bone)
+		{
+			bones.erase(itor);
+			bones.push_front(bone);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool hgeSkeleton::BoneUp(hgeBone* bone)
+{
+	if(!bone)return false;
+	std::list<hgeBone*>::iterator itor;
+	for(itor = bones.begin();itor != bones.end();itor++)
+	{
+		if(*itor == bone)
+		{
+			if(itor != bones.begin())
+			{
+				itor = bones.erase(itor);
+				itor--;
+				itor = bones.insert(itor,bone);
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
+bool hgeSkeleton::BoneDown(hgeBone* bone)
+{
+	if(!bone)return false;
+	std::list<hgeBone*>::iterator itor;
+	for(itor = bones.begin();itor != bones.end();itor++)
+	{
+		if(*itor == bone)
+		{
+			itor = bones.erase(itor);
+			if(itor == bones.end())
+			{
+				bones.push_back(bone);
+				return true;
+			}
+			itor++;
+			if(itor == bones.end())
+			{
+				bones.push_back(bone);
+				return true;
+			}
+			bones.insert(itor,bone);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool hgeSkeleton::BoneBottom(hgeBone* bone)
+{
+	if(!bone)return false;
+	std::list<hgeBone*>::iterator itor;
+	for(itor = bones.begin();itor != bones.end();itor++)
+	{
+		if(*itor == bone)
+		{
+			bones.erase(itor);
+			bones.push_back(bone);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool hgeSkeleton::DelBone(hgeBone* bone)
+{
+	if(!bone)return false;
+	std::list<hgeBone*>::iterator itor;
+	for(itor = bones.begin();itor != bones.end();itor++)
+	{
+		if(*itor == bone)
+		{
+			bones.erase(itor);
+			delete bone;
+			return true;
+		}
+	}
+	return false;
 }

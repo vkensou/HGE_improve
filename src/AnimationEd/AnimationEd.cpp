@@ -32,6 +32,8 @@ BEGIN_MESSAGE_MAP(CAnimationEdApp, CWinAppEx)
 	ON_COMMAND(ID_BindBone, &CAnimationEdApp::OnBindbone)
 	ON_COMMAND(ID_ReleaseBind, &CAnimationEdApp::OnReleasebind)
 	ON_COMMAND(ID_32783, &CAnimationEdApp::On32783)
+	ON_COMMAND(ID_DEL_BONE, &CAnimationEdApp::OnDelBone)
+	ON_COMMAND(ID_DEL_JOINT, &CAnimationEdApp::OnDelJoint)
 END_MESSAGE_MAP()
 
 
@@ -242,16 +244,35 @@ void CAnimationEdApp::OnReleasebind()
 {
 	// TODO: 在此添加命令处理程序代码
 	if(hotjoint==0)return;
-	hotjoint->bindjoint->bindbone = 0;
-	hotjoint->bindjoint->bindjoint = 0;
-	hotjoint->bindjoint->angle = 0;
-	hotjoint->bindbone = 0;
-	hotjoint->bindjoint = 0;
-	hotjoint->angle = 0;
+	hotjoint->ReleaseBind();
 }
 
 void CAnimationEdApp::On32783()
 {
 	// TODO: 在此添加命令处理程序代码
 	g_bindshow->ShowWindow(SW_SHOW);
+}
+
+void CAnimationEdApp::OnDelBone()
+{
+	// TODO: 在此添加命令处理程序代码
+	if(hotbone)
+	{
+		nowskt->DelBone(hotbone);
+		hotbone = 0;
+		g_leftview->RefreshBoneList();
+		SelectBone(-1);
+	}
+}
+
+void CAnimationEdApp::OnDelJoint()
+{
+	// TODO: 在此添加命令处理程序代码
+	if(hotjoint)
+	{
+		hotbone->DelJoint(hotjoint);
+		hotjoint = 0;
+		g_leftview2->RefreshJointList();
+		SelectJoint(-1);
+	}
 }

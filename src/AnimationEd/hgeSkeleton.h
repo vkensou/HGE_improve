@@ -107,11 +107,12 @@ class hgeJoint:public hgeLinePoint
 {
 public:
 	hgeJoint(hgeBone *father):hgeLinePoint((hgeLine*)father){bone = father;bindbone = 0;bindjoint = 0;angle = 0;};
-	~hgeJoint(){};
+	~hgeJoint(){ReleaseBind();};
 	hgeBone *bone;//表明所属的骨头
 	hgeBone *bindbone;//绑定的关节所属的骨头
 	hgeJoint *bindjoint;//绑定的关节
 	float angle;//两个骨头的夹角
+	void ReleaseBind();
 protected:
 	void PositionChanged();
 };
@@ -149,7 +150,7 @@ public:
 	hgeBone():hgeLine(),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;};
 	hgeBone(float x1,float y1,float x2,float y2):hgeLine(x1,y1,x2,y2),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;};
 	hgeBone(hgePoint point1,hgePoint point2):hgeLine(point1,point2),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;};
-	~hgeBone(){};
+	~hgeBone();
 	hgeBindPoint bind;//用于绑定图片的节点
 	hgeLinePoint control;
 	void SetPosition(float x,float y);
@@ -161,6 +162,7 @@ public:
 	hgeBindPoint& BindPoint(){return bind;}
 	std::vector<hgeJoint*> joints;
 	hgeJoint* AddJoint();
+	bool DelJoint(hgeJoint* joint);
 	void SetPositionByJoint(hgeJoint *joint);
 	bool BoneBinded(hgeBone *bone,hgeJoint* s = 0);
 	int GetID(){return mid.getid();}
@@ -195,9 +197,15 @@ public:
 	hgeSkeleton(void){mainbone = 0;x = y = 0;rotate = 0;ox = oy = 0;newestbi = -1;};
 	virtual ~hgeSkeleton(void){};
 	int AddBone();
+	bool DelBone(hgeBone* bone);
 	//std::map<int,hgeBone*>bones;
 	std::list<hgeBone*>bones;
 	hgeBone* GetBoneFromID(int id);
+	bool BoneTop(hgeBone* bone);
+	bool BoneUp(hgeBone* bone);
+	bool BoneDown(hgeBone* bone);
+	bool BoneBottom(hgeBone* bone);
+
 	hgeBone *mainbone;//主骨头
 	//骨骼中心点的位置
 	float x,y;

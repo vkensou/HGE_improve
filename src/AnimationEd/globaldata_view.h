@@ -18,6 +18,6 @@ extern CBindShow *g_bindshow;
 
 extern int mode;//模式，0-普通，1-关节绑定模式
 
-void SelectBone(UINT index,bool s = false);
+void SelectBone(int index,bool s = false);
 
-void SelectJoint(UINT index,bool s = false);
+void SelectJoint(int index,bool s = false);

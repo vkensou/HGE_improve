@@ -42,6 +42,8 @@ public:
 	afx_msg void OnBindbone();
 	afx_msg void OnReleasebind();
 	afx_msg void On32783();
+	afx_msg void OnDelBone();
+	afx_msg void OnDelJoint();
 };
 
 extern CAnimationEdApp theApp;

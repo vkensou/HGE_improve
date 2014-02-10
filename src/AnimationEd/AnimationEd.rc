@@ -158,6 +158,7 @@ BEGIN
     POPUP "骨骼"
     BEGIN
         MENUITEM "创建骨头",                        ID_NEW_BONE
+        MENUITEM "删除骨头",                        ID_DEL_BONE
     END
     POPUP "骨头"
     BEGIN
@@ -165,6 +166,7 @@ BEGIN
         MENUITEM "绑定骨头",                        ID_BindBone
         MENUITEM "解除绑定",                        ID_ReleaseBind
         MENUITEM "绑定图形元件",                      ID_32783
+        MENUITEM "删除关节",                        ID_DEL_JOINT
     END
     POPUP "帮助(&H)"
     BEGIN
@@ -222,11 +224,15 @@ BEGIN
     DEFPUSHBUTTON   "确定",IDOK,113,41,50,14,WS_GROUP
 END
 
-IDD_LEFTVIEW DIALOGEX 0, 0, 194, 152
+IDD_LEFTVIEW DIALOGEX 0, 0, 194, 182
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_SYSMENU
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    LISTBOX         IDC_LIST1,0,0,90,144,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LISTBOX         IDC_LIST1,0,36,90,144,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "顶",IDC_BUTTON1,0,0,18,18
+    PUSHBUTTON      "上",IDC_BUTTON2,18,0,18,18
+    PUSHBUTTON      "下",IDC_BUTTON3,36,0,18,18
+    PUSHBUTTON      "底",IDC_BUTTON4,54,0,18,18
 END
 
 IDD_DOWNVIEW DIALOGEX 0, 0, 316, 183
@@ -323,10 +329,8 @@ BEGIN
 
     IDD_LEFTVIEW, DIALOG
     BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 187
         TOPMARGIN, 7
-        BOTTOMMARGIN, 145
+        BOTTOMMARGIN, 175
     END
 
     IDD_DOWNVIEW, DIALOG

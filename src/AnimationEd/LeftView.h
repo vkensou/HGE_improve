@@ -34,6 +34,14 @@ public:
 	int RefreshBoneList();
 	void SetIndex(int index);
 	afx_msg void OnLbnSelchangeList1();
+	CButton btop;
+	CButton bup;
+	CButton bdown;
+	CButton bbottom;
+	afx_msg void OnBnClickedButton1();
+	afx_msg void OnBnClickedButton2();
+	afx_msg void OnBnClickedButton3();
+	afx_msg void OnBnClickedButton4();
 };
 
 

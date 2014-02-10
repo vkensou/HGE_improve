@@ -187,7 +187,10 @@ bool FrameFunc()
 	{
 		if(hge->Input_GetKeyState(HGEK_LBUTTON))
 		{
-			hotbone->SetHead(mx,my);
+			if(hotbone)
+				hotbone->SetHead(mx,my);
+			else
+				mode = 0;
 		}
 		else
 		{
@@ -214,11 +217,11 @@ bool FrameFunc()
 	hge->Gfx_BeginScene();
 	hge->Gfx_Clear(0);
 
-	std::list<hgeBone*>::iterator itor;
+	std::list<hgeBone*>::reverse_iterator ritor;
 	hgeBone* vv;
-	for(itor = nowskt->bones.begin();itor != nowskt->bones.end();itor++)
+	for(ritor = nowskt->bones.rbegin();ritor != nowskt->bones.rend();ritor++)
 	{
-		vv = *itor;
+		vv = *ritor;
 		hge->Gfx_RenderLine(vv->GetHeadX(),vv->GetHeadY(),vv->GetTailX(),vv->GetTailY(),0xffffffff);
 		vv->bind.Render();
 	}

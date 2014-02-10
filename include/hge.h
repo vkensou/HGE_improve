@@ -70,6 +70,16 @@ typedef unsigned char       BYTE;
 #define M_2_PI	0.636619772367581343076f
 #endif
 
+//弧度转角度
+inline float Degree(float radian)
+{
+	return radian / M_PI * 180.f;
+}
+//角度转弧度
+inline float Radian(float degree)
+{
+	return degree * M_PI / 180.f;
+}
 
 /*
 ** HGE Handle types

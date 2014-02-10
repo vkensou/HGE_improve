@@ -10,7 +10,7 @@ CRightView *g_rightview = 0;
 CBindShow *g_bindshow = 0;
 
 int mode=0;
-void SelectBone(UINT index,bool s)
+void SelectBone(int index,bool s)
 {
 	if(mode == 0)
 	{
@@ -27,13 +27,11 @@ void SelectBone(UINT index,bool s)
 		}
 		else
 		{
-			if(index<0 || index>=nowskt->bones.size())return ;
-			if(hotbone == nowskt->GetBoneFromID(index))return; 
 			//g_leftview->RefreshBoneList();
+			hotbone = nowskt->GetBoneFromID(index);
+			if(0 == hotbone)return;
 			if(s)
 				g_leftview->SetIndex(index);
-			hotbone = nowskt->GetBoneFromID(index);
-			//hotbone = bones[index];
 			hotjoint = 0;
 			g_leftview2->RefreshJointList();
 			g_rightview->SetPropertyPage(1);
@@ -43,11 +41,11 @@ void SelectBone(UINT index,bool s)
 	}
 }
 
-void SelectJoint(UINT index,bool s)
+void SelectJoint(int index,bool s)
 {
 	if(mode ==0 )
 	{
-		if(index<0 || index>=hotbone->joints.size()+4)return ;
+		if(index<0 || index>=(int)hotbone->joints.size()+4)return ;
 		//g_leftview->RefreshBoneList();
 		if(s)
 			g_leftview2->SetIndex(index);
