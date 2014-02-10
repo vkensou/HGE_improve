@@ -36,7 +36,7 @@ public:
 			//在第一、四象限
 			if(lx > 0)
 			{
-				if(ly < 0)rotate += 2 * M_PI;
+				if(ly < 0)rotate += M_2PI;
 			}
 			//在第二、三象限
 			else rotate += M_PI;
@@ -44,7 +44,7 @@ public:
 		else
 		{
 			if(ly>0)rotate = M_PI_2;
-			else if(ly<0)rotate = M_PI_4 * 3;
+			else if(ly<0)rotate = M_PI_2 * 3;
 			else rotate = 0;
 		}
 		dx = tail.x - head.x ;

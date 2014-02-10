@@ -5,16 +5,16 @@ int hgeBone::cid::nid = 0;
 
 void hgeLinePoint::UpdatePosition(bool w)
 {
-	float l = tra ==true ? r * line->GetLength() :a;
+	if(true == tra)a = r * line->GetLength();
 	if(k)
 	{
-		x = line->GetHeadX() + l * cos(line->GetRotate());
-		y = line->GetHeadY() + l * sin(line->GetRotate());
+		x = line->GetHeadX() + a * cos(line->GetRotate());
+		y = line->GetHeadY() + a * sin(line->GetRotate());
 	}
 	else
 	{
-		x = line->GetTailX() - l * cos(line->GetRotate());
-		y = line->GetTailY() - l * sin(line->GetRotate());
+		x = line->GetTailX() - a * cos(line->GetRotate());
+		y = line->GetTailY() - a * sin(line->GetRotate());
 	}
 	if(w)
 		PositionChanged();
@@ -102,6 +102,7 @@ float hgeLine::NeedRotateFrom(hgeLine *line)
 	float x = (line->dx * dy) - (line->dy - dx);
 	if(x<=0)
 		jj = M_2PI - jj;
+	while(jj<0)jj+=M_2PI;
 	return jj;
 }
 
@@ -180,6 +181,9 @@ void hgeBone::SetPositionByJoint(hgeJoint *joint)
 {
 	if(!joint)return;
 	rotate=joint->bindbone->rotate + joint->angle ;
+	while(rotate>M_2PI)rotate-=M_2PI;
+	while(rotate<0)rotate+=M_2PI;
+
 	if(joint->GetBasis()== true)
 	{
 		head.x = joint->GetX() - joint->GetAbsolute() * cos(rotate);
@@ -242,6 +246,12 @@ void hgeBone::PositionChanged()
 {
 	bind.UpdatePosition();
 	control.UpdatePosition();
+
+	std::vector<hgeJoint*>::iterator itor;
+	for(itor = joints.begin();itor != joints.end();itor++)
+	{
+		(*itor)->UpdatePosition();
+	}
 	MoveBindBone();
 };
 
