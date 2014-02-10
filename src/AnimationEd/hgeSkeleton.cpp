@@ -121,6 +121,7 @@ float hgeLine::GetDistanceFromPoint(float _x,float _y)
 	return d.GetDistanceToPoint(_x,_y);
 }
 
+
 hgeBone::~hgeBone()
 {
 	std::vector<hgeJoint*>::iterator itor;
@@ -243,6 +244,15 @@ void hgeBone::PositionChanged()
 	control.UpdatePosition();
 	MoveBindBone();
 };
+
+hgePoint hgeBone::GetOtherPoint()
+{
+	float tt = rotate + M_PI_2;
+	hgePoint other;
+	other.x = control.GetX() + 8.f * cos(tt);
+	other.y = control.GetY() + 8.f * sin(tt);
+	return other;
+}
 
 hgeJoint* hgeBone::AddJoint()
 {

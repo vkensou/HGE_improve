@@ -68,7 +68,7 @@ public:
 	float GetDistanceFromPoint(hgePoint point){return GetDistanceFromPoint(point.x,point.y);};
 	//从参数线段开始旋转
 	float NeedRotateFrom(hgeLine *line);
-
+	//获取垂直平分线上的一点
 protected:
 	virtual void PositionChanged(){};
 	hgePoint head,tail;
@@ -168,6 +168,7 @@ public:
 	int GetID(){return mid.getid();}
 	bool SetFather(int index,hgeBone* fabone);
 	int GetFather(){return father;}
+	hgePoint GetOtherPoint();
 protected:
 	void PositionChanged();
 	int father;

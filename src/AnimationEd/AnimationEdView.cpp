@@ -93,6 +93,9 @@ CAnimationEdDoc* CAnimationEdView::GetDocument() const // 非调试版本是内联的
 bool FrameFunc()
 {
 	float mx=0,my=0;
+	static float lmx = 0,lmy = 0;
+	static float vmx = 0,vmy = 0;
+	static float rort = 0;
 	hge->Input_GetMousePos(&mx,&my);
 	overi = overji = -1;
 	over = 0;overj = 0;
@@ -118,7 +121,20 @@ bool FrameFunc()
 			if(over)
 				SelectBone(overi,true);
 			else
-				SelectBone(-1,true);
+			{
+				float x,y;
+				hgePoint dd;
+				if(hotbone)
+					dd = hotbone->GetOtherPoint();
+				x = dd.x,y = dd.y;
+				if(mode == 0 && hotbone && mx >= x-4 && mx <= x+4 && my >= y-4 && my <= y+4)
+				{
+					rort = hotbone->GetRotate() + M_PI_2;
+					mode = 7;
+				}
+				else
+					SelectBone(-1,true);
+			}
 		}
 		
 		if(over)
@@ -148,6 +164,12 @@ bool FrameFunc()
 			{
 				SelectJoint(overji+4,true);
 			}
+			else if(hotbone && hotbone->GetDistanceFromPoint(mx,my)<2)
+			{
+				mode = 6;
+				vmx = mx - hotbone->GetX();
+				vmy = my - hotbone->GetY();
+			}
 		}
 
 		if(hge->Input_KeyDown(HGEK_RBUTTON))
@@ -171,7 +193,7 @@ bool FrameFunc()
 	}
 	else if(mode == 3)
 	{
-		if(hge->Input_GetKeyState(HGEK_LBUTTON))
+		if(hge->Input_GetKeyState(HGEK_LBUTTON) && hotbone)
 		{
 			hotbone->SetTail(mx,my);
 		}
@@ -185,12 +207,9 @@ bool FrameFunc()
 	}
 	else if(mode == 4)
 	{
-		if(hge->Input_GetKeyState(HGEK_LBUTTON))
+		if(hge->Input_GetKeyState(HGEK_LBUTTON) && hotbone)
 		{
-			if(hotbone)
-				hotbone->SetHead(mx,my);
-			else
-				mode = 0;
+			hotbone->SetHead(mx,my);
 		}
 		else
 		{
@@ -200,7 +219,7 @@ bool FrameFunc()
 	}
 	else if(mode == 5)
 	{
-		if(hge->Input_GetKeyState(HGEK_LBUTTON))
+		if(hge->Input_GetKeyState(HGEK_LBUTTON) && hotbone)
 		{
 			hotbone->SetTail(mx,my);
 		}
@@ -210,9 +229,36 @@ bool FrameFunc()
 			g_rightview->RefreshProperty();
 		}
 	}
-
-
-
+	else if(mode == 6)
+	{
+		if(hge->Input_GetKeyState(HGEK_LBUTTON) && hotbone)
+		{
+			if(lmx != mx || lmy !=my)
+				hotbone->SetPosition(mx - vmx,my - vmy);
+		}
+		else
+		{
+			mode = 0;
+			g_rightview->RefreshProperty();
+		}
+	}
+	else if(mode ==7)
+	{
+		if(hge->Input_GetKeyState(HGEK_LBUTTON) && hotbone)
+		{
+			if(abs(hotbone->ControlPoint().GetX() - mx) > 0.01 && abs(hotbone->ControlPoint().GetY() - my) > 0.01)
+			{
+				hgeLine temp(hotbone->ControlPoint().GetX() ,hotbone->ControlPoint().GetY() ,mx,my);
+				hotbone->SetRotate(temp.GetRotate() - M_PI_2);
+			}
+		}
+		else
+		{
+			mode = 0;
+			g_rightview->RefreshProperty();
+		}
+	}
+	lmx = mx;lmy = my;
 
 	hge->Gfx_BeginScene();
 	hge->Gfx_Clear(0);
@@ -258,6 +304,12 @@ bool FrameFunc()
 				hge->Gfx_RenderLine(hotbone->joints[i]->bindbone->GetHeadX(),hotbone->joints[i]->bindbone->GetHeadY(),hotbone->joints[i]->bindbone->GetTailX(),hotbone->joints[i]->bindbone->GetTailY(),0xff0000ff);
 			}
 		}
+		hgePoint dd = hotbone->GetOtherPoint();
+		x = dd.x,y = dd.y;
+		hge->Gfx_RenderLine(x,y-3,x+3,y,0xffffffff);
+		hge->Gfx_RenderLine(x,y-3,x-3,y,0xffffffff);
+		hge->Gfx_RenderLine(x,y+3,x+3,y,0xffffffff);
+		hge->Gfx_RenderLine(x,y+3,x-3,y,0xffffffff);
 	}
 	if(hotjoint)
 	{
