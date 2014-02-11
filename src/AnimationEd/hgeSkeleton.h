@@ -106,11 +106,12 @@ class hgeBone;
 class hgeJoint:public hgeLinePoint
 {
 public:
-	hgeJoint(hgeBone *father):hgeLinePoint((hgeLine*)father){bone = father;bindbone = 0;bindjoint = 0;angle = 0;};
+	hgeJoint(hgeBone *father):hgeLinePoint((hgeLine*)father){bone = father;bindbone = 0;bindjoint = 0;angle = 0;bidx = jidx = -1;};
 	~hgeJoint(){ReleaseBind();};
 	hgeBone *bone;//表明所属的骨头
 	hgeBone *bindbone;//绑定的关节所属的骨头
 	hgeJoint *bindjoint;//绑定的关节
+	int bidx,jidx;
 	float angle;//两个骨头的夹角
 	void ReleaseBind();
 protected:
@@ -150,11 +151,13 @@ public:
 	hgeBone():hgeLine(),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;};
 	hgeBone(float x1,float y1,float x2,float y2):hgeLine(x1,y1,x2,y2),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;};
 	hgeBone(hgePoint point1,hgePoint point2):hgeLine(point1,point2),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;};
+	hgeBone(int id):hgeLine(),bind(this),control(this),mid(id){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;};
 	~hgeBone();
 	hgeBindPoint bind;//用于绑定图片的节点
 	hgeLinePoint control;
 	void SetPosition(float x,float y);
 	void SetPosition(hgePoint point){SetPosition(point.x,point.y);};
+	void SetLength(float l){length = l;SetPosition(control.GetX(),control.GetY());};
 	void SetRotate(float r);
 	float GetX(){return control.GetX();};
 	float GetY(){return control.GetY();};
@@ -163,10 +166,12 @@ public:
 	std::vector<hgeJoint*> joints;
 	hgeJoint* AddJoint();
 	bool DelJoint(hgeJoint* joint);
+	int GetJointIndex(hgeJoint* joint);
 	void SetPositionByJoint(hgeJoint *joint);
 	bool BoneBinded(hgeBone *bone,hgeJoint* s = 0);
 	int GetID(){return mid.getid();}
 	bool SetFather(int index,hgeBone* fabone);
+	void SetFatherID(int index){father = index;}
 	int GetFather(){return father;}
 	hgePoint GetOtherPoint();
 protected:
@@ -179,6 +184,7 @@ private:
 	class cid
 	{
 	public:
+		cid(int id){_id = id;nid =_id+1;}
 		cid():_id(nid++){};
 		virtual ~cid(){};
 		int getid(){return _id;}
@@ -206,7 +212,8 @@ public:
 	bool BoneUp(hgeBone* bone);
 	bool BoneDown(hgeBone* bone);
 	bool BoneBottom(hgeBone* bone);
-
+	bool Save(const wchar_t* path);
+	bool Load(const wchar_t* path);
 	hgeBone *mainbone;//主骨头
 	//骨骼中心点的位置
 	float x,y;

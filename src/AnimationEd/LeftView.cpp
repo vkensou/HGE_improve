@@ -190,6 +190,7 @@ void CLeftView::OnLbnSelchangeList1()
 void CLeftView::OnBnClickedButton1()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	if(!hotbone)return;
 	nowskt->BoneTop(hotbone);
 	this->RefreshBoneList();
 	SetIndex(hotbone->GetID());
@@ -198,6 +199,7 @@ void CLeftView::OnBnClickedButton1()
 void CLeftView::OnBnClickedButton2()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	if(!hotbone)return;
 	nowskt->BoneUp(hotbone);
 	this->RefreshBoneList();
 	SetIndex(hotbone->GetID());
@@ -206,6 +208,7 @@ void CLeftView::OnBnClickedButton2()
 void CLeftView::OnBnClickedButton3()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	if(!hotbone)return;
 	nowskt->BoneDown(hotbone);
 	this->RefreshBoneList();
 	SetIndex(hotbone->GetID());
@@ -214,6 +217,7 @@ void CLeftView::OnBnClickedButton3()
 void CLeftView::OnBnClickedButton4()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	if(!hotbone)return;
 	nowskt->BoneBottom(hotbone);
 	this->RefreshBoneList();
 	SetIndex(hotbone->GetID());

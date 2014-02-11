@@ -44,6 +44,8 @@ public:
 	afx_msg void On32783();
 	afx_msg void OnDelBone();
 	afx_msg void OnDelJoint();
+	afx_msg void OnSaveSkeleton();
+	afx_msg void OnLoadSkeleton();
 };
 
 extern CAnimationEdApp theApp;

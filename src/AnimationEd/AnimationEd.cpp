@@ -34,6 +34,8 @@ BEGIN_MESSAGE_MAP(CAnimationEdApp, CWinAppEx)
 	ON_COMMAND(ID_32783, &CAnimationEdApp::On32783)
 	ON_COMMAND(ID_DEL_BONE, &CAnimationEdApp::OnDelBone)
 	ON_COMMAND(ID_DEL_JOINT, &CAnimationEdApp::OnDelJoint)
+	ON_COMMAND(ID_SAVE_SKELETON, &CAnimationEdApp::OnSaveSkeleton)
+	ON_COMMAND(ID_LOAD_SKELETON, &CAnimationEdApp::OnLoadSkeleton)
 END_MESSAGE_MAP()
 
 
@@ -274,5 +276,35 @@ void CAnimationEdApp::OnDelJoint()
 		hotjoint = 0;
 		g_leftview2->RefreshJointList();
 		SelectJoint(-1);
+	}
+}
+
+void CAnimationEdApp::OnSaveSkeleton()
+{
+	// TODO: 在此添加命令处理程序代码
+	CFileDialog dlgFile(FALSE, NULL, NULL, OFN_HIDEREADONLY, L"骨骼文件(*.skt)|*.skt|", NULL);
+
+    if (dlgFile.DoModal())
+	{
+		CString path = dlgFile.GetPathName();
+		if(path==L"")return;
+		if(path.Right(4)!=L".skt")path+=L".skt";
+		nowskt->Save(path.GetBuffer());
+		path.ReleaseBuffer();
+	}
+}
+
+void CAnimationEdApp::OnLoadSkeleton()
+{
+	// TODO: 在此添加命令处理程序代码
+	CFileDialog dlgFile(TRUE, NULL, NULL, OFN_HIDEREADONLY, L"骨骼文件(*.skt)|*.skt|", NULL);
+
+    if (dlgFile.DoModal())
+	{
+		CString path = dlgFile.GetPathName();
+		if(path==L"")return;
+		nowskt->Load(path.GetBuffer());
+		path.ReleaseBuffer();
+		g_leftview->RefreshBoneList();
 	}
 }

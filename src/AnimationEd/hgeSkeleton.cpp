@@ -250,7 +250,7 @@ void hgeBone::PositionChanged()
 	std::vector<hgeJoint*>::iterator itor;
 	for(itor = joints.begin();itor != joints.end();itor++)
 	{
-		(*itor)->UpdatePosition();
+		(*itor)->UpdatePosition(false);
 	}
 	MoveBindBone();
 };
@@ -321,6 +321,15 @@ bool hgeBone::SetFather(int index,hgeBone* fabone)
 	return false;
 }
 
+int hgeBone::GetJointIndex(hgeJoint* joint)
+{
+	for(int i = 0;i<(int)joints.size();i++)
+	{
+		if(joints[i] == joint)
+			return i;
+	}
+	return -1;
+}
 
 int hgeSkeleton::AddBone()
 {
@@ -437,4 +446,190 @@ bool hgeSkeleton::DelBone(hgeBone* bone)
 		}
 	}
 	return false;
+}
+
+bool hgeSkeleton::Save(const wchar_t* path)
+{
+	FILE *f = _wfopen(path,L"w");
+	UINT sz = bones.size();
+	int t;bool bt;float ft;
+	fwrite(&sz,sizeof(sz),1,f);
+
+	std::list<hgeBone*>::iterator itor;
+	hgeBone *tb;
+	for(itor = bones.begin();itor != bones.end();itor++)
+	{
+		tb = *itor;
+		t = tb->GetID();
+		//存ID
+		fwrite(&t,sizeof(t),1,f);
+		//存控制点信息
+		bt = tb->ControlPoint().GetBasis();
+		fwrite(&bt,sizeof(bt),1,f);
+		if(bt)
+		{
+			ft = tb->ControlPoint().GetRelative();
+		}
+		else
+		{
+			ft = tb->ControlPoint().GetAbsolute();
+		}
+		fwrite(&ft,sizeof(ft),1,f);
+
+		//存绑定点信息
+		bt = tb->BindPoint().GetBasis();
+		fwrite(&bt,sizeof(bt),1,f);
+		if(bt)
+		{
+			ft = tb->BindPoint().GetRelative();
+		}
+		else
+		{
+			ft = tb->BindPoint().GetAbsolute();
+		}
+		fwrite(&ft,sizeof(ft),1,f);
+		bt = tb->BindPoint().part != 0;
+		fwrite(&bt,sizeof(bt),1,f);
+		if(bt)
+		{
+			ft = tb->BindPoint().GetHScale();
+			fwrite(&ft,sizeof(ft),1,f);
+			ft = tb->BindPoint().GetVScale();
+			fwrite(&ft,sizeof(ft),1,f);
+			ft = tb->BindPoint().GetRotation();
+			fwrite(&ft,sizeof(ft),1,f);
+			t = 0;
+			fwrite(&t,sizeof(t),1,f);
+		}
+		ft = tb->GetHeadX();
+		fwrite(&ft,sizeof(ft),1,f);
+		ft = tb->GetHeadY();
+		fwrite(&ft,sizeof(ft),1,f);
+		ft = tb->GetTailX();
+		fwrite(&ft,sizeof(ft),1,f);
+		ft = tb->GetTailY();
+		fwrite(&ft,sizeof(ft),1,f);
+		t = tb->GetFather();
+		fwrite(&t,sizeof(t),1,f);
+		sz = tb->joints.size();
+		fwrite(&sz,sizeof(sz),1,f);
+		for(UINT i = 0;i<tb->joints.size();i++)
+		{
+			bt = tb->joints[i]->GetBasis();
+			fwrite(&bt,sizeof(bt),1,f);
+			if(bt)
+			{
+				ft = tb->joints[i]->GetRelative();
+			}
+			else
+			{
+				ft = tb->joints[i]->GetAbsolute();
+			}
+			fwrite(&ft,sizeof(ft),1,f);
+			if(tb->joints[i]->bindbone)
+			{
+				t = tb->joints[i]->bindbone->GetID();
+				fwrite(&t,sizeof(t),1,f);
+				t = tb->joints[i]->bindbone->GetJointIndex(tb->joints[i]->bindjoint);
+				fwrite(&t,sizeof(t),1,f);
+				ft = tb->joints[i]->angle;
+				fwrite(&ft,sizeof(ft),1,f);
+			}
+			else
+			{
+				t = -1;
+				fwrite(&t,sizeof(t),1,f);
+			}
+		}
+	}
+	fclose(f);
+	return true;
+}
+
+bool hgeSkeleton::Load(const wchar_t* path)
+{
+	FILE *f = _wfopen(path,L"r");
+	UINT sz,sz2;
+	int t;bool bt;float ft,ft2;
+	fread(&sz,sizeof(sz),1,f);
+	bones.clear();
+	hgeBone *tb;hgeJoint *tj;
+	for(int i = 0;i<sz;i++)
+	{
+		fread(&t,sizeof(t),1,f);
+		tb = new hgeBone(t);
+		bones.push_back(tb);
+		fread(&bt,sizeof(bt),1,f);
+		fread(&ft,sizeof(ft),1,f);
+		tb->ControlPoint().SetBasis(bt);
+		if(bt)
+			tb->ControlPoint().SetRelative(ft);
+		else
+			tb->ControlPoint().SetAbsolute(ft);
+		fread(&bt,sizeof(bt),1,f);
+		fread(&ft,sizeof(ft),1,f);
+		tb->BindPoint().SetBasis(bt);
+		if(bt)
+			tb->BindPoint().SetRelative(ft);
+		else
+			tb->BindPoint().SetAbsolute(ft);
+		fread(&bt,sizeof(bt),1,f);
+		if(bt)
+		{
+			fread(&ft,sizeof(ft),1,f);
+			fread(&ft2,sizeof(ft2),1,f);
+			tb->BindPoint().SetScale(ft,ft2);
+			fread(&ft,sizeof(ft),1,f);
+			tb->BindPoint().SetRotation(ft);
+			fread(&t,sizeof(t),1,f);
+		}
+		fread(&ft,sizeof(ft),1,f);
+		fread(&ft2,sizeof(ft2),1,f);
+		tb->SetHead(ft,ft2);
+		fread(&ft,sizeof(ft),1,f);
+		fread(&ft2,sizeof(ft2),1,f);
+		tb->SetTail(ft,ft2);
+		fread(&t,sizeof(t),1,f);
+		tb->SetFatherID(t);
+		fread(&sz2,sizeof(sz2),1,f);
+		for(int j = 0;j<sz2;j++)
+		{
+			tj = new hgeJoint(tb);
+			tb->joints.push_back(tj);
+			fread(&bt,sizeof(bt),1,f);
+			fread(&ft,sizeof(ft),1,f);
+			tj->SetBasis(bt);
+			if(bt)
+				tj->SetRelative(ft);
+			else
+				tj->SetAbsolute(ft);
+			fread(&t,sizeof(t),1,f);
+			if(t!=-1)
+			{
+				tj->bidx = t;
+				fread(&t,sizeof(t),1,f);
+				tj->jidx = t;
+				fread(&ft,sizeof(ft),1,f);
+				tj->angle = ft;
+			}
+		}
+	}
+	fclose(f);
+
+	std::list<hgeBone*>::iterator itor;
+	for(itor = bones.begin();itor != bones.end();itor++)
+	{
+		tb = *itor;
+		tb->SetFather(tb->GetFather(),GetBoneFromID(tb->GetFather()));
+		for(UINT i = 0;i<tb->joints.size();i++)
+		{
+			if(tb->joints[i]->bidx>-1)
+			{
+				tb->joints[i]->bindbone = GetBoneFromID(tb->joints[i]->bidx);
+				tb->joints[i]->bindjoint = tb->joints[i]->bindbone->joints[tb->joints[i]->jidx];
+			}
+		}
+	}
+
+	return true;
 }
