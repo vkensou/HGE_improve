@@ -304,6 +304,23 @@ bool hgeBone::fathered(hgeBone* w)
 		return false;
 }
 
+hgeBone* hgeBone::GetAcst()
+{
+	if(ftrb)
+	{
+		hgeBone* ls;
+		ls = ftrb->GetAcst();
+		if(ls)
+			return ls;
+		else
+			return ftrb;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
 bool hgeBone::SetFather(int index,hgeBone* fabone)
 {
 	if(index == -1 || fabone == this)
@@ -628,6 +645,31 @@ bool hgeSkeleton::Load(const wchar_t* path)
 				tb->joints[i]->bindbone = GetBoneFromID(tb->joints[i]->bidx);
 				tb->joints[i]->bindjoint = tb->joints[i]->bindbone->joints[tb->joints[i]->jidx];
 			}
+		}
+	}
+
+	return true;
+}
+
+bool hgeSkeleton::CheckReady()
+{
+	if(!mainbone)return false;
+	std::list<hgeBone*>::iterator itor;
+	hgeBone* nn;
+	for(itor = bones.begin();itor != bones.end();itor++)
+	{
+		nn = *itor;
+		if(nn == mainbone)
+		{
+			//主骨头不能有父骨头
+			if(nn->GetFather()!=-1)
+				return false;
+		}
+		else
+		{
+			//除主骨头外的所有骨头的祖宗必须是主骨头
+			if(nn->GetAcst()!=mainbone)
+				return false;
 		}
 	}
 

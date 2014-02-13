@@ -22,6 +22,7 @@
 #define IDR_HTML_DOWNVIEW               313
 #define IDD_LEFTVIEW2                   313
 #define IDD_DIALOG1                     315
+#define IDD_ANIM_EDIT                   316
 #define IDC_LIST1                       1000
 #define IDC_COMBO1                      1002
 #define IDC_BONENAME                    1003
@@ -31,6 +32,9 @@
 #define IDC_FILENAME                    1007
 #define IDC_BUTTON3                     1008
 #define IDC_BUTTON4                     1009
+#define IDC_SLIDER1                     1010
+#define IDC_EDIT1                       1011
+#define IDC_EDIT2                       1012
 #define ID_Menu                         32771
 #define ID_32772                        32772
 #define ID_NEW_SKELETON                 32773
@@ -52,14 +56,18 @@
 #define ID_SAVE_SKELETON                32789
 #define ID_32790                        32790
 #define ID_LOAD_SKELETON                32791
+#define ID_32792                        32792
+#define ID_CHANGEMODE                   32793
+#define ID_32794                        32794
+#define ID_DIALOG_ANIMED                32795
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        316
-#define _APS_NEXT_COMMAND_VALUE         32792
-#define _APS_NEXT_CONTROL_VALUE         1010
+#define _APS_NEXT_RESOURCE_VALUE        317
+#define _APS_NEXT_COMMAND_VALUE         32796
+#define _APS_NEXT_CONTROL_VALUE         1013
 #define _APS_NEXT_SYMED_VALUE           314
 #endif
 #endif

@@ -10,9 +10,40 @@ CRightView *g_rightview = 0;
 CBindShow *g_bindshow = 0;
 
 int mode=0;
+bool editmode=true;
 void SelectBone(int index,bool s)
 {
-	if(mode == 0)
+	if(editmode)
+	{
+		if(mode == 0)
+		{
+			if(index == -1)
+			{
+				if(s)
+					g_leftview->SetIndex(index);
+				hotbone = 0;
+				hotjoint = 0;
+				g_leftview2->RefreshJointList();
+				g_rightview->SetPropertyPage(0);
+				g_rightview->RefreshProperty();
+				g_bindshow->ResfreshData(index);
+			}
+			else
+			{
+				//g_leftview->RefreshBoneList();
+				hotbone = nowskt->GetBoneFromID(index);
+				if(0 == hotbone)return;
+				if(s)
+					g_leftview->SetIndex(index);
+				hotjoint = 0;
+				g_leftview2->RefreshJointList();
+				g_rightview->SetPropertyPage(1);
+				g_rightview->RefreshProperty();
+				g_bindshow->ResfreshData(index);
+			}
+		}
+	}
+	else
 	{
 		if(index == -1)
 		{
@@ -20,23 +51,14 @@ void SelectBone(int index,bool s)
 				g_leftview->SetIndex(index);
 			hotbone = 0;
 			hotjoint = 0;
-			g_leftview2->RefreshJointList();
-			g_rightview->SetPropertyPage(0);
-			g_rightview->RefreshProperty();
-			g_bindshow->ResfreshData(index);
 		}
 		else
 		{
-			//g_leftview->RefreshBoneList();
 			hotbone = nowskt->GetBoneFromID(index);
 			if(0 == hotbone)return;
 			if(s)
 				g_leftview->SetIndex(index);
 			hotjoint = 0;
-			g_leftview2->RefreshJointList();
-			g_rightview->SetPropertyPage(1);
-			g_rightview->RefreshProperty();
-			g_bindshow->ResfreshData(index);
 		}
 	}
 }

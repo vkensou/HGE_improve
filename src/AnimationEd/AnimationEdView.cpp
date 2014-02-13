@@ -118,23 +118,22 @@ bool FrameFunc()
 
 		if(hge->Input_KeyDown(HGEK_LBUTTON))
 		{
-			if(over)
+			float x,y;
+			hgePoint dd;
+			if(hotbone)
+			{
+				dd = hotbone->GetOtherPoint();
+				x = dd.x,y = dd.y;
+			}
+			if(mode == 0 && hotbone && mx >= x-4 && mx <= x+4 && my >= y-4 && my <= y+4)
+			{
+				rort = hotbone->GetRotate() + M_PI_2;
+				mode = 7;
+			}
+			else if(over)
 				SelectBone(overi,true);
 			else
-			{
-				float x,y;
-				hgePoint dd;
-				if(hotbone)
-					dd = hotbone->GetOtherPoint();
-				x = dd.x,y = dd.y;
-				if(mode == 0 && hotbone && mx >= x-4 && mx <= x+4 && my >= y-4 && my <= y+4)
-				{
-					rort = hotbone->GetRotate() + M_PI_2;
-					mode = 7;
-				}
-				else
-					SelectBone(-1,true);
-			}
+				SelectBone(-1,true);
 		}
 		
 		if(over)
@@ -150,7 +149,7 @@ bool FrameFunc()
 			}
 		}
 
-		if(hge->Input_KeyDown(HGEK_LBUTTON))
+		if(hge->Input_KeyDown(HGEK_LBUTTON) && editmode)
 		{
 			if(mode == 0 && over && mx >= over->GetHeadX()-4 && mx <= over->GetHeadX()+4 && my >= over->GetHeadY()-4 && my <= over->GetHeadY()+4)
 			{

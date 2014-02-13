@@ -12,6 +12,7 @@
 
 #include "globaldata_animall.h"
 #include "globaldata_view.h"
+#include "animedit.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -36,6 +37,8 @@ BEGIN_MESSAGE_MAP(CAnimationEdApp, CWinAppEx)
 	ON_COMMAND(ID_DEL_JOINT, &CAnimationEdApp::OnDelJoint)
 	ON_COMMAND(ID_SAVE_SKELETON, &CAnimationEdApp::OnSaveSkeleton)
 	ON_COMMAND(ID_LOAD_SKELETON, &CAnimationEdApp::OnLoadSkeleton)
+	ON_COMMAND(ID_CHANGEMODE, &CAnimationEdApp::OnChangemode)
+	ON_COMMAND(ID_DIALOG_ANIMED, &CAnimationEdApp::OnDialogAnimed)
 END_MESSAGE_MAP()
 
 
@@ -219,6 +222,7 @@ void CAnimationEdApp::OnNewBone()
 	// TODO: 在此添加命令处理程序代码
 	//hgeBone *nb = new hgeBone(100,100,200,200);
 	//bones.push_back(nb);
+	if(!editmode)return;
 	mode = 2;
 	//int a = nowskt->AddBone();
 	//g_leftview->RefreshBoneList();
@@ -228,7 +232,7 @@ void CAnimationEdApp::OnNewBone()
 void CAnimationEdApp::OnNewJoint()
 {
 	// TODO: 在此添加命令处理程序代码
-	if(hotbone==0)return ;
+	if(hotbone==0 || !editmode)return ;
 	hotbone->AddJoint();
 	g_leftview2->RefreshJointList();
 	SelectJoint(hotbone->joints.size()+3,true);
@@ -237,7 +241,7 @@ void CAnimationEdApp::OnNewJoint()
 void CAnimationEdApp::OnBindbone()
 {
 	// TODO: 在此添加命令处理程序代码
-	if(hotjoint==0)return;
+	if(hotjoint==0 || !editmode)return;
 	if(hotjoint->bindbone)return;
 	mode = 1;
 }
@@ -245,7 +249,7 @@ void CAnimationEdApp::OnBindbone()
 void CAnimationEdApp::OnReleasebind()
 {
 	// TODO: 在此添加命令处理程序代码
-	if(hotjoint==0)return;
+	if(hotjoint==0 || !editmode)return;
 	hotjoint->ReleaseBind();
 }
 
@@ -306,5 +310,43 @@ void CAnimationEdApp::OnLoadSkeleton()
 		nowskt->Load(path.GetBuffer());
 		path.ReleaseBuffer();
 		g_leftview->RefreshBoneList();
+	}
+}
+
+void CAnimationEdApp::OnChangemode()
+{
+	// TODO: 在此添加命令处理程序代码
+	editmode = !editmode;
+	if(editmode)
+	{
+		AfxGetMainWnd()->SetWindowTextW(L"动画编辑器 - 骨骼模式");
+	}
+	else
+	{
+		//没有通过检查的话不能进入动画编辑模式
+		if(!nowskt->CheckReady())
+		{
+			editmode = true;
+			return;
+		}
+		AfxGetMainWnd()->SetWindowTextW(L"动画编辑器 - 动画模式");
+		mode = 0;
+		SelectBone(-1);
+	}
+}
+
+void CAnimationEdApp::OnDialogAnimed()
+{
+	// TODO: 在此添加命令处理程序代码
+	if(!editmode)
+	{
+		CAnimEdit ae;
+		
+		if(ae.DoModal() == IDOK)
+		{
+			nowskt->framesnum = ae.fnum;
+			nowskt->animfps = ae.sfps;
+			g_downview->RefreshData();
+		}
 	}
 }

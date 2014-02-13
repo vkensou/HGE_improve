@@ -46,6 +46,8 @@ public:
 	afx_msg void OnDelJoint();
 	afx_msg void OnSaveSkeleton();
 	afx_msg void OnLoadSkeleton();
+	afx_msg void OnChangemode();
+	afx_msg void OnDialogAnimed();
 };
 
 extern CAnimationEdApp theApp;

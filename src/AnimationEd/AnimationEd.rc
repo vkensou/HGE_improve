@@ -153,6 +153,7 @@ BEGIN
     BEGIN
         MENUITEM "创建骨头",                        ID_NEW_BONE
         MENUITEM "删除骨头",                        ID_DEL_BONE
+        MENUITEM "切换模式",                        ID_CHANGEMODE
     END
     POPUP "骨头"
     BEGIN
@@ -161,6 +162,10 @@ BEGIN
         MENUITEM "解除绑定",                        ID_ReleaseBind
         MENUITEM "绑定图形元件",                      ID_32783
         MENUITEM "删除关节",                        ID_DEL_JOINT
+    END
+    POPUP "动画"
+    BEGIN
+        MENUITEM "对话框",                         ID_DIALOG_ANIMED
     END
     POPUP "帮助(&H)"
     BEGIN
@@ -233,6 +238,7 @@ IDD_DOWNVIEW DIALOGEX 0, 0, 316, 183
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_SYSMENU
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
+    CONTROL         "",IDC_SLIDER1,"msctls_trackbar32",TBS_BOTH | TBS_TOOLTIPS | WS_BORDER | WS_TABSTOP,0,42,312,30
 END
 
 IDD_RIGHTVIEW DIALOGEX 0, 0, 316, 183
@@ -263,6 +269,20 @@ BEGIN
     LTEXT           "静态",IDC_PICNAME,102,24,78,12
     PUSHBUTTON      "图片",IDC_BUTTON3,138,48,42,18
     COMBOBOX        IDC_COMBO1,0,132,84,18,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_ANIM_EDIT DIALOGEX 0, 0, 316, 183
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "确定",IDOK,205,162,50,14
+    PUSHBUTTON      "取消",IDCANCEL,259,162,50,14
+    LTEXT           "帧数量：",IDC_STATIC,6,12,48,12
+    EDITTEXT        IDC_EDIT1,60,12,54,18,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "帧率：",IDC_STATIC,6,36,48,18
+    EDITTEXT        IDC_EDIT2,60,36,54,18,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "帧/每秒",IDC_STATIC,120,36,54,18
 END
 
 
@@ -352,6 +372,14 @@ BEGIN
     END
 
     IDD_DIALOG1, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 176
+    END
+
+    IDD_ANIM_EDIT, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 309

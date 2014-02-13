@@ -1,4 +1,5 @@
 #pragma once
+#include "afxcmn.h"
 
 
 
@@ -27,6 +28,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+	CSliderCtrl slider;
+	virtual void OnInitialUpdate();
+	void RefreshData();
 };
 
 

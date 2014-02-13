@@ -174,6 +174,7 @@ public:
 	void SetFatherID(int index){father = index;}
 	int GetFather(){return father;}
 	hgePoint GetOtherPoint();
+	hgeBone* GetAcst();//获取祖宗
 protected:
 	void PositionChanged();
 	int father;
@@ -201,7 +202,7 @@ private:
 class hgeSkeleton
 {
 public:
-	hgeSkeleton(void){mainbone = 0;x = y = 0;rotate = 0;ox = oy = 0;newestbi = -1;};
+	hgeSkeleton(void){mainbone = 0;x = y = 0;rotate = 0;ox = oy = 0;newestbi = -1;mbidx = -1;framesnum = 0;animfps = 0;};
 	virtual ~hgeSkeleton(void){};
 	int AddBone();
 	bool DelBone(hgeBone* bone);
@@ -214,11 +215,15 @@ public:
 	bool BoneBottom(hgeBone* bone);
 	bool Save(const wchar_t* path);
 	bool Load(const wchar_t* path);
+	bool CheckReady();
 	hgeBone *mainbone;//主骨头
+	int mbidx;
 	//骨骼中心点的位置
 	float x,y;
 	float rotate;
 	//主骨头的控制点与中心点的偏移量
 	float ox,oy;
 	int newestbi;
+	UINT framesnum;
+	UINT animfps;
 };
