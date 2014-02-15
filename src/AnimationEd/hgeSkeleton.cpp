@@ -98,11 +98,14 @@ void hgeJoint::ReleaseBind()
 
 float hgeLine::NeedRotateFrom(hgeLine *line)
 {
-	float jj= abs(rotate - line->rotate);
-	float x = (line->dx * dy) - (line->dy - dx);
-	if(x<=0)
-		jj = M_2PI - jj;
-	while(jj<0)jj+=M_2PI;
+	//float jj= abs(rotate - line->rotate);
+	//float x = (line->dx * dy) - (line->dy - dx);
+	//if(x<=0)
+	//	jj = M_2PI - jj;
+	//while(jj<0)jj+=M_2PI;
+	//while(jj>M_2PI)jj-=M_2PI;
+	//return jj;
+	float jj = rotate - line->rotate;
 	return jj;
 }
 
@@ -153,7 +156,7 @@ void hgeBone::SetPosition(float x,float y)
 	return ;
 }
 
-void hgeBone::SetRotate(float r)
+void hgeBone::SetRotate(float r,bool v)
 {
 	if(rotate != r)
 	{
@@ -173,14 +176,22 @@ void hgeBone::SetRotate(float r)
 			head.y = tail.y - length * sin(rotate);
 		}
 	}
-	PositionChanged();
+	PositionChanged(v);
 	return ;
 }
 
-void hgeBone::SetPositionByJoint(hgeJoint *joint)
+void hgeBone::SetPositionByJoint(hgeJoint *joint,bool v)
 {
 	if(!joint)return;
-	rotate=joint->bindbone->rotate + joint->angle ;
+	if(v)
+	{
+		if(mode || frameindex == -1)
+			rotate = yrotate;
+		else
+			rotate = frames[frameindex];
+	}
+	else
+		rotate=joint->bindbone->rotate + joint->angle ;
 	while(rotate>M_2PI)rotate-=M_2PI;
 	while(rotate<0)rotate+=M_2PI;
 
@@ -220,7 +231,7 @@ bool hgeBone::BoneBinded(hgeBone *bone,hgeJoint* s)
 	return false;
 }
 
-void hgeBone::MoveBindBone(hgeJoint* s)
+void hgeBone::MoveBindBone(hgeJoint* s,bool v)
 {
 	for(UINT i = 0; i< joints.size();i++)
 	{
@@ -235,7 +246,7 @@ void hgeBone::MoveBindBone(hgeJoint* s)
 			else
 			{	
 				joints[i]->bindjoint->SetXY(joints[i]->GetX(),joints[i]->GetY());
-				joints[i]->bindbone->SetPositionByJoint(joints[i]->bindjoint);
+				joints[i]->bindbone->SetPositionByJoint(joints[i]->bindjoint,v);
 				//joints[i]->bindbone->SetRotate(bone->GetRotate()+joints[i]->angle);
 			}
 		}
@@ -246,13 +257,47 @@ void hgeBone::PositionChanged()
 {
 	bind.UpdatePosition();
 	control.UpdatePosition();
-
+	if(mode)
+	{
+		yrotate = rotate;
+	}
+	else
+	{
+		if(frameindex > -1)
+		{
+			frames[frameindex] = rotate;
+		}
+	}
 	std::vector<hgeJoint*>::iterator itor;
 	for(itor = joints.begin();itor != joints.end();itor++)
 	{
 		(*itor)->UpdatePosition(false);
 	}
-	MoveBindBone();
+	MoveBindBone(0,false);
+};
+
+
+void hgeBone::PositionChanged(bool v)
+{
+	bind.UpdatePosition();
+	control.UpdatePosition();
+	if(mode)
+	{
+		yrotate = rotate;
+	}
+	else
+	{
+		if(frameindex > -1)
+		{
+			frames[frameindex] = rotate;
+		}
+	}
+	std::vector<hgeJoint*>::iterator itor;
+	for(itor = joints.begin();itor != joints.end();itor++)
+	{
+		(*itor)->UpdatePosition(false);
+	}
+	MoveBindBone(0,v);
 };
 
 hgePoint hgeBone::GetOtherPoint()
@@ -350,9 +395,10 @@ int hgeBone::GetJointIndex(hgeJoint* joint)
 
 int hgeSkeleton::AddBone()
 {
-	hgeBone*  nb = new hgeBone(100,100,200,200);
+	hgeBone*  nb = new hgeBone();
 	bones.push_back(nb);
 	newestbi = nb->GetID();
+	nb->SetFrameNum(framesnum);
 	return nb->GetID();
 }
 
@@ -674,4 +720,87 @@ bool hgeSkeleton::CheckReady()
 	}
 
 	return true;
+}
+
+void hgeSkeleton::SetMode(bool _md)
+{
+	mode = _md;
+	std::list<hgeBone*>::iterator itor;
+	hgeBone* nn;
+	for(itor = bones.begin();itor != bones.end();itor++)
+	{
+		nn = *itor;
+		nn->SetMode(mode);
+	}
+	if(mainbone)
+		mainbone->Reload();
+}
+
+void hgeBone::SetMode(bool _md)
+{
+	mode = _md;
+}
+
+void hgeSkeleton::SetFrameNum(UINT num)
+{
+	framesnum = num;
+	std::list<hgeBone*>::iterator itor;
+	hgeBone* nn;
+	for(itor = bones.begin();itor != bones.end();itor++)
+	{
+		nn = *itor;
+		nn->SetFrameNum(framesnum);
+	}
+}
+
+void hgeBone::SetFrameNum(UINT num)
+{
+	if(num==frames.size())return;
+	if(num>frames.size())
+	{
+		int w = num - frames.size();
+		for(UINT i=0;i<w;i++)
+		{
+			frames.push_back(0.f);
+		}
+	}
+	else
+	{
+		int w = frames.size()-num;
+		for(UINT i=0;i<w;i++)
+		{
+			frames.pop_back();
+		}
+	}
+}
+
+void hgeSkeleton::SetFrameIndex(int index)
+{
+	if(index <-1 || index >=framesnum)
+		index = -1;
+	frameindex = index;
+	std::list<hgeBone*>::iterator itor;
+	hgeBone* nn;
+	for(itor = bones.begin();itor != bones.end();itor++)
+	{
+		nn = *itor;
+		nn->SetFrameIndex(index);
+	}
+	if(mainbone)
+		mainbone->Reload();
+}
+
+void hgeBone::SetFrameIndex(int index)
+{
+	frameindex = index;
+}
+
+void hgeBone::Reload()
+{
+	float r;
+	if(mode || frameindex == -1)
+		r = yrotate;
+	else
+		r = frames[frameindex];
+	SetRotate(r,true);
 }

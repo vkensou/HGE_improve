@@ -30,6 +30,7 @@ void CDownView::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CDownView, CFormView)
 	ON_WM_SIZE()
+	ON_WM_HSCROLL()
 END_MESSAGE_MAP()
 
 
@@ -100,4 +101,13 @@ void CDownView::RefreshData()
 			slider.SetRangeMax(0);
 		}
 	}
+}
+void CDownView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+
+	CFormView::OnHScroll(nSBCode, nPos, pScrollBar);
+	int v;
+	v = slider.GetPos();
+	nowskt->SetFrameIndex(v-1);
 }

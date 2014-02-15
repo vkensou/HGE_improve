@@ -31,6 +31,7 @@ public:
 	CSliderCtrl slider;
 	virtual void OnInitialUpdate();
 	void RefreshData();
+	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 };
 
 

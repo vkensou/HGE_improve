@@ -127,6 +127,8 @@ bool FrameFunc()
 			}
 			if(mode == 0 && hotbone && mx >= x-4 && mx <= x+4 && my >= y-4 && my <= y+4)
 			{
+				vmx = mx - x;
+				vmy = my - y;
 				rort = hotbone->GetRotate() + M_PI_2;
 				mode = 7;
 			}
@@ -247,7 +249,7 @@ bool FrameFunc()
 		{
 			if(abs(hotbone->ControlPoint().GetX() - mx) > 0.01 && abs(hotbone->ControlPoint().GetY() - my) > 0.01)
 			{
-				hgeLine temp(hotbone->ControlPoint().GetX() ,hotbone->ControlPoint().GetY() ,mx,my);
+				hgeLine temp(hotbone->ControlPoint().GetX() ,hotbone->ControlPoint().GetY() ,mx - vmx ,my - vmy);
 				hotbone->SetRotate(temp.GetRotate() - M_PI_2);
 			}
 		}

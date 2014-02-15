@@ -320,17 +320,20 @@ void CAnimationEdApp::OnChangemode()
 	if(editmode)
 	{
 		AfxGetMainWnd()->SetWindowTextW(L"动画编辑器 - 骨骼模式");
+		nowskt->SetMode(true);
 	}
 	else
 	{
 		//没有通过检查的话不能进入动画编辑模式
 		if(!nowskt->CheckReady())
 		{
+			nowskt->SetMode(true);
 			editmode = true;
 			return;
 		}
 		AfxGetMainWnd()->SetWindowTextW(L"动画编辑器 - 动画模式");
 		mode = 0;
+		nowskt->SetMode(false);
 		SelectBone(-1);
 	}
 }
@@ -344,7 +347,7 @@ void CAnimationEdApp::OnDialogAnimed()
 		
 		if(ae.DoModal() == IDOK)
 		{
-			nowskt->framesnum = ae.fnum;
+			nowskt->SetFrameNum(ae.fnum);
 			nowskt->animfps = ae.sfps;
 			g_downview->RefreshData();
 		}
