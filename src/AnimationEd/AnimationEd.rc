@@ -165,6 +165,8 @@ BEGIN
     END
     POPUP "动画"
     BEGIN
+        MENUITEM "新建动画",                        ID_ADD_ANIM
+        MENUITEM "删除动画",                        ID_DEL_ANIM
         MENUITEM "对话框",                         ID_DIALOG_ANIMED
     END
     POPUP "帮助(&H)"
@@ -238,7 +240,8 @@ IDD_DOWNVIEW DIALOGEX 0, 0, 316, 183
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_SYSMENU
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_SLIDER1,"msctls_trackbar32",TBS_BOTH | TBS_TOOLTIPS | WS_BORDER | WS_TABSTOP,0,42,312,30
+    CONTROL         "",IDC_SLIDER1,"msctls_trackbar32",TBS_BOTH | TBS_TOOLTIPS | WS_BORDER | WS_TABSTOP,88,42,224,30
+    LISTBOX         IDC_LIST1,0,0,90,180,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
 END
 
 IDD_RIGHTVIEW DIALOGEX 0, 0, 316, 183

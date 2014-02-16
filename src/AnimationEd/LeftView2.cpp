@@ -101,7 +101,7 @@ void CLeftView2::OnSetFocus(CWnd* pOldWnd)
 int CLeftView2::RefreshJointList()
 {
 	jointlist.ResetContent();
-	if(hotbone==0)return 0;
+	if(hotbone==0 || editmode == false)return 0;
 	CString cont;
 	cont = L"Í·½áµã";
 	jointlist.AddString(cont);

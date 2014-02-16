@@ -14,6 +14,7 @@ IMPLEMENT_DYNCREATE(CDownView, CFormView)
 
 CDownView::CDownView()
 	: CFormView(CDownView::IDD)
+	, animidx(0)
 {
 
 }
@@ -26,11 +27,14 @@ void CDownView::DoDataExchange(CDataExchange* pDX)
 {
 	CFormView::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_SLIDER1, slider);
+	DDX_LBIndex(pDX, IDC_LIST1, animidx);
+	DDX_Control(pDX, IDC_LIST1, lbanim);
 }
 
 BEGIN_MESSAGE_MAP(CDownView, CFormView)
 	ON_WM_SIZE()
 	ON_WM_HSCROLL()
+	ON_LBN_SELCHANGE(IDC_LIST1, &CDownView::OnLbnSelchangeList1)
 END_MESSAGE_MAP()
 
 
@@ -65,9 +69,13 @@ void CDownView::OnSize(UINT nType, int cx, int cy)
 	size.cy = rect.bottom - rect.top;
 	SetScrollSizes(MM_HIMETRIC, size); // 将CScrollView的大小设置为当前客户区大小
 
+	if(lbanim)
+	{
+		lbanim.MoveWindow(0,0,130,cy);
+	}
 	if(slider)
 	{
-		slider.MoveWindow(0,(cy - 50)/2,cx,50);
+		slider.MoveWindow(130,(cy - 50)/2,cx-130,50);
 	}
 }
 
@@ -77,12 +85,15 @@ void CDownView::OnInitialUpdate()
 	// TODO: 在此添加专用代码和/或调用基类
 	CRect rect;
 	GetClientRect(&rect); // 获取当前客户区view大小
-	slider.MoveWindow(0,(rect.Height() - 50)/2,rect.Width(),50);
+	lbanim.MoveWindow(0,0,130,rect.Height());
+	slider.MoveWindow(130,(rect.Height() - 50)/2,rect.Width()-130,50);
+
 	RefreshData();
 }
 
-void CDownView::RefreshData()
+void CDownView::RefreshData(int idx)
 {
+	lbanim.ResetContent();
 	if(editmode)
 	{
 		slider.SetRangeMin(0);
@@ -90,10 +101,30 @@ void CDownView::RefreshData()
 	}
 	else
 	{
-		if(nowskt->framesnum>0)
+		CString l;
+		for(int i = 0;i<nowskt->anims.size();i++)
+		{
+			l.Format(L"%d",i+1);
+			lbanim.AddString(l);
+		}
+		if(nowskt->anims.size()>0)
+		{
+			if(idx > -1)
+			{
+				lbanim.SetCurSel(idx);
+				nowskt->SetAnimIndex(idx);
+			}
+			else
+			{
+				lbanim.SetCurSel(0);
+				nowskt->SetAnimIndex(0);
+			}
+		}
+		if(nowskt->GetFrameNum()>0)
 		{
 			slider.SetRangeMin(1);
-			slider.SetRangeMax(nowskt->framesnum);
+			slider.SetRangeMax(nowskt->GetFrameNum());
+			nowskt->SetFrameIndex(0);
 		}
 		else
 		{
@@ -102,12 +133,32 @@ void CDownView::RefreshData()
 		}
 	}
 }
+
 void CDownView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 
 	CFormView::OnHScroll(nSBCode, nPos, pScrollBar);
+	if(editmode)return;
 	int v;
 	v = slider.GetPos();
 	nowskt->SetFrameIndex(v-1);
+}
+
+void CDownView::OnLbnSelchangeList1()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	if(editmode)return;
+	nowskt->SetAnimIndex(lbanim.GetCurSel());
+	if(nowskt->GetFrameNum()>0)
+	{
+		slider.SetRangeMin(1);
+		slider.SetRangeMax(nowskt->GetFrameNum());
+		nowskt->SetFrameIndex(0);
+	}
+	else
+	{
+		slider.SetRangeMin(0);
+		slider.SetRangeMax(0);
+	}
 }

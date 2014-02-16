@@ -185,10 +185,10 @@ void hgeBone::SetPositionByJoint(hgeJoint *joint,bool v)
 	if(!joint)return;
 	if(v)
 	{
-		if(mode || frameindex == -1)
+		if(mode || animindex == -1 || frameindex == -1)
 			rotate = yrotate;
 		else
-			rotate = frames[frameindex];
+			rotate = anims[animindex].at(frameindex);
 	}
 	else
 		rotate=joint->bindbone->rotate + joint->angle ;
@@ -257,16 +257,13 @@ void hgeBone::PositionChanged()
 {
 	bind.UpdatePosition();
 	control.UpdatePosition();
-	if(mode)
+	if(mode || animindex == -1 || frameindex == -1)
 	{
 		yrotate = rotate;
 	}
 	else
 	{
-		if(frameindex > -1)
-		{
-			frames[frameindex] = rotate;
-		}
+		anims[animindex].at(frameindex) = rotate;
 	}
 	std::vector<hgeJoint*>::iterator itor;
 	for(itor = joints.begin();itor != joints.end();itor++)
@@ -281,16 +278,13 @@ void hgeBone::PositionChanged(bool v)
 {
 	bind.UpdatePosition();
 	control.UpdatePosition();
-	if(mode)
+	if(mode || animindex == -1 || frameindex == -1)
 	{
 		yrotate = rotate;
 	}
 	else
 	{
-		if(frameindex > -1)
-		{
-			frames[frameindex] = rotate;
-		}
+		anims[animindex].at(frameindex) = rotate;
 	}
 	std::vector<hgeJoint*>::iterator itor;
 	for(itor = joints.begin();itor != joints.end();itor++)
@@ -398,7 +392,11 @@ int hgeSkeleton::AddBone()
 	hgeBone*  nb = new hgeBone();
 	bones.push_back(nb);
 	newestbi = nb->GetID();
-	nb->SetFrameNum(framesnum);
+	for(int i = 0 ;i<anims.size();i++)
+	{
+		nb->AddAnim();
+		nb->SetFrameNum(anims[i].frames.size());
+	}
 	return nb->GetID();
 }
 
@@ -743,40 +741,59 @@ void hgeBone::SetMode(bool _md)
 
 void hgeSkeleton::SetFrameNum(UINT num)
 {
-	framesnum = num;
+	if(animindex<0)return;
+
+	if(num==anims[animindex].frames.size())return;
+	if(num>anims[animindex].frames.size())
+	{
+		int w = num - anims[animindex].frames.size();
+		for(UINT i=0;i<w;i++)
+		{
+			anims[animindex].frames.push_back(std::pair<float,float>(0.f,0.f));
+		}
+	}
+	else
+	{
+		int w = anims[animindex].frames.size()-num;
+		for(UINT i=0;i<w;i++)
+		{
+			anims[animindex].frames.pop_back();
+		}
+	}
+
 	std::list<hgeBone*>::iterator itor;
 	hgeBone* nn;
 	for(itor = bones.begin();itor != bones.end();itor++)
 	{
 		nn = *itor;
-		nn->SetFrameNum(framesnum);
+		nn->SetFrameNum(anims[animindex].frames.size());
 	}
 }
 
 void hgeBone::SetFrameNum(UINT num)
 {
-	if(num==frames.size())return;
-	if(num>frames.size())
+	if(num==anims[animindex].size())return;
+	if(num>anims[animindex].size())
 	{
-		int w = num - frames.size();
+		int w = num - anims[animindex].size();
 		for(UINT i=0;i<w;i++)
 		{
-			frames.push_back(0.f);
+			anims[animindex].push_back(yrotate);
 		}
 	}
 	else
 	{
-		int w = frames.size()-num;
+		int w = anims[animindex].size()-num;
 		for(UINT i=0;i<w;i++)
 		{
-			frames.pop_back();
+			anims[animindex].pop_back();
 		}
 	}
 }
 
 void hgeSkeleton::SetFrameIndex(int index)
 {
-	if(index <-1 || index >=framesnum)
+	if(index <-1 || index >=anims[animindex].frames.size())
 		index = -1;
 	frameindex = index;
 	std::list<hgeBone*>::iterator itor;
@@ -798,9 +815,67 @@ void hgeBone::SetFrameIndex(int index)
 void hgeBone::Reload()
 {
 	float r;
-	if(mode || frameindex == -1)
+	if(mode || animindex == -1 || frameindex == -1)
 		r = yrotate;
 	else
-		r = frames[frameindex];
+		r = anims[animindex].at(frameindex);
 	SetRotate(r,true);
+}
+
+int hgeSkeleton::AddAnim()
+{
+	anims.push_back(hgeSkeleton::anim());
+	std::list<hgeBone*>::iterator itor;
+	hgeBone* nn;
+	for(itor = bones.begin();itor != bones.end();itor++)
+	{
+		nn = *itor;
+		nn->AddAnim();
+	}
+	return anims.size()-1;
+}
+
+void hgeSkeleton::DelAnim(int idx)
+{
+	std::list<hgeBone*>::iterator itor;
+	hgeBone* nn;
+	for(itor = bones.begin();itor != bones.end();itor++)
+	{
+		nn = *itor;
+		nn->DelAnim(idx);
+	}
+	std::vector<anim>::const_iterator itor2 = anims.begin();
+	itor2 += idx;
+	anims.erase(itor2);
+}
+
+void hgeSkeleton::SetAnimIndex(int index)
+{
+	animindex = index;
+	frameindex = -1;
+	std::list<hgeBone*>::iterator itor;
+	hgeBone* nn;
+	for(itor = bones.begin();itor != bones.end();itor++)
+	{
+		nn = *itor;
+		nn->SetAnimIndex(index);
+		nn->SetFrameIndex(-1);
+	}
+}
+
+void hgeBone::AddAnim()
+{
+	anims.push_back(hgeBone::frames());
+}
+
+void hgeBone::DelAnim(int index)
+{
+	std::vector<frames>::const_iterator itor = anims.begin();
+	itor += index;
+	anims.erase(itor);
+}
+
+void hgeBone::SetAnimIndex(int index)
+{
+	animindex = index;
 }

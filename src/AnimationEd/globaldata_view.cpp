@@ -11,6 +11,9 @@ CBindShow *g_bindshow = 0;
 
 int mode=0;
 bool editmode=true;
+
+float ox=0.f,oy=0.f,os=1.f;
+
 void SelectBone(int index,bool s)
 {
 	if(editmode)
@@ -51,6 +54,8 @@ void SelectBone(int index,bool s)
 				g_leftview->SetIndex(index);
 			hotbone = 0;
 			hotjoint = 0;
+			g_leftview2->RefreshJointList();
+			g_rightview->SetPropertyPage(0);
 		}
 		else
 		{
@@ -59,6 +64,8 @@ void SelectBone(int index,bool s)
 			if(s)
 				g_leftview->SetIndex(index);
 			hotjoint = 0;
+			g_leftview2->RefreshJointList();
+			g_rightview->SetPropertyPage(0);
 		}
 	}
 }

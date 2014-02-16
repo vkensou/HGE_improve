@@ -39,6 +39,8 @@ BEGIN_MESSAGE_MAP(CAnimationEdApp, CWinAppEx)
 	ON_COMMAND(ID_LOAD_SKELETON, &CAnimationEdApp::OnLoadSkeleton)
 	ON_COMMAND(ID_CHANGEMODE, &CAnimationEdApp::OnChangemode)
 	ON_COMMAND(ID_DIALOG_ANIMED, &CAnimationEdApp::OnDialogAnimed)
+	ON_COMMAND(ID_ADD_ANIM, &CAnimationEdApp::OnAddAnim)
+	ON_COMMAND(ID_DEL_ANIM, &CAnimationEdApp::OnDelAnim)
 END_MESSAGE_MAP()
 
 
@@ -349,7 +351,20 @@ void CAnimationEdApp::OnDialogAnimed()
 		{
 			nowskt->SetFrameNum(ae.fnum);
 			nowskt->animfps = ae.sfps;
-			g_downview->RefreshData();
+			g_downview->RefreshData(nowskt->GetAnimIndex());
 		}
 	}
+}
+
+void CAnimationEdApp::OnAddAnim()
+{
+	// TODO: 在此添加命令处理程序代码
+	g_downview->RefreshData(nowskt->AddAnim());
+}
+
+void CAnimationEdApp::OnDelAnim()
+{
+	// TODO: 在此添加命令处理程序代码
+	nowskt->DelAnim(nowskt->GetAnimIndex());
+	g_downview->RefreshData();
 }

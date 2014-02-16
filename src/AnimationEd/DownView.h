@@ -1,5 +1,6 @@
 #pragma once
 #include "afxcmn.h"
+#include "afxwin.h"
 
 
 
@@ -30,8 +31,11 @@ public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	CSliderCtrl slider;
 	virtual void OnInitialUpdate();
-	void RefreshData();
+	void RefreshData(int idx = -1);
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	int animidx;
+	CListBox lbanim;
+	afx_msg void OnLbnSelchangeList1();
 };
 
 

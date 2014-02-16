@@ -56,7 +56,7 @@ BOOL CAnimEdit::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
-	fnum = nowskt->framesnum;
+	fnum = nowskt->GetFrameNum();
 	sfps = nowskt->animfps;
 	UpdateData(FALSE);
 	return TRUE;  // return TRUE unless you set the focus to a control

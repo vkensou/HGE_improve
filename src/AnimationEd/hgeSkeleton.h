@@ -148,10 +148,10 @@ protected:
 class hgeBone:public hgeLine
 {
 public:
-	hgeBone():hgeLine(),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;};
-	hgeBone(float x1,float y1,float x2,float y2):hgeLine(x1,y1,x2,y2),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;};
-	hgeBone(hgePoint point1,hgePoint point2):hgeLine(point1,point2),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;};
-	hgeBone(int id):hgeLine(),bind(this),control(this),mid(id){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;};
+	hgeBone():hgeLine(),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;animindex = -1;};
+	hgeBone(float x1,float y1,float x2,float y2):hgeLine(x1,y1,x2,y2),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;animindex = -1;};
+	hgeBone(hgePoint point1,hgePoint point2):hgeLine(point1,point2),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;animindex = -1;};
+	hgeBone(int id):hgeLine(),bind(this),control(this),mid(id){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;animindex = -1;};
 	~hgeBone();
 	hgeBindPoint bind;//用于绑定图片的节点
 	hgeLinePoint control;
@@ -177,7 +177,13 @@ public:
 	hgeBone* GetAcst();//获取祖宗
 	void SetMode(bool mode);
 	float yrotate;
-	std::vector<float> frames;
+	void AddAnim();
+	void DelAnim(int index);
+	void SetAnimIndex(int index);
+	int GetAnimIndex(){return animindex;}
+	int animindex;
+	typedef std::vector<float> frames;
+	std::vector<frames>anims;
 	void SetFrameNum(UINT num);
 	int frameindex;
 	void SetFrameIndex(int index);
@@ -212,7 +218,7 @@ private:
 class hgeSkeleton
 {
 public:
-	hgeSkeleton(void){mainbone = 0;x = y = 0;rotate = 0;ox = oy = 0;newestbi = -1;mbidx = -1;framesnum = 0;animfps = 0;mode = true;frameindex = -1;};
+	hgeSkeleton(void){mainbone = 0;x = y = 0;rotate = 0;ox = oy = 0;newestbi = -1;mbidx = -1;animfps = 0;mode = true;frameindex = -1;};
 	virtual ~hgeSkeleton(void){};
 	int AddBone();
 	bool DelBone(hgeBone* bone);
@@ -234,13 +240,25 @@ public:
 	//主骨头的控制点与中心点的偏移量
 	float ox,oy;
 	int newestbi;
-	UINT framesnum;
+	class anim
+	{
+	public:
+		std::vector<std::pair<float,float>>frames;
+	};
+	std::vector<anim> anims;
+	//UINT framesnum;
 	UINT animfps;
+	int animindex;
 	int frameindex;
 	bool mode;
 	void SetMode(bool mode);
+	int AddAnim();
+	void DelAnim(int index);
+	void SetAnimIndex(int index);
+	int GetAnimIndex(){return animindex;}
 	void SetFrameNum(UINT num);
-	UINT GetFrameNum(){return framesnum;}
+	UINT GetFrameNum(){if(animindex == -1)return 0;else return anims[animindex].frames.size();}
 	void SetFrameIndex(int index);
 	int GetFrameIndex(){return frameindex;}
+
 };

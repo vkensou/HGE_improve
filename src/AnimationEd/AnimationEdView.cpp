@@ -93,16 +93,26 @@ CAnimationEdDoc* CAnimationEdView::GetDocument() const // 非调试版本是内联的
 bool FrameFunc()
 {
 	float mx=0,my=0;
+	float mx2=0,my2=0;
+
 	static float lmx = 0,lmy = 0;
 	static float vmx = 0,vmy = 0;
+	static float ocx = 0,ocy = 0;
 	static float rort = 0;
-	hge->Input_GetMousePos(&mx,&my);
+	hge->Input_GetMousePos(&mx2,&my2);
+	mx = mx2 - ox;my = my2 - oy;
+	mx /=os;my /=os;
 	overi = overji = -1;
 	over = 0;overj = 0;
 
 	std::map<int,hgeBone*>::iterator m1_Iter;
 	if(mode == 0 || mode == 1)
 	{
+		if(hge->Input_KeyDown(HGEK_R))
+		{
+			ox = hge->System_GetState(HGE_SCREENWIDTH) /2;oy = hge->System_GetState(HGE_SCREENHEIGHT) /2;os = 1;
+			hge->Gfx_SetTransform(0,0,ox,oy,0,os,os);
+		}
 		std::list<hgeBone*>::iterator itor;
 		hgeBone* vv;
 		for(itor = nowskt->bones.begin();itor != nowskt->bones.end();itor++)
@@ -135,7 +145,28 @@ bool FrameFunc()
 			else if(over)
 				SelectBone(overi,true);
 			else
+			{
 				SelectBone(-1,true);
+			}
+
+		}
+		if(hge->Input_GetMouseWheel()!=0)
+		{
+			if(hge->Input_GetMouseWheel()>0)
+				os *=2;
+			else if(hge->Input_GetMouseWheel()<0)
+				os /=2;
+			ox = mx2 - mx * os;
+			oy = my2 - my * os;
+			hge->Gfx_SetTransform();
+			hge->Gfx_SetTransform(0,0,ox,oy,0.f,os,os);
+		}
+
+		if(!mode && !hotbone && hge->Input_GetKeyState(HGEK_LBUTTON) && hge->Input_GetKeyState(HGEK_RBUTTON))
+		{
+			ocx = mx ;
+			ocy = my ;
+			mode = 8;
 		}
 		
 		if(over)
@@ -259,10 +290,25 @@ bool FrameFunc()
 			g_rightview->RefreshProperty();
 		}
 	}
+	else if(mode ==8)
+	{
+		if(hge->Input_GetKeyState(HGEK_LBUTTON) && hge->Input_GetKeyState(HGEK_RBUTTON))
+		{
+			ox = (mx - ocx)*os + ox;
+			oy = (my - ocy)*os + oy;
+			//hge->Gfx_SetTransform();
+			hge->Gfx_SetTransform(0,0,ox,oy,0.f,os,os);
+		}
+		else
+			mode = 0;
+	}
 	lmx = mx;lmy = my;
 
 	hge->Gfx_BeginScene();
 	hge->Gfx_Clear(0);
+
+	hge->Gfx_RenderLine(-70,0,70,0,0xffffffff);
+	hge->Gfx_RenderLine(0,-70,0,70,0xffffffff);
 
 	std::list<hgeBone*>::reverse_iterator ritor;
 	hgeBone* vv;
@@ -376,7 +422,8 @@ void CAnimationEdView::OnInitialUpdate()
 		hge->Release();
 		hge = 0;
 	}
-
+	ox = rect.Width()/2;oy = rect.Height()/2;
+	hge->Gfx_SetTransform(0,0,ox,oy,0.f,os,os);
 }
 
 void CAnimationEdView::OnDestroy()

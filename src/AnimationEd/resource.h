@@ -60,13 +60,17 @@
 #define ID_CHANGEMODE                   32793
 #define ID_32794                        32794
 #define ID_DIALOG_ANIMED                32795
+#define ID_32796                        32796
+#define ID_32797                        32797
+#define ID_ADD_ANIM                     32798
+#define ID_DEL_ANIM                     32799
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        317
-#define _APS_NEXT_COMMAND_VALUE         32796
+#define _APS_NEXT_COMMAND_VALUE         32800
 #define _APS_NEXT_CONTROL_VALUE         1013
 #define _APS_NEXT_SYMED_VALUE           314
 #endif

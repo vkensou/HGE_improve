@@ -48,6 +48,8 @@ public:
 	afx_msg void OnLoadSkeleton();
 	afx_msg void OnChangemode();
 	afx_msg void OnDialogAnimed();
+	afx_msg void OnAddAnim();
+	afx_msg void OnDelAnim();
 };
 
 extern CAnimationEdApp theApp;
