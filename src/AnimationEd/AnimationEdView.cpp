@@ -317,6 +317,7 @@ bool FrameFunc()
 	hge->Gfx_RenderLine(0,-70,0,70,0xffffffff);
 
 	nowskt->Update();
+	if(nowskt->IsPlaying())g_downview->slider.SetPos(nowskt->GetFrameIndex()+1);
 	nowskt->Render();
 	std::list<hgeBone*>::reverse_iterator ritor;
 	hgeBone* vv;
