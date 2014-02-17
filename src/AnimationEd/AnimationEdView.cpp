@@ -281,7 +281,10 @@ bool FrameFunc()
 			if(abs(hotbone->ControlPoint().GetX() - mx) > 0.01 && abs(hotbone->ControlPoint().GetY() - my) > 0.01)
 			{
 				hgeLine temp(hotbone->ControlPoint().GetX() ,hotbone->ControlPoint().GetY() ,mx - vmx ,my - vmy);
-				hotbone->SetRotate(temp.GetRotate() - M_PI_2);
+				if(editmode)
+					hotbone->SetRotate(temp.GetRotate() - M_PI_2);
+				else
+					hotbone->SetRotateE(temp.GetRotate() - M_PI_2);
 			}
 		}
 		else

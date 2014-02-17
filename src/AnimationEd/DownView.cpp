@@ -29,6 +29,8 @@ void CDownView::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_SLIDER1, slider);
 	DDX_LBIndex(pDX, IDC_LIST1, animidx);
 	DDX_Control(pDX, IDC_LIST1, lbanim);
+	DDX_Control(pDX, IDC_BUTTON1, bplay);
+	DDX_Control(pDX, IDC_BUTTON2, bstop);
 }
 
 BEGIN_MESSAGE_MAP(CDownView, CFormView)
@@ -72,10 +74,9 @@ void CDownView::OnSize(UINT nType, int cx, int cy)
 	if(lbanim)
 	{
 		lbanim.MoveWindow(0,0,130,cy);
-	}
-	if(slider)
-	{
 		slider.MoveWindow(130,(cy - 50)/2,cx-130,50);
+		bplay.MoveWindow(132,0,60,40);
+		bstop.MoveWindow(192,0,60,40);
 	}
 }
 
@@ -87,7 +88,8 @@ void CDownView::OnInitialUpdate()
 	GetClientRect(&rect); // 获取当前客户区view大小
 	lbanim.MoveWindow(0,0,130,rect.Height());
 	slider.MoveWindow(130,(rect.Height() - 50)/2,rect.Width()-130,50);
-
+	bplay.MoveWindow(132,0,60,40);
+	bstop.MoveWindow(192,0,60,40);
 	RefreshData();
 }
 
@@ -98,6 +100,9 @@ void CDownView::RefreshData(int idx)
 	{
 		slider.SetRangeMin(0);
 		slider.SetRangeMax(0);
+		bplay.SetWindowTextW(L"播放");
+		bplay.EnableWindow(false);
+		bstop.EnableWindow(false);
 	}
 	else
 	{
@@ -125,11 +130,17 @@ void CDownView::RefreshData(int idx)
 			slider.SetRangeMin(1);
 			slider.SetRangeMax(nowskt->GetFrameNum());
 			nowskt->SetFrameIndex(0);
+			bplay.SetWindowTextW(L"播放");
+			bplay.EnableWindow(true);
+			bstop.EnableWindow(false);
 		}
 		else
 		{
 			slider.SetRangeMin(0);
 			slider.SetRangeMax(0);
+			bplay.SetWindowTextW(L"播放");
+			bplay.EnableWindow(false);
+			bstop.EnableWindow(false);
 		}
 	}
 }
@@ -143,6 +154,8 @@ void CDownView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	int v;
 	v = slider.GetPos();
 	nowskt->SetFrameIndex(v-1);
+	nowskt->SetPosition(0,0);
+	g_rightview->RefreshProperty();
 }
 
 void CDownView::OnLbnSelchangeList1()
@@ -155,10 +168,17 @@ void CDownView::OnLbnSelchangeList1()
 		slider.SetRangeMin(1);
 		slider.SetRangeMax(nowskt->GetFrameNum());
 		nowskt->SetFrameIndex(0);
+		nowskt->SetPosition(0,0);
+		bplay.SetWindowTextW(L"播放");
+		bplay.EnableWindow(true);
+		bstop.EnableWindow(false);
 	}
 	else
 	{
 		slider.SetRangeMin(0);
 		slider.SetRangeMax(0);
+		bplay.SetWindowTextW(L"播放");
+		bplay.EnableWindow(false);
+		bstop.EnableWindow(false);
 	}
 }

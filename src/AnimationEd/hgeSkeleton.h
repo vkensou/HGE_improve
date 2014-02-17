@@ -155,10 +155,12 @@ public:
 	~hgeBone();
 	hgeBindPoint bind;//用于绑定图片的节点
 	hgeLinePoint control;
-	void SetPosition(float x,float y);
+	void SetPosition(float x,float y,int v = 0);
 	void SetPosition(hgePoint point){SetPosition(point.x,point.y);};
 	void SetLength(float l){length = l;SetPosition(control.GetX(),control.GetY());};
-	void SetRotate(float r,bool v = false);
+	void SetRotate(float r,int v = 0);
+	void SetRotateE(float r);
+	float GetRotateE();
 	float GetX(){return control.GetX();};
 	float GetY(){return control.GetY();};
 	hgeLinePoint& ControlPoint(){return control;}
@@ -167,7 +169,7 @@ public:
 	hgeJoint* AddJoint();
 	bool DelJoint(hgeJoint* joint);
 	int GetJointIndex(hgeJoint* joint);
-	void SetPositionByJoint(hgeJoint *joint,bool v = false);
+	void SetPositionByJoint(hgeJoint *joint,int v = 0);
 	bool BoneBinded(hgeBone *bone,hgeJoint* s = 0);
 	int GetID(){return mid.getid();}
 	bool SetFather(int index,hgeBone* fabone);
@@ -190,13 +192,13 @@ public:
 	int GetFrameIndex(){return frameindex;}
 	void Reload();
 protected:
-	void PositionChanged(bool v);
+	void PositionChanged(int v);
 	void PositionChanged();
 	int father;
 	hgeBone* ftrb;
 	bool fathered(hgeBone*);
 private:
-	void MoveBindBone(hgeJoint* s=0,bool v = false);
+	void MoveBindBone(hgeJoint* s=0,int v = 0);
 	class cid
 	{
 	public:
@@ -218,7 +220,7 @@ private:
 class hgeSkeleton
 {
 public:
-	hgeSkeleton(void){mainbone = 0;x = y = 0;rotate = 0;ox = oy = 0;newestbi = -1;mbidx = -1;animfps = 0;mode = true;frameindex = -1;};
+	hgeSkeleton(void){mainbone = 0;x = y = 0;rotate = 0;ox = oy = 0;newestbi = -1;mbidx = -1;animfps = 0;mode = true;frameindex = -1;animindex = -1;};
 	virtual ~hgeSkeleton(void){};
 	int AddBone();
 	bool DelBone(hgeBone* bone);
@@ -247,7 +249,9 @@ public:
 	};
 	std::vector<anim> anims;
 	//UINT framesnum;
-	UINT animfps;
+	void SetFps(UINT fps);
+	UINT GetFps(){return animfps;}
+	float time;
 	int animindex;
 	int frameindex;
 	bool mode;
@@ -260,5 +264,12 @@ public:
 	UINT GetFrameNum(){if(animindex == -1)return 0;else return anims[animindex].frames.size();}
 	void SetFrameIndex(int index);
 	int GetFrameIndex(){return frameindex;}
-
+	void SetPosition(float x,float y);
+	float GetX(){return x;};
+	float GetY(){return y;};
+	void SetOffset(float x,float y);
+	float GetOX();
+	float GetOY();
+private:
+	UINT animfps;
 };

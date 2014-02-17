@@ -36,6 +36,8 @@ public:
 	int animidx;
 	CListBox lbanim;
 	afx_msg void OnLbnSelchangeList1();
+	CButton bplay;
+	CButton bstop;
 };
 
 

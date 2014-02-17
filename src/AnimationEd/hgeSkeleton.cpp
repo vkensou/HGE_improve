@@ -136,7 +136,7 @@ hgeBone::~hgeBone()
 	joints.clear();
 }
 
-void hgeBone::SetPosition(float x,float y)
+void hgeBone::SetPosition(float x,float y,int v)
 {
 	if(control.GetBasis())
 	{
@@ -152,11 +152,11 @@ void hgeBone::SetPosition(float x,float y)
 		head.x = tail.x - length * cos(rotate);
 		head.y = tail.y - length * sin(rotate);
 	}
-	PositionChanged();
+	PositionChanged(v);
 	return ;
 }
 
-void hgeBone::SetRotate(float r,bool v)
+void hgeBone::SetRotate(float r,int v)
 {
 	if(rotate != r)
 	{
@@ -180,18 +180,38 @@ void hgeBone::SetRotate(float r,bool v)
 	return ;
 }
 
-void hgeBone::SetPositionByJoint(hgeJoint *joint,bool v)
+void hgeBone::SetRotateE(float r)
+{
+	if(animindex >-1 && frameindex >-1)
+	{
+		anims[animindex].at(frameindex) = r;
+		SetRotate(r,true);
+	}
+}
+
+float hgeBone::GetRotateE()
+{
+	if(animindex >-1 && frameindex >-1)
+	{
+		return anims[animindex].at(frameindex);
+	}
+	return 0;
+}
+
+void hgeBone::SetPositionByJoint(hgeJoint *joint,int v)
 {
 	if(!joint)return;
-	if(v)
+
+	if(v == 0)
+		rotate=joint->bindbone->rotate + joint->angle ;
+	else if(v==1)
 	{
 		if(mode || animindex == -1 || frameindex == -1)
 			rotate = yrotate;
 		else
 			rotate = anims[animindex].at(frameindex);
 	}
-	else
-		rotate=joint->bindbone->rotate + joint->angle ;
+	
 	while(rotate>M_2PI)rotate-=M_2PI;
 	while(rotate<0)rotate+=M_2PI;
 
@@ -231,7 +251,7 @@ bool hgeBone::BoneBinded(hgeBone *bone,hgeJoint* s)
 	return false;
 }
 
-void hgeBone::MoveBindBone(hgeJoint* s,bool v)
+void hgeBone::MoveBindBone(hgeJoint* s,int v)
 {
 	for(UINT i = 0; i< joints.size();i++)
 	{
@@ -274,7 +294,7 @@ void hgeBone::PositionChanged()
 };
 
 
-void hgeBone::PositionChanged(bool v)
+void hgeBone::PositionChanged(int v)
 {
 	bind.UpdatePosition();
 	control.UpdatePosition();
@@ -284,7 +304,7 @@ void hgeBone::PositionChanged(bool v)
 	}
 	else
 	{
-		anims[animindex].at(frameindex) = rotate;
+		//anims[animindex].at(frameindex) = rotate;
 	}
 	std::vector<hgeJoint*>::iterator itor;
 	for(itor = joints.begin();itor != joints.end();itor++)
@@ -819,7 +839,7 @@ void hgeBone::Reload()
 		r = yrotate;
 	else
 		r = anims[animindex].at(frameindex);
-	SetRotate(r,true);
+	SetRotate(r,1);
 }
 
 int hgeSkeleton::AddAnim()
@@ -878,4 +898,54 @@ void hgeBone::DelAnim(int index)
 void hgeBone::SetAnimIndex(int index)
 {
 	animindex = index;
+}
+
+void hgeSkeleton::SetPosition(float _x,float _y)
+{
+	x = _x;y = _y;
+	if(mainbone)
+	{
+		if(animindex == -1 || frameindex == -1)
+			mainbone->SetPosition(0,0,2);
+		else
+			mainbone->SetPosition(x + anims[animindex].frames[frameindex].first,y + anims[animindex].frames[frameindex].second,2);
+	}
+}
+
+void hgeSkeleton::SetOffset(float _x,float _y)
+{
+	if(animindex == -1 || frameindex == -1)return;
+
+	anims[animindex].frames[frameindex].first = _x;
+	anims[animindex].frames[frameindex].second = _y;
+
+	ox = _x;oy = _y;
+	if(mainbone)
+		mainbone->SetPosition(x + anims[animindex].frames[frameindex].first,y + anims[animindex].frames[frameindex].second,2);
+}
+
+float hgeSkeleton::GetOX()
+{
+	if(animindex > -1 && frameindex > -1)
+		return anims[animindex].frames[frameindex].first;
+	else
+		return 0;
+
+}
+
+float hgeSkeleton::GetOY()
+{
+	if(animindex > -1 && frameindex > -1)
+		return anims[animindex].frames[frameindex].second;
+	else
+		return 0;
+}
+
+void hgeSkeleton::SetFps(UINT fps)
+{
+	animfps = fps;
+	if(animfps>0)
+		time = 1000 / animfps;
+	else
+		time = 99999999999.f;
 }

@@ -57,7 +57,7 @@ BOOL CAnimEdit::OnInitDialog()
 
 	// TODO:  在此添加额外的初始化
 	fnum = nowskt->GetFrameNum();
-	sfps = nowskt->animfps;
+	sfps = nowskt->GetFps();
 	UpdateData(FALSE);
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 异常: OCX 属性页应返回 FALSE

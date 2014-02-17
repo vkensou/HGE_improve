@@ -56,6 +56,7 @@ void SelectBone(int index,bool s)
 			hotjoint = 0;
 			g_leftview2->RefreshJointList();
 			g_rightview->SetPropertyPage(0);
+			g_rightview->RefreshProperty();
 		}
 		else
 		{
@@ -65,7 +66,8 @@ void SelectBone(int index,bool s)
 				g_leftview->SetIndex(index);
 			hotjoint = 0;
 			g_leftview2->RefreshJointList();
-			g_rightview->SetPropertyPage(0);
+			g_rightview->SetPropertyPage(1);
+			g_rightview->RefreshProperty();
 		}
 	}
 }
