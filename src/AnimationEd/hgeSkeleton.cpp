@@ -1029,9 +1029,9 @@ void hgeSkeleton::SetPosition(float _x,float _y)
 	if(mainbone)
 	{
 		if(animindex == -1 || frameindex == -1)
-			mainbone->SetPosition(0,0,2);
+			mainbone->SetPosition(0,0,-1);
 		else
-			mainbone->SetPosition(x + ox,y + oy,2);
+			mainbone->SetPosition(x + ox,y + oy,-1);
 	}
 }
 
@@ -1044,7 +1044,7 @@ void hgeSkeleton::SetOffset(float _x,float _y)
 
 	ox = _x;oy = _y;
 	if(mainbone)
-		mainbone->SetPosition(x + anims[animindex].frames[frameindex].first,y + anims[animindex].frames[frameindex].second,2);
+		mainbone->SetPosition(x + anims[animindex].frames[frameindex].first,y + anims[animindex].frames[frameindex].second,-1);
 }
 
 float hgeSkeleton::GetOX()

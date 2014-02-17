@@ -216,7 +216,10 @@ void CAnimationEdApp::OnNewAnim()
 void CAnimationEdApp::OnNewSkeleton()
 {
 	// TODO: 在此添加命令处理程序代码
-	
+	SelectBone(-1,true);
+	g_leftview->bonelist.ResetContent();
+	delete nowskt ;
+	nowskt = new hgeSkeleton;
 }
 
 void CAnimationEdApp::OnNewBone()
