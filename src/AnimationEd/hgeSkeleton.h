@@ -1,10 +1,13 @@
 #pragma once
 #include "hge.h"
 #include "showbase.h"
+#include "hgetimer.h"
 #include <vector>
 #include <list>
 #include <cmath>
 #include <map>
+#include "showpicturedata.h"
+#include "showslicedpicture.h"
 
 using namespace Show;
 
@@ -83,6 +86,7 @@ public:
 	void SetRelative(float r);
 	void SetAbsolute(float a);
 	void SetBasis(bool b);
+	bool GetTra(){return tra;}
 	float GetRelative(){return r;}
 	float GetAbsolute(){return a;}
 	bool GetBasis(){return k;}
@@ -139,6 +143,7 @@ public:
 	}
 	Base *part;
 	void PositionChanged();
+	UINT ls;
 protected:
 	float hscale,vscale;//缩放系数，可用于镜像
 	float ox,oy;//偏移
@@ -148,17 +153,17 @@ protected:
 class hgeBone:public hgeLine
 {
 public:
-	hgeBone():hgeLine(),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;animindex = -1;};
-	hgeBone(float x1,float y1,float x2,float y2):hgeLine(x1,y1,x2,y2),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;animindex = -1;};
-	hgeBone(hgePoint point1,hgePoint point2):hgeLine(point1,point2),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;animindex = -1;};
-	hgeBone(int id):hgeLine(),bind(this),control(this),mid(id){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;animindex = -1;};
+	hgeBone():hgeLine(),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;animindex = -1;dj = 0.f;};
+	hgeBone(float x1,float y1,float x2,float y2):hgeLine(x1,y1,x2,y2),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;animindex = -1;dj = 0.f;};
+	hgeBone(hgePoint point1,hgePoint point2):hgeLine(point1,point2),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;animindex = -1;dj = 0.f;};
+	hgeBone(int id):hgeLine(),bind(this),control(this),mid(id){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;animindex = -1;dj = 0.f;};
 	~hgeBone();
 	hgeBindPoint bind;//用于绑定图片的节点
 	hgeLinePoint control;
 	void SetPosition(float x,float y,int v = 0);
 	void SetPosition(hgePoint point){SetPosition(point.x,point.y);};
 	void SetLength(float l){length = l;SetPosition(control.GetX(),control.GetY());};
-	void SetRotate(float r,int v = 0);
+	void SetRotate(float r,int v = 0,float s = 0);
 	void SetRotateE(float r);
 	float GetRotateE();
 	float GetX(){return control.GetX();};
@@ -169,7 +174,7 @@ public:
 	hgeJoint* AddJoint();
 	bool DelJoint(hgeJoint* joint);
 	int GetJointIndex(hgeJoint* joint);
-	void SetPositionByJoint(hgeJoint *joint,int v = 0);
+	void SetPositionByJoint(hgeJoint *joint,int v = 0,float s = 0);
 	bool BoneBinded(hgeBone *bone,hgeJoint* s = 0);
 	int GetID(){return mid.getid();}
 	bool SetFather(int index,hgeBone* fabone);
@@ -191,14 +196,16 @@ public:
 	void SetFrameIndex(int index);
 	int GetFrameIndex(){return frameindex;}
 	void Reload();
+	void Update(float p);
+	//void Render();
 protected:
-	void PositionChanged(int v);
+	void PositionChanged(int v = 0,float s = 0);
 	void PositionChanged();
 	int father;
 	hgeBone* ftrb;
 	bool fathered(hgeBone*);
 private:
-	void MoveBindBone(hgeJoint* s=0,int v = 0);
+	void MoveBindBone(hgeJoint* s=0,int v = 0,float x = 0);
 	class cid
 	{
 	public:
@@ -212,6 +219,7 @@ private:
 	};
 	cid mid;
 	bool mode;
+	float dj;
 };
 
 
@@ -220,8 +228,8 @@ private:
 class hgeSkeleton
 {
 public:
-	hgeSkeleton(void){mainbone = 0;x = y = 0;rotate = 0;ox = oy = 0;newestbi = -1;mbidx = -1;animfps = 0;mode = true;frameindex = -1;animindex = -1;};
-	virtual ~hgeSkeleton(void){};
+	hgeSkeleton(void){mainbone = 0;x = y = 0;rotate = 0;ox = oy = 0;newestbi = -1;mbidx = -1;mode = true;frameindex = -1;animindex = -1;bplaying =false;dat = new PictureData();dox = doy = 0;};
+	virtual ~hgeSkeleton(void){delete dat;};
 	int AddBone();
 	bool DelBone(hgeBone* bone);
 	//std::map<int,hgeBone*>bones;
@@ -245,12 +253,14 @@ public:
 	class anim
 	{
 	public:
+		anim(){fps = 0;}
 		std::vector<std::pair<float,float>>frames;
+		UINT fps;
 	};
 	std::vector<anim> anims;
 	//UINT framesnum;
 	void SetFps(UINT fps);
-	UINT GetFps(){return animfps;}
+	UINT GetFps(){if(animindex == -1)return 0;else return anims[animindex].fps;}
 	float time;
 	int animindex;
 	int frameindex;
@@ -270,6 +280,15 @@ public:
 	void SetOffset(float x,float y);
 	float GetOX();
 	float GetOY();
+	void Render();
+	void Play();
+	void Stop();
+	void Update();
+	bool IsPlaying(){return bplaying;}
+	PictureData *dat;
+	void Rec();
 private:
-	UINT animfps;
+	bool bplaying;
+	hgeTimer timer;
+	float dox,doy;
 };

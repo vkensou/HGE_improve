@@ -37,6 +37,8 @@ BEGIN_MESSAGE_MAP(CDownView, CFormView)
 	ON_WM_SIZE()
 	ON_WM_HSCROLL()
 	ON_LBN_SELCHANGE(IDC_LIST1, &CDownView::OnLbnSelchangeList1)
+	ON_BN_CLICKED(IDC_BUTTON1, &CDownView::OnBnClickedButton1)
+	ON_BN_CLICKED(IDC_BUTTON2, &CDownView::OnBnClickedButton2)
 END_MESSAGE_MAP()
 
 
@@ -178,6 +180,42 @@ void CDownView::OnLbnSelchangeList1()
 		slider.SetRangeMin(0);
 		slider.SetRangeMax(0);
 		bplay.SetWindowTextW(L"播放");
+		bplay.EnableWindow(false);
+		bstop.EnableWindow(false);
+	}
+}
+
+void CDownView::OnBnClickedButton1()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	nowskt->Play();
+	psbr();
+}
+
+void CDownView::OnBnClickedButton2()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	nowskt->Stop();
+	psbr();
+}
+
+void CDownView::psbr()
+{
+	if(nowskt->GetFrameNum()>0)
+	{
+		if(nowskt->IsPlaying())
+		{
+			bplay.EnableWindow(false);
+			bstop.EnableWindow(true);
+		}
+		else
+		{
+			bplay.EnableWindow(true);
+			bstop.EnableWindow(false);
+		}
+	}
+	else
+	{
 		bplay.EnableWindow(false);
 		bstop.EnableWindow(false);
 	}

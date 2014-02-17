@@ -32,4 +32,6 @@ public:
 	afx_msg void OnCbnSelchangeCombo1();
 	CString picname;
 	afx_msg void OnBnClickedButton3();
+	afx_msg void OnBnClickedButton4();
+	afx_msg void OnBnClickedButton5();
 };

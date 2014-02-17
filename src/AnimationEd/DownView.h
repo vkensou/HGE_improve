@@ -38,6 +38,9 @@ public:
 	afx_msg void OnLbnSelchangeList1();
 	CButton bplay;
 	CButton bstop;
+	afx_msg void OnBnClickedButton1();
+	afx_msg void OnBnClickedButton2();
+	void psbr();
 };
 
 

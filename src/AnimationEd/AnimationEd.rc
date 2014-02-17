@@ -128,7 +128,6 @@ BEGIN
     POPUP "文件(&F)"
     BEGIN
         MENUITEM "新建骨骼",                        ID_NEW_SKELETON
-        MENUITEM "新建动画",                        ID_NEW_ANIM
         MENUITEM "保存骨骼",                        ID_SAVE_SKELETON
         MENUITEM "打开骨骼",                        ID_LOAD_SKELETON
         MENUITEM "退出(&X)",                      ID_APP_EXIT
@@ -274,6 +273,8 @@ BEGIN
     LTEXT           "静态",IDC_PICNAME,102,24,78,12
     PUSHBUTTON      "图片",IDC_BUTTON3,138,48,42,18
     COMBOBOX        IDC_COMBO1,0,132,84,18,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "解除",IDC_BUTTON4,132,120,48,24
+    PUSHBUTTON      "恢复",IDC_BUTTON5,215,47,48,21
 END
 
 IDD_ANIM_EDIT DIALOGEX 0, 0, 316, 183

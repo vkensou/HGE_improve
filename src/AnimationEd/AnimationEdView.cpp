@@ -313,13 +313,14 @@ bool FrameFunc()
 	hge->Gfx_RenderLine(-70,0,70,0,0xffffffff);
 	hge->Gfx_RenderLine(0,-70,0,70,0xffffffff);
 
+	nowskt->Update();
+	nowskt->Render();
 	std::list<hgeBone*>::reverse_iterator ritor;
 	hgeBone* vv;
 	for(ritor = nowskt->bones.rbegin();ritor != nowskt->bones.rend();ritor++)
 	{
 		vv = *ritor;
 		hge->Gfx_RenderLine(vv->GetHeadX(),vv->GetHeadY(),vv->GetTailX(),vv->GetTailY(),0xffffffff);
-		vv->bind.Render();
 	}
 
 	if(hotbone)

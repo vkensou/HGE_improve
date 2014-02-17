@@ -42,6 +42,8 @@ BEGIN_MESSAGE_MAP(CBindShow, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON1, &CBindShow::OnBnClickedButton1)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &CBindShow::OnCbnSelchangeCombo1)
 	ON_BN_CLICKED(IDC_BUTTON3, &CBindShow::OnBnClickedButton3)
+	ON_BN_CLICKED(IDC_BUTTON4, &CBindShow::OnBnClickedButton4)
+	ON_BN_CLICKED(IDC_BUTTON5, &CBindShow::OnBnClickedButton5)
 END_MESSAGE_MAP()
 
 
@@ -90,10 +92,10 @@ void CBindShow::OnBnClickedButton2()
 	{
 		UpdateData(TRUE);
         filename = dlgFile.GetFileName();
-		dat->LoadData(dlgFile.GetPathName());
+		nowskt->dat->LoadData(dlgFile.GetPathName());
 		cbindex.ResetContent();
 		CString k;
-		for(UINT i = 0 ;i < dat->slices.size();i++)
+		for(UINT i = 0 ;i < nowskt->dat->slices.size();i++)
 		{
 			k.Format(L"%d",i+1);
 			cbindex.AddString(k);
@@ -111,8 +113,8 @@ void CBindShow::OnBnClickedButton3()
 	{
 		UpdateData(TRUE);
 		picname = dlgFile.GetFileName();
-		if(dat->tex)hge->Texture_Free(dat->tex);
-		dat->tex = hge->Texture_Load(dlgFile.GetPathName());
+		if(nowskt->dat->tex)hge->Texture_Free(nowskt->dat->tex);
+		nowskt->dat->tex = hge->Texture_Load(dlgFile.GetPathName());
 	}
 	UpdateData(FALSE);
 }
@@ -130,7 +132,7 @@ void CBindShow::OnBnClickedButton1()
 	//	{
 			hotbone->BindPoint().part = new SlicedPicture();
 			SlicedPicture* p = (SlicedPicture*)hotbone->bind.part;
-			p->SetPictureData(dat);
+			p->SetPictureData(nowskt->dat);
 			p->SetSliceIndex(cbindex.GetCurSel()+1);
 	//		break;
 	//	}
@@ -167,3 +169,18 @@ void CBindShow::OnCbnSelchangeCombo1()
 	//}
 }
 
+
+void CBindShow::OnBnClickedButton4()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	if(!hotbone)return ;
+	delete hotbone->BindPoint().part;
+	hotbone->BindPoint().part = 0;
+}
+
+
+void CBindShow::OnBnClickedButton5()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	nowskt->Rec();
+}

@@ -156,7 +156,7 @@ void hgeBone::SetPosition(float x,float y,int v)
 	return ;
 }
 
-void hgeBone::SetRotate(float r,int v)
+void hgeBone::SetRotate(float r,int v,float s)
 {
 	if(rotate != r)
 	{
@@ -176,7 +176,7 @@ void hgeBone::SetRotate(float r,int v)
 			head.y = tail.y - length * sin(rotate);
 		}
 	}
-	PositionChanged(v);
+	PositionChanged(v,s);
 	return ;
 }
 
@@ -185,7 +185,7 @@ void hgeBone::SetRotateE(float r)
 	if(animindex >-1 && frameindex >-1)
 	{
 		anims[animindex].at(frameindex) = r;
-		SetRotate(r,true);
+		SetRotate(r,2);
 	}
 }
 
@@ -198,7 +198,7 @@ float hgeBone::GetRotateE()
 	return 0;
 }
 
-void hgeBone::SetPositionByJoint(hgeJoint *joint,int v)
+void hgeBone::SetPositionByJoint(hgeJoint *joint,int v,float s)
 {
 	if(!joint)return;
 
@@ -211,7 +211,16 @@ void hgeBone::SetPositionByJoint(hgeJoint *joint,int v)
 		else
 			rotate = anims[animindex].at(frameindex);
 	}
-	
+	else if(v==2)
+	{
+		rotate=joint->bindbone->rotate + joint->angle ;
+		if(!mode && animindex != -1 && frameindex != -1)
+			anims[animindex].at(frameindex) = rotate;
+	}
+	else if(v==3)
+	{
+		rotate = anims[animindex].at(frameindex) + s * dj;
+	}
 	while(rotate>M_2PI)rotate-=M_2PI;
 	while(rotate<0)rotate+=M_2PI;
 
@@ -251,7 +260,7 @@ bool hgeBone::BoneBinded(hgeBone *bone,hgeJoint* s)
 	return false;
 }
 
-void hgeBone::MoveBindBone(hgeJoint* s,int v)
+void hgeBone::MoveBindBone(hgeJoint* s,int v,float x)
 {
 	for(UINT i = 0; i< joints.size();i++)
 	{
@@ -266,7 +275,9 @@ void hgeBone::MoveBindBone(hgeJoint* s,int v)
 			else
 			{	
 				joints[i]->bindjoint->SetXY(joints[i]->GetX(),joints[i]->GetY());
-				joints[i]->bindbone->SetPositionByJoint(joints[i]->bindjoint,v);
+				joints[i]->bindbone->SetPositionByJoint(joints[i]->bindjoint,v,x);
+				joints[i]->angle = NeedRotateFrom(joints[i]->bindbone);
+				joints[i]->bindjoint->angle = -joints[i]->angle;
 				//joints[i]->bindbone->SetRotate(bone->GetRotate()+joints[i]->angle);
 			}
 		}
@@ -294,7 +305,7 @@ void hgeBone::PositionChanged()
 };
 
 
-void hgeBone::PositionChanged(int v)
+void hgeBone::PositionChanged(int v,float s)
 {
 	bind.UpdatePosition();
 	control.UpdatePosition();
@@ -311,7 +322,7 @@ void hgeBone::PositionChanged(int v)
 	{
 		(*itor)->UpdatePosition(false);
 	}
-	MoveBindBone(0,v);
+	MoveBindBone(0,v,s);
 };
 
 hgePoint hgeBone::GetOtherPoint()
@@ -415,6 +426,7 @@ int hgeSkeleton::AddBone()
 	for(int i = 0 ;i<anims.size();i++)
 	{
 		nb->AddAnim();
+		nb->SetAnimIndex(anims.size()-1);
 		nb->SetFrameNum(anims[i].frames.size());
 	}
 	return nb->GetID();
@@ -532,7 +544,7 @@ bool hgeSkeleton::DelBone(hgeBone* bone)
 bool hgeSkeleton::Save(const wchar_t* path)
 {
 	FILE *f = _wfopen(path,L"w");
-	UINT sz = bones.size();
+	UINT sz = bones.size(),sz3,sz4;
 	int t;bool bt;float ft;
 	fwrite(&sz,sizeof(sz),1,f);
 
@@ -547,6 +559,8 @@ bool hgeSkeleton::Save(const wchar_t* path)
 		//存控制点信息
 		bt = tb->ControlPoint().GetBasis();
 		fwrite(&bt,sizeof(bt),1,f);
+		bt = tb->ControlPoint().GetTra();
+		fwrite(&bt,sizeof(bt),1,f);
 		if(bt)
 		{
 			ft = tb->ControlPoint().GetRelative();
@@ -559,6 +573,8 @@ bool hgeSkeleton::Save(const wchar_t* path)
 
 		//存绑定点信息
 		bt = tb->BindPoint().GetBasis();
+		fwrite(&bt,sizeof(bt),1,f);
+		bt = tb->BindPoint().GetTra();
 		fwrite(&bt,sizeof(bt),1,f);
 		if(bt)
 		{
@@ -579,7 +595,8 @@ bool hgeSkeleton::Save(const wchar_t* path)
 			fwrite(&ft,sizeof(ft),1,f);
 			ft = tb->BindPoint().GetRotation();
 			fwrite(&ft,sizeof(ft),1,f);
-			t = 0;
+			SlicedPicture* p = (SlicedPicture*)tb->BindPoint().part;
+			t = p->GetSliceIndex();
 			fwrite(&t,sizeof(t),1,f);
 		}
 		ft = tb->GetHeadX();
@@ -597,6 +614,8 @@ bool hgeSkeleton::Save(const wchar_t* path)
 		for(UINT i = 0;i<tb->joints.size();i++)
 		{
 			bt = tb->joints[i]->GetBasis();
+			fwrite(&bt,sizeof(bt),1,f);
+			bt = tb->joints[i]->GetTra();
 			fwrite(&bt,sizeof(bt),1,f);
 			if(bt)
 			{
@@ -622,7 +641,39 @@ bool hgeSkeleton::Save(const wchar_t* path)
 				fwrite(&t,sizeof(t),1,f);
 			}
 		}
+		sz3 = tb->anims.size();
+		fwrite(&sz3,sizeof(sz3),1,f);
+		for(UINT k = 0;k<sz3;k++)
+		{
+			sz4 = tb->anims[k].size();
+			fwrite(&sz4,sizeof(sz4),1,f);
+			for(UINT j = 0;j<sz4;j++)
+			{
+				ft = tb->anims[k].at(j);
+				fwrite(&ft,sizeof(ft),1,f);
+			}
+		}
 	}
+	sz3 = anims.size();
+	fwrite(&sz3,sizeof(sz3),1,f);
+	for(UINT k = 0;k<sz3;k++)
+	{
+		ft = anims[k].fps ;
+		fwrite(&ft,sizeof(ft),1,f);
+		sz4 = anims[k].frames.size();
+		fwrite(&sz4,sizeof(sz4),1,f);
+		for(UINT j = 0;j<sz4;j++)
+		{
+			ft = anims[k].frames[j].first ;
+			fwrite(&ft,sizeof(ft),1,f);
+			ft = anims[k].frames[j].second ;
+			fwrite(&ft,sizeof(ft),1,f);
+		}
+	}
+	t = -1;
+	if(mainbone)
+		t = mainbone->GetID();
+	fwrite(&t,sizeof(t),1,f);
 	fclose(f);
 	return true;
 }
@@ -630,7 +681,7 @@ bool hgeSkeleton::Save(const wchar_t* path)
 bool hgeSkeleton::Load(const wchar_t* path)
 {
 	FILE *f = _wfopen(path,L"r");
-	UINT sz,sz2;
+	UINT sz,sz2,sz3,sz4;
 	int t;bool bt;float ft,ft2;
 	fread(&sz,sizeof(sz),1,f);
 	bones.clear();
@@ -641,15 +692,17 @@ bool hgeSkeleton::Load(const wchar_t* path)
 		tb = new hgeBone(t);
 		bones.push_back(tb);
 		fread(&bt,sizeof(bt),1,f);
-		fread(&ft,sizeof(ft),1,f);
 		tb->ControlPoint().SetBasis(bt);
+		fread(&bt,sizeof(bt),1,f);
+		fread(&ft,sizeof(ft),1,f);
 		if(bt)
 			tb->ControlPoint().SetRelative(ft);
 		else
 			tb->ControlPoint().SetAbsolute(ft);
 		fread(&bt,sizeof(bt),1,f);
-		fread(&ft,sizeof(ft),1,f);
 		tb->BindPoint().SetBasis(bt);
+		fread(&bt,sizeof(bt),1,f);
+		fread(&ft,sizeof(ft),1,f);
 		if(bt)
 			tb->BindPoint().SetRelative(ft);
 		else
@@ -663,6 +716,10 @@ bool hgeSkeleton::Load(const wchar_t* path)
 			fread(&ft,sizeof(ft),1,f);
 			tb->BindPoint().SetRotation(ft);
 			fread(&t,sizeof(t),1,f);
+			tb->BindPoint().part = new SlicedPicture();
+			SlicedPicture* p = (SlicedPicture*)tb->bind.part;
+			p->SetPictureData(dat);
+			tb->BindPoint().ls = t;
 		}
 		fread(&ft,sizeof(ft),1,f);
 		fread(&ft2,sizeof(ft2),1,f);
@@ -678,8 +735,9 @@ bool hgeSkeleton::Load(const wchar_t* path)
 			tj = new hgeJoint(tb);
 			tb->joints.push_back(tj);
 			fread(&bt,sizeof(bt),1,f);
-			fread(&ft,sizeof(ft),1,f);
 			tj->SetBasis(bt);
+			fread(&bt,sizeof(bt),1,f);
+			fread(&ft,sizeof(ft),1,f);
 			if(bt)
 				tj->SetRelative(ft);
 			else
@@ -694,7 +752,44 @@ bool hgeSkeleton::Load(const wchar_t* path)
 				tj->angle = ft;
 			}
 		}
+		fread(&sz3,sizeof(sz3),1,f);
+		for(UINT k = 0;k<sz3;k++)
+		{
+			tb->AddAnim();
+			tb->SetAnimIndex(tb->anims.size()-1);
+			fread(&sz4,sizeof(sz4),1,f);
+			tb->SetFrameNum(sz4);
+			for(UINT j = 0;j<sz4;j++)
+			{
+				fread(&ft,sizeof(ft),1,f);
+				tb->anims[k].at(j) = ft;
+			}
+		}
 	}
+
+	fread(&sz3,sizeof(sz3),1,f);
+	for(UINT k = 0;k<sz3;k++)
+	{
+		anims.push_back(hgeSkeleton::anim());
+		animindex = anims.size()-1;
+		fread(&ft,sizeof(ft),1,f);
+		anims[k].fps = ft;
+		fread(&sz4,sizeof(sz4),1,f);
+		for(UINT j = 0;j<sz4;j++)
+		{
+			anims[k].frames.push_back(std::pair<float,float>(0.f,0.f));
+			fread(&ft,sizeof(ft),1,f);
+			anims[k].frames[j].first = ft;
+			fread(&ft,sizeof(ft),1,f);
+			anims[k].frames[j].second = ft;
+
+		}
+	}
+
+
+	fread(&t,sizeof(t),1,f);
+	mbidx = t;
+
 	fclose(f);
 
 	std::list<hgeBone*>::iterator itor;
@@ -711,7 +806,8 @@ bool hgeSkeleton::Load(const wchar_t* path)
 			}
 		}
 	}
-
+	if(mbidx>-1)
+		mainbone = GetBoneFromID(mbidx);
 	return true;
 }
 
@@ -825,11 +921,32 @@ void hgeSkeleton::SetFrameIndex(int index)
 	}
 	if(mainbone)
 		mainbone->Reload();
+	if(frameindex>-1)
+	{
+		int v = frameindex + 1 >=anims[animindex].frames.size()?0:frameindex + 1;
+		ox = anims[animindex].frames[frameindex].first;
+		oy = anims[animindex].frames[frameindex].second;
+		dox = anims[animindex].frames[v].first - anims[animindex].frames[frameindex].first;
+		doy = anims[animindex].frames[v].second - anims[animindex].frames[frameindex].second;
+	}
 }
 
 void hgeBone::SetFrameIndex(int index)
 {
 	frameindex = index;
+	if(animindex != -1 && frameindex!=-1)
+	{
+		UINT v = frameindex + 1;
+		if(v+1>anims[animindex].size())v = 0;
+		dj = anims[animindex].at(v) - anims[animindex].at(frameindex);
+	}
+	else
+		dj = 0.f;
+}
+
+void hgeBone::Update(float p)
+{
+	SetRotate(anims[animindex].at(frameindex) + p * dj,3,p);
 }
 
 void hgeBone::Reload()
@@ -881,6 +998,12 @@ void hgeSkeleton::SetAnimIndex(int index)
 		nn->SetAnimIndex(index);
 		nn->SetFrameIndex(-1);
 	}
+
+	if(animindex>-1 && anims[animindex].fps>0)
+		time = 1000.f / (float)anims[animindex].fps;
+	else
+		time = 99999999999.f;
+
 }
 
 void hgeBone::AddAnim()
@@ -908,7 +1031,7 @@ void hgeSkeleton::SetPosition(float _x,float _y)
 		if(animindex == -1 || frameindex == -1)
 			mainbone->SetPosition(0,0,2);
 		else
-			mainbone->SetPosition(x + anims[animindex].frames[frameindex].first,y + anims[animindex].frames[frameindex].second,2);
+			mainbone->SetPosition(x + ox,y + oy,2);
 	}
 }
 
@@ -930,7 +1053,6 @@ float hgeSkeleton::GetOX()
 		return anims[animindex].frames[frameindex].first;
 	else
 		return 0;
-
 }
 
 float hgeSkeleton::GetOY()
@@ -941,11 +1063,82 @@ float hgeSkeleton::GetOY()
 		return 0;
 }
 
-void hgeSkeleton::SetFps(UINT fps)
+void hgeSkeleton::SetFps(UINT _fps)
 {
-	animfps = fps;
-	if(animfps>0)
-		time = 1000 / animfps;
+	if(animindex == -1)return;
+	anims[animindex].fps = _fps;
+	if(anims[animindex].fps>0)
+		time = 1000.f / (float)anims[animindex].fps;
 	else
 		time = 99999999999.f;
+}
+
+void hgeSkeleton::Render()
+{
+	std::list<hgeBone*>::reverse_iterator ritor;
+	hgeBone* vv;
+	for(ritor = bones.rbegin();ritor != bones.rend();ritor++)
+	{
+		vv = *ritor;
+		vv->BindPoint().Render();
+	}
+}
+
+void hgeSkeleton::Play()
+{
+	if(animindex!=-1 && GetFrameNum()>0)
+	{
+		bplaying = true;
+		timer.StartTick();
+		SetFrameIndex(0);
+	}
+	else
+	{
+		bplaying = false;
+		timer.StopTick();
+	}
+}
+
+void hgeSkeleton::Stop()
+{
+	bplaying = false;
+	timer.StopTick();
+	dox = doy = 0;
+}
+
+void hgeSkeleton::Update()
+{
+	if(!bplaying)return;
+	float t = (float)timer.NowTick();
+	if(t>time)
+	{
+		if(GetFrameIndex() + 1 >= GetFrameNum())
+			SetFrameIndex(0);
+		else
+			SetFrameIndex(GetFrameIndex()+1);
+		timer.StartTick();
+		t = 0;
+	}
+		
+	if(mainbone)
+		mainbone->Update(t/time);
+	ox = anims[animindex].frames[frameindex].first + dox * (t/time) ;
+	oy = anims[animindex].frames[frameindex].second + doy * (t/time);
+	SetPosition(x,y);
+}
+
+void hgeSkeleton::Rec()
+{
+	std::list<hgeBone*>::reverse_iterator ritor;
+	hgeBone* vv;
+	for(ritor = bones.rbegin();ritor != bones.rend();ritor++)
+	{
+		vv = *ritor;
+		if(vv->BindPoint().part)
+		{
+			SlicedPicture* p = (SlicedPicture*)vv->BindPoint().part;
+			p->SetPictureData(dat);
+			p->SetSliceIndex(vv->BindPoint().ls);
+		}
+	}
 }

@@ -13,4 +13,3 @@ extern hgeJoint *hotjoint;
 extern hgeBone *over;
 extern hgeJoint *overj;
 
-extern Show::PictureData *dat;

@@ -327,6 +327,7 @@ void CAnimationEdApp::OnChangemode()
 	nowskt->SetMode(editmode);
 	g_downview->RefreshData();
 	mode = 0;
+	nowskt->Stop();
 	if(editmode)
 	{
 		AfxGetMainWnd()->SetWindowTextW(L"¶¯»­±à¼­Æ÷ - ¹Ç÷ÀÄ£Ê½");
