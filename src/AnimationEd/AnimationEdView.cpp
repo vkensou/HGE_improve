@@ -11,6 +11,8 @@
 #include "globaldata_animall.h"
 #include "globaldata_view.h"
 
+#include "hgefont2.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -27,6 +29,7 @@ BEGIN_MESSAGE_MAP(CAnimationEdView, CView)
 END_MESSAGE_MAP()
 
 // CAnimationEdView 构造/析构
+hgeFont2 *fnt=0;
 
 CAnimationEdView::CAnimationEdView()
 {
@@ -309,7 +312,7 @@ bool FrameFunc()
 
 	hge->Gfx_BeginScene();
 	hge->Gfx_Clear(0);
-
+	hge->Gfx_SetTransform(0,0,ox,oy,0.f,os,os);
 	hge->Gfx_RenderLine(-70,0,70,0,0xffffffff);
 	hge->Gfx_RenderLine(0,-70,0,70,0xffffffff);
 
@@ -387,6 +390,8 @@ bool FrameFunc()
 		hge->Gfx_RenderLine(x,y-4,x+4,y+4,0xffffff00);
 		hge->Gfx_RenderLine(x-4,y+4,x+4,y+4,0xffffff00);
 	}
+	hge->Gfx_SetTransform(0,0,0,0,0.f,1,1);
+	fnt->Print(0,0,0,L"FPS:%d" ,hge->Timer_GetFPS());
 	hge->Gfx_EndScene();
 	return false;
 }
@@ -428,6 +433,7 @@ void CAnimationEdView::OnInitialUpdate()
 	}
 	ox = rect.Width()/2;oy = rect.Height()/2;
 	hge->Gfx_SetTransform(0,0,ox,oy,0.f,os,os);
+	fnt = new hgeFont2(L"宋体",12);
 }
 
 void CAnimationEdView::OnDestroy()
@@ -437,6 +443,7 @@ void CAnimationEdView::OnDestroy()
 	// TODO: 在此处添加消息处理程序代码
 	if ( hge!=0 )
 	{
+		delete fnt;
 		hge->System_Shutdown();
 		hge->Release();
 		hge = 0;
