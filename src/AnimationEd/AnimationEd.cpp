@@ -205,7 +205,9 @@ BOOL CAnimationEdApp::OnIdle(LONG lCount)
 {
 	// TODO: 在此添加专用代码和/或调用基类
 	if(hge)hge->System_Start();
-	return CWinAppEx::OnIdle(lCount);
+	if(CWinAppEx::OnIdle(lCount))
+		return TRUE;
+	return TRUE;
 }
 
 void CAnimationEdApp::OnNewAnim()

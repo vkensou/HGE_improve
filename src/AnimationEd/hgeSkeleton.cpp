@@ -717,6 +717,8 @@ bool hgeSkeleton::Load(const wchar_t* path)
 			tb->BindPoint().SetRotation(ft);
 			fread(&t,sizeof(t),1,f);
 			tb->BindPoint().part = new SlicedPicture();
+			tb->BindPoint().SetScale(tb->BindPoint().GetHScale(),tb->BindPoint().GetVScale());
+			tb->BindPoint().SetRotation(tb->BindPoint().GetRotation());
 			SlicedPicture* p = (SlicedPicture*)tb->bind.part;
 			p->SetPictureData(dat);
 			tb->BindPoint().ls = t;
