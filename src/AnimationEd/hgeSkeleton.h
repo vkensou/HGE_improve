@@ -125,7 +125,7 @@ protected:
 class hgeBindPoint:public hgeLinePoint
 {
 public:
-	hgeBindPoint(hgeLine *hostline):hgeLinePoint(hostline){part = 0;hscale = vscale = 1.f;rotate = 0;}
+	hgeBindPoint(hgeLine *hostline):hgeLinePoint(hostline){part = 0;hscale = vscale = 1.f;rotate = 0;hscale2 = vscale2 = 1.f;}
 	~hgeBindPoint(){delete part;}
 	hgeBone *bone;//表明所属的骨头
 	void SetScale(float hscale=1.0f, float vscale=0.0f);
@@ -133,6 +133,11 @@ public:
 	float GetRotation(){return rotate;}
 	float GetHScale(){return hscale;}
 	float GetVScale(){return vscale;}
+
+	void SetScale2(float hscale=1.0f, float vscale=0.0f);
+	float GetHScale2(){return hscale2;}
+	float GetVScale2(){return vscale2;}
+
 	void Update(){}
 	void Render()
 	{
@@ -148,15 +153,16 @@ protected:
 	float hscale,vscale;//缩放系数，可用于镜像
 	float ox,oy;//偏移
 	float rotate;//旋转
+	float hscale2,vscale2;//缩放系数，可用于镜像
 };
 
 class hgeBone:public hgeLine
 {
 public:
-	hgeBone():hgeLine(),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;animindex = -1;dj = 0.f;};
-	hgeBone(float x1,float y1,float x2,float y2):hgeLine(x1,y1,x2,y2),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;animindex = -1;dj = 0.f;};
-	hgeBone(hgePoint point1,hgePoint point2):hgeLine(point1,point2),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;animindex = -1;dj = 0.f;};
-	hgeBone(int id):hgeLine(),bind(this),control(this),mid(id){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;animindex = -1;dj = 0.f;};
+	hgeBone():hgeLine(),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;animindex = -1;dj = 0.f;er = 0;scale = 1;hflip = vflip = true;};
+	hgeBone(float x1,float y1,float x2,float y2):hgeLine(x1,y1,x2,y2),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;animindex = -1;dj = 0.f;er = 0;scale = 1;hflip = vflip = true;};
+	hgeBone(hgePoint point1,hgePoint point2):hgeLine(point1,point2),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;animindex = -1;dj = 0.f;er = 0;scale = 1;hflip = vflip = true;};
+	hgeBone(int id):hgeLine(),bind(this),control(this),mid(id){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;animindex = -1;dj = 0.f;er = 0;scale = 1;hflip = vflip = true;};
 	~hgeBone();
 	hgeBindPoint bind;//用于绑定图片的节点
 	hgeLinePoint control;
@@ -198,6 +204,9 @@ public:
 	void Reload();
 	void Update(float p);
 	//void Render();
+	void SetRotateX(float rot);
+	void SetScaleX(float h,float v);
+
 protected:
 	void PositionChanged(int v = 0,float s = 0);
 	void PositionChanged();
@@ -220,6 +229,9 @@ private:
 	cid mid;
 	bool mode;
 	float dj;
+	float er;
+	float scale;
+	bool hflip,vflip;
 };
 
 
@@ -228,7 +240,7 @@ private:
 class hgeSkeleton
 {
 public:
-	hgeSkeleton(void){mainbone = 0;x = y = 0;rotate = 0;ox = oy = 0;newestbi = -1;mbidx = -1;mode = true;frameindex = -1;animindex = -1;bplaying =false;dat = new PictureData();dox = doy = 0;};
+	hgeSkeleton(void){mainbone = 0;x = y = 0;rotate = 0;hscale = vscale = 1; ox = oy = 0;newestbi = -1;mbidx = -1;mode = true;frameindex = -1;animindex = -1;bplaying =false;dat = new PictureData();dox = doy = 0;};
 	virtual ~hgeSkeleton(void){delete dat;};
 	int AddBone();
 	bool DelBone(hgeBone* bone);
@@ -246,7 +258,6 @@ public:
 	int mbidx;
 	//骨骼中心点的位置
 	float x,y;
-	float rotate;
 	//主骨头的控制点与中心点的偏移量
 	float ox,oy;
 	int newestbi;
@@ -275,6 +286,7 @@ public:
 	void SetFrameIndex(int index);
 	int GetFrameIndex(){return frameindex;}
 	void SetPosition(float x,float y);
+	void SetPosition();
 	float GetX(){return x;};
 	float GetY(){return y;};
 	void SetOffset(float x,float y);
@@ -287,8 +299,15 @@ public:
 	bool IsPlaying(){return bplaying;}
 	PictureData *dat;
 	void Rec();
+	void SetRotate(float rot);
+	void SetScale(float h,float v);
+	float GetRotate(){return rotate;}
+	float GetHScale(){return hscale;}
+	float GetVScale(){return vscale;}
 private:
 	bool bplaying;
 	hgeTimer timer;
 	float dox,doy;
+	float rotate;
+	float hscale,vscale;
 };

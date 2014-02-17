@@ -64,7 +64,7 @@ void hgeBindPoint::SetScale(float _h, float _v)
 {
 	hscale = _h;vscale = _v;
 	if(part)
-		part->SetScale(hscale,vscale);
+		part->SetScale(hscale * hscale2,vscale * vscale2);
 }
 
 void hgeBindPoint::SetRotation(float rot)
@@ -72,6 +72,13 @@ void hgeBindPoint::SetRotation(float rot)
 	rotate = rot;
 	if(part)
 		part->SetRotation(line->GetRotate()+rotate);
+}
+
+void hgeBindPoint::SetScale2(float _h, float _v)
+{
+	hscale2 = _h;vscale2 = _v;
+	if(part)
+		part->SetScale(hscale * hscale2,vscale * vscale2);
 }
 
 void hgeJoint::PositionChanged()
@@ -142,15 +149,15 @@ void hgeBone::SetPosition(float x,float y,int v)
 	{
 		head.x = x - control.GetAbsolute() * cos(rotate);
 		head.y = y - control.GetAbsolute() * sin(rotate);
-		tail.x = head.x + length * cos(rotate);
-		tail.y = head.y + length * sin(rotate);
+		tail.x = head.x + length * scale * cos(rotate);
+		tail.y = head.y + length * scale * sin(rotate);
 	}
 	else
 	{
 		tail.x = x + control.GetAbsolute() * cos(rotate);
 		tail.y = y + control.GetAbsolute() * sin(rotate);
-		head.x = tail.x - length * cos(rotate);
-		head.y = tail.y - length * sin(rotate);
+		head.x = tail.x - length * scale * cos(rotate);
+		head.y = tail.y - length * scale * sin(rotate);
 	}
 	PositionChanged(v);
 	return ;
@@ -158,23 +165,24 @@ void hgeBone::SetPosition(float x,float y,int v)
 
 void hgeBone::SetRotate(float r,int v,float s)
 {
-	if(rotate != r)
+	if(!hflip)
+		rotate = M_PI - rotate;
+	if(!vflip)
+		rotate = M_2PI - rotate;
+	rotate = r + er;
+	if(control.GetBasis()== true)
 	{
-		rotate = r;
-		if(control.GetBasis()== true)
-		{
-			head.x = control.GetX() - control.GetAbsolute() * cos(rotate);
-			head.y = control.GetY() - control.GetAbsolute() * sin(rotate);
-			tail.x = head.x + length * cos(rotate);
-			tail.y = head.y + length * sin(rotate);
-		}
-		else
-		{
-			tail.x = control.GetX() + control.GetAbsolute() * cos(rotate);
-			tail.y = control.GetY() + control.GetAbsolute() * sin(rotate);
-			head.x = tail.x - length * cos(rotate);
-			head.y = tail.y - length * sin(rotate);
-		}
+		head.x = control.GetX() - control.GetAbsolute() * cos(rotate);
+		head.y = control.GetY() - control.GetAbsolute() * sin(rotate);
+		tail.x = head.x + length * scale * cos(rotate);
+		tail.y = head.y + length * scale * sin(rotate);
+	}
+	else
+	{
+		tail.x = control.GetX() + control.GetAbsolute() * cos(rotate);
+		tail.y = control.GetY() + control.GetAbsolute() * sin(rotate);
+		head.x = tail.x - length * scale * cos(rotate);
+		head.y = tail.y - length * scale * sin(rotate);
 	}
 	PositionChanged(v,s);
 	return ;
@@ -221,6 +229,14 @@ void hgeBone::SetPositionByJoint(hgeJoint *joint,int v,float s)
 	{
 		rotate = anims[animindex].at(frameindex) + s * dj;
 	}
+	if(v!=-1)
+	{
+		if(!hflip)
+			rotate = M_PI - rotate;
+		if(!vflip)
+			rotate = M_2PI - rotate;
+		rotate += er;
+	}
 	while(rotate>M_2PI)rotate-=M_2PI;
 	while(rotate<0)rotate+=M_2PI;
 
@@ -228,15 +244,15 @@ void hgeBone::SetPositionByJoint(hgeJoint *joint,int v,float s)
 	{
 		head.x = joint->GetX() - joint->GetAbsolute() * cos(rotate);
 		head.y = joint->GetY() - joint->GetAbsolute() * sin(rotate);
-		tail.x = head.x + length * cos(rotate);
-		tail.y = head.y + length * sin(rotate);
+		tail.x = head.x + length * scale * cos(rotate);
+		tail.y = head.y + length * scale * sin(rotate);
 	}
 	else
 	{
 		tail.x = joint->GetX() + joint->GetAbsolute() * cos(rotate);
 		tail.y = joint->GetY() + joint->GetAbsolute() * sin(rotate);
-		head.x = tail.x - length * cos(rotate);
-		head.y = tail.y - length * sin(rotate);
+		head.x = tail.x - length * scale * cos(rotate);
+		head.y = tail.y - length * scale * sin(rotate);
 	}
 	bind.UpdatePosition();
 	control.UpdatePosition();
@@ -930,6 +946,14 @@ void hgeSkeleton::SetFrameIndex(int index)
 		oy = anims[animindex].frames[frameindex].second;
 		dox = anims[animindex].frames[v].first - anims[animindex].frames[frameindex].first;
 		doy = anims[animindex].frames[v].second - anims[animindex].frames[frameindex].second;
+		ox *= hscale;oy *= vscale;
+		if(hscale <0)ox = -ox;
+		if(vscale <0)oy = -oy;
+		//float l = sqrt((ox * ox) + (oy * oy));
+		hgeBone x(0,0,ox,oy);
+		x.SetRotate(x.GetRotate()+rotate);
+		ox = x.GetTailX();
+		oy = x.GetTailY();
 	}
 }
 
@@ -1028,6 +1052,11 @@ void hgeBone::SetAnimIndex(int index)
 void hgeSkeleton::SetPosition(float _x,float _y)
 {
 	x = _x;y = _y;
+	SetPosition();
+}
+
+void hgeSkeleton::SetPosition()
+{
 	if(mainbone)
 	{
 		if(animindex == -1 || frameindex == -1)
@@ -1046,6 +1075,7 @@ void hgeSkeleton::SetOffset(float _x,float _y)
 
 	ox = _x;oy = _y;
 	if(mainbone)
+		//SetPosition();
 		mainbone->SetPosition(x + anims[animindex].frames[frameindex].first,y + anims[animindex].frames[frameindex].second,-1);
 }
 
@@ -1126,6 +1156,14 @@ void hgeSkeleton::Update()
 		mainbone->Update(t/time);
 	ox = anims[animindex].frames[frameindex].first + dox * (t/time) ;
 	oy = anims[animindex].frames[frameindex].second + doy * (t/time);
+	ox *= hscale;oy *= vscale;
+	if(hscale <0)ox = -ox;
+	if(vscale <0)oy = -oy;
+	//float l = sqrt((ox * ox) + (oy * oy));
+	hgeBone v(0,0,ox,oy);
+	v.SetRotate(v.GetRotate()+rotate);
+	ox = v.GetTailX();
+	oy = v.GetTailY();
 	SetPosition(x,y);
 }
 
@@ -1143,4 +1181,44 @@ void hgeSkeleton::Rec()
 			p->SetSliceIndex(vv->BindPoint().ls);
 		}
 	}
+}
+
+void hgeSkeleton::SetRotate(float rot)
+{
+	rotate = rot;
+	std::list<hgeBone*>::reverse_iterator ritor;
+	hgeBone* vv;
+	for(ritor = bones.rbegin();ritor != bones.rend();ritor++)
+	{
+		vv = *ritor;
+		vv->SetRotateX(rotate);
+	}
+	SetPosition();
+}
+
+void hgeSkeleton::SetScale(float h,float v)
+{
+	hscale = h;vscale = v;
+	std::list<hgeBone*>::reverse_iterator ritor;
+	hgeBone* vv;
+	for(ritor = bones.rbegin();ritor != bones.rend();ritor++)
+	{
+		vv = *ritor;
+		vv->SetScaleX(hscale,vscale);
+	}
+	SetPosition();
+}
+
+void hgeBone::SetRotateX(float rot)
+{
+	er = rot;
+}
+
+void hgeBone::SetScaleX(float h,float v)
+{
+	hflip = h>=0;
+	vflip = v>=0;
+	scale = abs(h);
+	if(bind.part)
+		bind.SetScale2(scale,scale);
 }
