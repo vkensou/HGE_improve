@@ -218,7 +218,7 @@ private:
 	class cid
 	{
 	public:
-		cid(int id){_id = id;nid =_id+1;}
+		cid(int id){_id = id; if(_id >= nid)nid = _id+1;}
 		cid():_id(nid++){};
 		virtual ~cid(){};
 		int getid(){return _id;}

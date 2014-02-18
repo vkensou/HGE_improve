@@ -258,7 +258,7 @@ void hgeBone::SetPositionByJoint(hgeJoint *joint,int v,float s)
 	}
 	bind.UpdatePosition();
 	control.UpdatePosition();
-	MoveBindBone(joint);
+	MoveBindBone(joint,v,s);
 	return ;
 }
 
