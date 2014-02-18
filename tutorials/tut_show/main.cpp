@@ -19,10 +19,11 @@ HTEXTURE tex2 = 0;
 HTEXTURE tex3 = 0;
 HTEXTURE tex4 = 0;
 HTEXTURE tex5 = 0;
+HTEXTURE tex6 = 0;
 PictureData *data;
 PictureData *data2;
 hgeSkeleton *skt;
-
+hgeSkeleton *skt2;
 bool FrameFunc()
 {
 	return false;
@@ -48,6 +49,9 @@ bool RenderFunc()
 	
 	skt->Update();
 	skt->Render();
+
+	skt2->Update();
+	skt2->Render();
 
 	hge->Gfx_EndScene();
 	return false;
@@ -116,11 +120,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		tex5 = hge->Texture_Load(L"Ότµ¶.png");
 		skt->dat->tex = tex5;
 		skt->Rec();
-		skt->SetPosition(300,300);
+		skt->SetPosition(200,300);
 		skt->SetRotate(2);
 		skt->SetScale(1,1);
 		skt->SetAnimIndex(0);	
 		skt->Play();
+
+		skt2 = new hgeSkeleton();
+		skt2->Load(L"man.skt");
+		skt2->dat->LoadData(L"man.dat");
+		tex6 = hge->Texture_Load(L"man.png");
+		skt2->dat->tex = tex6;
+		skt2->Rec();
+		skt2->SetPosition(600,500);
+		skt2->SetScale(0.5,0.5);
+		skt2->SetAnimIndex(0);	
+		skt2->Play();
 
 		hge->System_Start();
 	}
@@ -131,6 +146,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	hge->Texture_Free(tex3);
 	hge->Texture_Free(tex4);
 	hge->Texture_Free(tex5);
+	hge->Texture_Free(tex6);
 
 	delete data;
 	delete data2;
@@ -140,6 +156,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	delete sframe;
 	delete sanim;
 	delete skt;
+	delete skt2;
 
 	hge->System_Shutdown();
 	hge->Release();
