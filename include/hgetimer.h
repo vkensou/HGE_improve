@@ -10,6 +10,7 @@ public:
 	void StartTick(void);
 	void PauseTick(void);
 	void GoonTick(void);
+	void Resume(void);
 	void StopTick(void);
 	int NowTick(void);
 	void SetTick(int aa);

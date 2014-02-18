@@ -45,6 +45,7 @@
 				AdditionalOptions="/QIfist "
 				Optimization="2"
 				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="..\..\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -119,6 +120,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/QIfist "
 				Optimization="0"
+				AdditionalIncludeDirectories="..\..\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="0"
@@ -386,6 +388,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\hgeSkeleton.cpp"
+				>
+			</File>
+			<File
 				RelativePath="hgesprite.cpp"
 				>
 				<FileConfiguration
@@ -493,6 +499,34 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\ShowBase.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ShowFrameAnimation.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\showpicture.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ShowPictureData.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ShowSlicedAnimation.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ShowSlicedFrame.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ShowSlicedPicture.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -547,6 +581,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\hgeSkeleton.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\include\hgesprite.h"
 				>
 			</File>
@@ -572,6 +610,34 @@
 			</File>
 			<File
 				RelativePath="resources.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\ShowBase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\ShowFrameAnimation.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\ShowPicture.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\ShowPictureData.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\ShowSlicedAnimation.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\ShowSlicedFrame.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\ShowSlicedPicture.h"
 				>
 			</File>
 		</Filter>

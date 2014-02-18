@@ -79,7 +79,7 @@ bool CALL HGE_Impl::System_Initiate()
 	GetLocalTime(&tm);
 	System_Log(L"Date: %02d.%02d.%d, %02d:%02d:%02d\n", tm.wDay, tm.wMonth, tm.wYear, tm.wHour, tm.wMinute, tm.wSecond);
 
-	System_Log(L"Application: %s",szWinTitle);
+	System_Log(L"Application: %ls",szWinTitle);
 	os_ver.dwOSVersionInfoSize=sizeof(os_ver);
 	GetVersionEx(&os_ver);
 	System_Log(L"OS: Windows %ld.%ld.%ld",os_ver.dwMajorVersion,os_ver.dwMinorVersion,os_ver.dwBuildNumber);

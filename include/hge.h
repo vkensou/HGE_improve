@@ -63,12 +63,31 @@ typedef unsigned char       BYTE;
 */
 #ifndef M_PI
 #define M_PI	3.14159265358979323846f
+#define M_2PI	6.28318530717958647692f
 #define M_PI_2	1.57079632679489661923f
 #define M_PI_4	0.785398163397448309616f
 #define M_1_PI	0.318309886183790671538f
 #define M_2_PI	0.636619772367581343076f
 #endif
 
+//弧度转角度
+inline float Degree(float radian)
+{
+	return radian / M_PI * 180.f;
+}
+//角度转弧度
+inline float Radian(float degree)
+{
+	return degree * M_PI / 180.f;
+}
+
+inline int sgn(float num)
+{
+	if(num>=0)
+		return 1;
+	else
+		return -1;
+}
 
 /*
 ** HGE Handle types
