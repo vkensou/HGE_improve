@@ -5,7 +5,6 @@
 #include <vector>
 #include <list>
 #include <cmath>
-#include <map>
 #include "showpicturedata.h"
 #include "showslicedpicture.h"
 
@@ -72,6 +71,7 @@ public:
 	//从参数线段开始旋转
 	float NeedRotateFrom(hgeLine *line);
 	//获取垂直平分线上的一点
+	float scale;
 protected:
 	virtual void PositionChanged(){};
 	hgePoint head,tail;
@@ -230,7 +230,6 @@ private:
 	bool mode;
 	float dj;
 	float er;
-	float scale;
 	bool hflip,vflip;
 };
 

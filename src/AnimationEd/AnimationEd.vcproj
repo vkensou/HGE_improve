@@ -224,10 +224,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\hgeSkeleton.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\LeftView.cpp"
 				>
 			</File>
@@ -299,10 +295,6 @@
 			</File>
 			<File
 				RelativePath=".\globaldata_view.h"
-				>
-			</File>
-			<File
-				RelativePath=".\hgeSkeleton.h"
 				>
 			</File>
 			<File

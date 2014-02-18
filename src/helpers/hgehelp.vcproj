@@ -388,6 +388,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\hgeSkeleton.cpp"
+				>
+			</File>
+			<File
 				RelativePath="hgesprite.cpp"
 				>
 				<FileConfiguration
@@ -574,6 +578,10 @@
 			</File>
 			<File
 				RelativePath="..\..\include\hgeresource.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\hgeSkeleton.h"
 				>
 			</File>
 			<File

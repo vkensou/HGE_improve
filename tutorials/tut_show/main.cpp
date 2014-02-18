@@ -4,7 +4,7 @@
 #include "showframeanimation.h"
 #include "showslicedframe.h"
 #include "showslicedanimation.h"
-
+#include "hgeskeleton.h"
 using namespace Show;
 
 HGE *hge=0;
@@ -18,8 +18,10 @@ HTEXTURE tex = 0;
 HTEXTURE tex2 = 0;
 HTEXTURE tex3 = 0;
 HTEXTURE tex4 = 0;
+HTEXTURE tex5 = 0;
 PictureData *data;
 PictureData *data2;
+hgeSkeleton *skt;
 
 bool FrameFunc()
 {
@@ -30,6 +32,7 @@ bool RenderFunc()
 {
 	hge->Gfx_BeginScene();
 	hge->Gfx_Clear(0);
+
 	pic->Render();
 
 	spic->Render();
@@ -42,6 +45,9 @@ bool RenderFunc()
 
 	sanim->Update(hge->Timer_GetDelta());
 	sanim->Render();
+	
+	skt->Update();
+	skt->Render();
 
 	hge->Gfx_EndScene();
 	return false;
@@ -103,6 +109,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		sanim->SetScale(-2.f,2.f);
 		sanim->SetRotation(-0.5);
 		sanim->Play();
+
+		skt = new hgeSkeleton();
+		skt->Load(L"test.skt");
+		skt->dat->LoadData(L"Ότµ¶.dat");
+		tex5 = hge->Texture_Load(L"Ότµ¶.png");
+		skt->dat->tex = tex5;
+		skt->Rec();
+		skt->SetPosition(300,300);
+		skt->SetRotate(2);
+		skt->SetScale(1,1);
+		skt->SetAnimIndex(0);	
+		skt->Play();
+
 		hge->System_Start();
 	}
 	else MessageBox(NULL, hge->System_GetErrorMessage(), L"Error", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
@@ -111,6 +130,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	hge->Texture_Free(tex2);
 	hge->Texture_Free(tex3);
 	hge->Texture_Free(tex4);
+	hge->Texture_Free(tex5);
 
 	delete data;
 	delete data2;
@@ -119,6 +139,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	delete spic2;
 	delete sframe;
 	delete sanim;
+	delete skt;
 
 	hge->System_Shutdown();
 	hge->Release();

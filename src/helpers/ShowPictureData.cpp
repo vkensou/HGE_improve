@@ -62,6 +62,7 @@ namespace Show
 			animations.push_back(nan);
 		}
 		hge->Resource_Free(dat);
+		hge->Release();
 		return 0;
 	}
 }

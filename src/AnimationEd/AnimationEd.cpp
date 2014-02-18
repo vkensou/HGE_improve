@@ -336,15 +336,11 @@ void CAnimationEdApp::OnChangemode()
 	if(editmode)
 	{
 		AfxGetMainWnd()->SetWindowTextW(L"¶¯»­±à¼­Æ÷ - ¹Ç÷ÀÄ£Ê½");
-		nowskt->SetRotate(0);
-		nowskt->SetScale(1,1);
 	}
 	else
 	{
 		AfxGetMainWnd()->SetWindowTextW(L"¶¯»­±à¼­Æ÷ - ¶¯»­Ä£Ê½");
 		nowskt->SetPosition(0,0);
-		nowskt->SetRotate(0.5);
-		nowskt->SetScale(2,-2);
 	}
 }
 

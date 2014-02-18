@@ -81,6 +81,14 @@ inline float Radian(float degree)
 	return degree * M_PI / 180.f;
 }
 
+inline int sgn(float num)
+{
+	if(num>=0)
+		return 1;
+	else
+		return -1;
+}
+
 /*
 ** HGE Handle types
 */

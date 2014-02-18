@@ -108,7 +108,7 @@ bool FrameFunc()
 	overi = overji = -1;
 	over = 0;overj = 0;
 
-	std::map<int,hgeBone*>::iterator m1_Iter;
+	//std::map<int,hgeBone*>::iterator m1_Iter;
 	if(mode == 0 || mode == 1)
 	{
 		if(hge->Input_KeyDown(HGEK_R))

@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 #include "hgeSkeleton.h"
 
 int hgeBone::cid::nid = 0;
@@ -6,6 +5,7 @@ int hgeBone::cid::nid = 0;
 void hgeLinePoint::UpdatePosition(bool w)
 {
 	if(true == tra)a = r * line->GetLength();
+	a *= line->scale;
 	if(k)
 	{
 		x = line->GetHeadX() + a * cos(line->GetRotate());
@@ -65,6 +65,7 @@ void hgeBindPoint::SetScale(float _h, float _v)
 	hscale = _h;vscale = _v;
 	if(part)
 		part->SetScale(hscale * hscale2,vscale * vscale2);
+		//part->SetScale(hscale,vscale);
 }
 
 void hgeBindPoint::SetRotation(float rot)
@@ -76,9 +77,10 @@ void hgeBindPoint::SetRotation(float rot)
 
 void hgeBindPoint::SetScale2(float _h, float _v)
 {
-	hscale2 = _h;vscale2 = _v;
+	hscale2 = _h * sgn(_v);vscale2 = abs(_v);
 	if(part)
 		part->SetScale(hscale * hscale2,vscale * vscale2);
+		//part->SetScale(hscale,vscale);
 }
 
 void hgeJoint::PositionChanged()
@@ -559,7 +561,7 @@ bool hgeSkeleton::DelBone(hgeBone* bone)
 
 bool hgeSkeleton::Save(const wchar_t* path)
 {
-	FILE *f = _wfopen(path,L"w");
+	FILE *f = _wfopen(path,L"wb");
 	UINT sz = bones.size(),sz3,sz4;
 	int t;bool bt;float ft;
 	fwrite(&sz,sizeof(sz),1,f);
@@ -696,42 +698,79 @@ bool hgeSkeleton::Save(const wchar_t* path)
 
 bool hgeSkeleton::Load(const wchar_t* path)
 {
-	FILE *f = _wfopen(path,L"r");
+	//FILE *f = _wfopen(path,L"r");
+
+
+	HGE *hge = hgeCreate(HGE_VERSION);
+	void *data;
+	char *zz;
+	int offset = 0;
+	data = hge->Resource_Load(path);
+	zz = (char*)data;
+	if(!data)return -1;
+
 	UINT sz,sz2,sz3,sz4;
 	int t;bool bt;float ft,ft2;
-	fread(&sz,sizeof(sz),1,f);
+
+	memcpy(&sz, zz + offset, sizeof(sz));
+	offset+=sizeof(sz);
+	//fread(&sz,sizeof(sz),1,f);
 	bones.clear();
 	hgeBone *tb;hgeJoint *tj;
 	for(int i = 0;i<sz;i++)
 	{
-		fread(&t,sizeof(t),1,f);
+		//fread(&t,sizeof(t),1,f);
+		memcpy(&t, zz + offset, sizeof(t));
+		offset+=sizeof(t);
 		tb = new hgeBone(t);
 		bones.push_back(tb);
-		fread(&bt,sizeof(bt),1,f);
+		//fread(&bt,sizeof(bt),1,f);
+		memcpy(&bt, zz + offset, sizeof(bt));
+		offset+=sizeof(bt);
 		tb->ControlPoint().SetBasis(bt);
-		fread(&bt,sizeof(bt),1,f);
-		fread(&ft,sizeof(ft),1,f);
+		//fread(&bt,sizeof(bt),1,f);
+		memcpy(&bt, zz + offset, sizeof(bt));
+		offset+=sizeof(bt);
+		//fread(&ft,sizeof(ft),1,f);
+		memcpy(&ft, zz + offset, sizeof(ft));
+		offset+=sizeof(ft);
 		if(bt)
 			tb->ControlPoint().SetRelative(ft);
 		else
 			tb->ControlPoint().SetAbsolute(ft);
-		fread(&bt,sizeof(bt),1,f);
+		//fread(&bt,sizeof(bt),1,f);
+		memcpy(&bt, zz + offset, sizeof(bt));
+		offset+=sizeof(bt);
 		tb->BindPoint().SetBasis(bt);
-		fread(&bt,sizeof(bt),1,f);
-		fread(&ft,sizeof(ft),1,f);
+		//fread(&bt,sizeof(bt),1,f);
+		memcpy(&bt, zz + offset, sizeof(bt));
+		offset+=sizeof(bt);
+		//fread(&ft,sizeof(ft),1,f);
+		memcpy(&ft, zz + offset, sizeof(ft));
+		offset+=sizeof(ft);
 		if(bt)
 			tb->BindPoint().SetRelative(ft);
 		else
 			tb->BindPoint().SetAbsolute(ft);
-		fread(&bt,sizeof(bt),1,f);
+		//fread(&bt,sizeof(bt),1,f);
+		memcpy(&bt, zz + offset, sizeof(bt));
+		offset+=sizeof(bt);
 		if(bt)
 		{
-			fread(&ft,sizeof(ft),1,f);
-			fread(&ft2,sizeof(ft2),1,f);
+			//fread(&ft,sizeof(ft),1,f);
+			memcpy(&ft, zz + offset, sizeof(ft));
+			offset+=sizeof(ft);
+			//fread(&ft2,sizeof(ft2),1,f);
+			memcpy(&ft2, zz + offset, sizeof(ft2));
+			offset+=sizeof(ft2);
 			tb->BindPoint().SetScale(ft,ft2);
-			fread(&ft,sizeof(ft),1,f);
+			//fread(&ft,sizeof(ft),1,f);
+			memcpy(&ft, zz + offset, sizeof(ft));
+			offset+=sizeof(ft);
 			tb->BindPoint().SetRotation(ft);
-			fread(&t,sizeof(t),1,f);
+			//fread(&t,sizeof(t),1,f);
+			memcpy(&t, zz + offset, sizeof(t));
+			offset+=sizeof(t);
 			tb->BindPoint().part = new SlicedPicture();
 			tb->BindPoint().SetScale(tb->BindPoint().GetHScale(),tb->BindPoint().GetVScale());
 			tb->BindPoint().SetRotation(tb->BindPoint().GetRotation());
@@ -739,76 +778,119 @@ bool hgeSkeleton::Load(const wchar_t* path)
 			p->SetPictureData(dat);
 			tb->BindPoint().ls = t;
 		}
-		fread(&ft,sizeof(ft),1,f);
-		fread(&ft2,sizeof(ft2),1,f);
+		//fread(&ft,sizeof(ft),1,f);
+		memcpy(&ft, zz + offset, sizeof(ft));
+		offset+=sizeof(ft);
+		//fread(&ft2,sizeof(ft2),1,f);
+		memcpy(&ft2, zz + offset, sizeof(ft2));
+		offset+=sizeof(ft2);
 		tb->SetHead(ft,ft2);
-		fread(&ft,sizeof(ft),1,f);
-		fread(&ft2,sizeof(ft2),1,f);
+		//fread(&ft,sizeof(ft),1,f);
+		memcpy(&ft, zz + offset, sizeof(ft));
+		offset+=sizeof(ft);
+		//fread(&ft2,sizeof(ft2),1,f);
+		memcpy(&ft2, zz + offset, sizeof(ft2));
+		offset+=sizeof(ft2);
 		tb->SetTail(ft,ft2);
-		fread(&t,sizeof(t),1,f);
+		//fread(&t,sizeof(t),1,f);
+		memcpy(&t, zz + offset, sizeof(t));
+		offset+=sizeof(t);
 		tb->SetFatherID(t);
-		fread(&sz2,sizeof(sz2),1,f);
+		//fread(&sz2,sizeof(sz2),1,f);
+		memcpy(&sz2, zz + offset, sizeof(sz2));
+		offset+=sizeof(sz2);
 		for(int j = 0;j<sz2;j++)
 		{
 			tj = new hgeJoint(tb);
 			tb->joints.push_back(tj);
-			fread(&bt,sizeof(bt),1,f);
+			//fread(&bt,sizeof(bt),1,f);
+			memcpy(&bt, zz + offset, sizeof(bt));
+			offset+=sizeof(bt);
 			tj->SetBasis(bt);
-			fread(&bt,sizeof(bt),1,f);
-			fread(&ft,sizeof(ft),1,f);
+			//fread(&bt,sizeof(bt),1,f);
+			memcpy(&bt, zz + offset, sizeof(bt));
+			offset+=sizeof(bt);
+			//fread(&ft,sizeof(ft),1,f);
+			memcpy(&ft, zz + offset, sizeof(ft));
+			offset+=sizeof(ft);
 			if(bt)
 				tj->SetRelative(ft);
 			else
 				tj->SetAbsolute(ft);
-			fread(&t,sizeof(t),1,f);
+			//fread(&t,sizeof(t),1,f);
+			memcpy(&t, zz + offset, sizeof(t));
+			offset+=sizeof(t);
 			if(t!=-1)
 			{
 				tj->bidx = t;
-				fread(&t,sizeof(t),1,f);
+				//fread(&t,sizeof(t),1,f);
+				memcpy(&t, zz + offset, sizeof(t));
+				offset+=sizeof(t);
 				tj->jidx = t;
-				fread(&ft,sizeof(ft),1,f);
+				//fread(&ft,sizeof(ft),1,f);
+				memcpy(&ft, zz + offset, sizeof(ft));
+				offset+=sizeof(ft);
 				tj->angle = ft;
 			}
 		}
-		fread(&sz3,sizeof(sz3),1,f);
+		//fread(&sz3,sizeof(sz3),1,f);
+		memcpy(&sz3, zz + offset, sizeof(sz3));
+		offset+=sizeof(sz3);
 		for(UINT k = 0;k<sz3;k++)
 		{
 			tb->AddAnim();
 			tb->SetAnimIndex(tb->anims.size()-1);
-			fread(&sz4,sizeof(sz4),1,f);
+			//fread(&sz4,sizeof(sz4),1,f);
+			memcpy(&sz4, zz + offset, sizeof(sz4));
+			offset+=sizeof(sz4);
 			tb->SetFrameNum(sz4);
 			for(UINT j = 0;j<sz4;j++)
 			{
-				fread(&ft,sizeof(ft),1,f);
+				//fread(&ft,sizeof(ft),1,f);
+				memcpy(&ft, zz + offset, sizeof(ft));
+				offset+=sizeof(ft);
 				tb->anims[k].at(j) = ft;
 			}
 		}
 	}
 
-	fread(&sz3,sizeof(sz3),1,f);
+	//fread(&sz3,sizeof(sz3),1,f);
+	memcpy(&sz3, zz + offset, sizeof(sz3));
+	offset+=sizeof(sz3);
 	for(UINT k = 0;k<sz3;k++)
 	{
 		anims.push_back(hgeSkeleton::anim());
 		animindex = anims.size()-1;
-		fread(&ft,sizeof(ft),1,f);
+		//fread(&ft,sizeof(ft),1,f);
+		memcpy(&ft, zz + offset, sizeof(ft));
+		offset+=sizeof(ft);
 		anims[k].fps = ft;
-		fread(&sz4,sizeof(sz4),1,f);
+		//fread(&sz4,sizeof(sz4),1,f);
+		memcpy(&sz4, zz + offset, sizeof(sz4));
+		offset+=sizeof(sz4);
 		for(UINT j = 0;j<sz4;j++)
 		{
 			anims[k].frames.push_back(std::pair<float,float>(0.f,0.f));
-			fread(&ft,sizeof(ft),1,f);
+			//fread(&ft,sizeof(ft),1,f);
+			memcpy(&ft, zz + offset, sizeof(ft));
+			offset+=sizeof(ft);
 			anims[k].frames[j].first = ft;
-			fread(&ft,sizeof(ft),1,f);
+			//fread(&ft,sizeof(ft),1,f);
+			memcpy(&ft, zz + offset, sizeof(ft));
+			offset+=sizeof(ft);
 			anims[k].frames[j].second = ft;
 
 		}
 	}
 
 
-	fread(&t,sizeof(t),1,f);
+	//fread(&t,sizeof(t),1,f);
+	memcpy(&t, zz + offset, sizeof(t));
+	offset+=sizeof(t);
 	mbidx = t;
-
-	fclose(f);
+	hge->Resource_Free(data);
+	//fclose(f);
+	hge->Release();
 
 	std::list<hgeBone*>::iterator itor;
 	for(itor = bones.begin();itor != bones.end();itor++)
@@ -1157,8 +1239,8 @@ void hgeSkeleton::Update()
 	ox = anims[animindex].frames[frameindex].first + dox * (t/time) ;
 	oy = anims[animindex].frames[frameindex].second + doy * (t/time);
 	ox *= hscale;oy *= vscale;
-	if(hscale <0)ox = -ox;
-	if(vscale <0)oy = -oy;
+	//if(hscale <0)ox = -ox;
+	//if(vscale <0)oy = -oy;
 	//float l = sqrt((ox * ox) + (oy * oy));
 	hgeBone v(0,0,ox,oy);
 	v.SetRotate(v.GetRotate()+rotate);
@@ -1198,7 +1280,7 @@ void hgeSkeleton::SetRotate(float rot)
 
 void hgeSkeleton::SetScale(float h,float v)
 {
-	hscale = h;vscale = v;
+	hscale = h;vscale = sgn(v) * abs(h);
 	std::list<hgeBone*>::reverse_iterator ritor;
 	hgeBone* vv;
 	for(ritor = bones.rbegin();ritor != bones.rend();ritor++)
@@ -1220,5 +1302,5 @@ void hgeBone::SetScaleX(float h,float v)
 	vflip = v>=0;
 	scale = abs(h);
 	if(bind.part)
-		bind.SetScale2(scale,scale);
+		bind.SetScale2(h,v);
 }
