@@ -1064,7 +1064,8 @@ bool HGE_Impl::_GfxRestore()
 
 	pD3DDevice->SetFVF(D3DFVF_HGEVERTEX);  //这句不加会导致  Direct3D9: (ERROR) :"Vertex shader declaration is not set" 再使得 DrawIndexedPrimitive failed 
 
-	if(procGfxRestoreFunc) return procGfxRestoreFunc();
+	if(listener)listener->GfxRestore();
+	//if(procGfxRestoreFunc) return procGfxRestoreFunc();
 
 	return true;
 }

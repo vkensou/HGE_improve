@@ -170,24 +170,27 @@ bool CALL HGE_Impl::System_Initiate()
 
 #ifdef DEMO
 
-	bool			(*func)();
-	bool			(*rfunc)();
+	HGEEventListener* ltn=0;
 	HWND			hwndTmp;
 
 	if(pHGE->bDMO)
 	{
 		Sleep(200);
-		func=(bool(*)())pHGE->System_GetStateFunc(HGE_FRAMEFUNC);
-		rfunc=(bool(*)())pHGE->System_GetStateFunc(HGE_RENDERFUNC);
+		ltn = pHGE->System_GetState(HGE_EVENTLISTENER);
+		//func=(bool(*)())pHGE->System_GetStateFunc(HGE_FRAMEFUNC);
+		//rfunc=(bool(*)())pHGE->System_GetStateFunc(HGE_RENDERFUNC);
 		hwndTmp=hwndParent; hwndParent=0;
-		pHGE->System_SetStateFunc(HGE_FRAMEFUNC, DFrame);
-		pHGE->System_SetStateFunc(HGE_RENDERFUNC, 0);
+		Demo demo;
+		pHGE->System_SetState(HGE_EVENTLISTENER,&demo);
+		//pHGE->System_SetStateFunc(HGE_FRAMEFUNC, DFrame);
+		//pHGE->System_SetStateFunc(HGE_RENDERFUNC, 0);
 		DInit();
 		pHGE->System_Start();
 		DDone();
 		hwndParent=hwndTmp;
-		pHGE->System_SetStateFunc(HGE_FRAMEFUNC, func);
-		pHGE->System_SetStateFunc(HGE_RENDERFUNC, rfunc);
+		pHGE->System_SetState(HGE_EVENTLISTENER,ltn);
+		//pHGE->System_SetStateFunc(HGE_FRAMEFUNC, func);
+		//pHGE->System_SetStateFunc(HGE_RENDERFUNC, rfunc);
 	}
 
 #endif
@@ -233,8 +236,10 @@ bool CALL HGE_Impl::System_Start()
 		return false;
 	}
 
-	if(!procFrameFunc) {
-		_PostError(L"System_Start: No frame function defined");
+	//if(!procFrameFunc) {
+	if(!listener) {
+		//_PostError(L"System_Start: No frame function defined");
+		_PostError(L"System_Start: No listener Set");
 		return false;
 	}
 
@@ -305,9 +310,16 @@ bool CALL HGE_Impl::System_Start()
 				}
 
 				// Do user's stuff
-
-				if(procFrameFunc()) break;
-				if(procRenderFunc) procRenderFunc();
+				
+				if(listener)
+				{
+					if(listener->Frame())
+						break;
+					if(listener->Render())
+						listener->Render();
+				}
+				//if(procFrameFunc()) break;
+				//if(procRenderFunc) procRenderFunc();
 				
 				// If if "child mode" - return after processing single frame
 
@@ -421,17 +433,18 @@ void CALL HGE_Impl::System_SetStateBool(hgeBoolState state, bool value)
 	}
 }
 
-void CALL HGE_Impl::System_SetStateFunc(hgeFuncState state, hgeCallback value)
+void CALL HGE_Impl::System_SetStateLisener(hgeListenerState   state, HGEEventListener* value)
 {
 	switch(state)
 	{
-		case HGE_FRAMEFUNC:			procFrameFunc=value; break;
-		case HGE_RENDERFUNC:		procRenderFunc=value; break;
-		case HGE_FOCUSLOSTFUNC:		procFocusLostFunc=value; break;
-		case HGE_FOCUSGAINFUNC:		procFocusGainFunc=value; break;
-		case HGE_GFXRESTOREFUNC:	procGfxRestoreFunc=value; break;
-		case HGE_EXITFUNC:			procExitFunc=value; break;
-		case HGE_RESIZE:			procResizeFunc=value; break;
+	case HGE_EVENTLISTENER: listener = value;break;
+		//case HGE_FRAMEFUNC:			procFrameFunc=value; break;
+		//case HGE_RENDERFUNC:		procRenderFunc=value; break;
+		//case HGE_FOCUSLOSTFUNC:		procFocusLostFunc=value; break;
+		//case HGE_FOCUSGAINFUNC:		procFocusGainFunc=value; break;
+		//case HGE_GFXRESTOREFUNC:	procGfxRestoreFunc=value; break;
+		//case HGE_EXITFUNC:			procExitFunc=value; break;
+		//case HGE_RESIZE:			procResizeFunc=value; break;
 	}
 }
 
@@ -540,15 +553,16 @@ bool CALL HGE_Impl::System_GetStateBool(hgeBoolState state)
 	return false;
 }
 
-hgeCallback CALL HGE_Impl::System_GetStateFunc(hgeFuncState state)
+HGEEventListener* CALL HGE_Impl::System_GetStateLisener(hgeListenerState   state)
 {
 	switch(state)
 	{
-		case HGE_FRAMEFUNC:		return procFrameFunc;
-		case HGE_RENDERFUNC:	return procRenderFunc;
-		case HGE_FOCUSLOSTFUNC:	return procFocusLostFunc;
-		case HGE_FOCUSGAINFUNC:	return procFocusGainFunc;
-		case HGE_EXITFUNC:		return procExitFunc;
+	case HGE_EVENTLISTENER:	return listener;
+		//case HGE_FRAMEFUNC:		return procFrameFunc;
+		//case HGE_RENDERFUNC:	return procRenderFunc;
+		//case HGE_FOCUSLOSTFUNC:	return procFocusLostFunc;
+		//case HGE_FOCUSGAINFUNC:	return procFocusGainFunc;
+		//case HGE_EXITFUNC:		return procExitFunc;
 	}
 
 	return NULL;
@@ -692,13 +706,14 @@ HGE_Impl::HGE_Impl()
 	fDeltaTime=0.0f;
 	nFPS=0;
 	
-	procFrameFunc=0;
-	procRenderFunc=0;
-	procFocusLostFunc=0;
-	procFocusGainFunc=0;
-	procGfxRestoreFunc=0;
-	procExitFunc=0;
-	procResizeFunc=0;
+	listener = 0;
+	//procFrameFunc=0;
+	//procRenderFunc=0;
+	//procFocusLostFunc=0;
+	//procFocusGainFunc=0;
+	//procGfxRestoreFunc=0;
+	//procExitFunc=0;
+	//procResizeFunc=0;
 	szIcon=0;
 	wcscpy(szWinTitle,L"HGE");
 	nScreenWidth=800;
@@ -745,11 +760,13 @@ void HGE_Impl::_FocusChange(bool bAct)
 
 	if(bActive)
 	{
-		if(procFocusGainFunc) procFocusGainFunc();
+		if(listener) listener->FocusGain();
+		//if(procFocusGainFunc) procFocusGainFunc();
 	}
 	else
 	{
-		if(procFocusLostFunc) procFocusLostFunc();
+		if(listener) listener->FocusLost();
+		//if(procFocusLostFunc) procFocusLostFunc();
 	}
 }
 
@@ -763,7 +780,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			return FALSE;
 		
 		case WM_PAINT:
-			if(pHGE->pD3D && pHGE->procRenderFunc && pHGE->bWindowed) pHGE->procRenderFunc();
+			if(pHGE->pD3D && pHGE->listener && pHGE->bWindowed) pHGE->listener->Render();
 			break;
 
 		case WM_DESTROY:
@@ -792,7 +809,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		case WM_SYSKEYDOWN:
 			if(wparam == VK_F4)
 			{
-				if(pHGE->procExitFunc && !pHGE->procExitFunc()) return FALSE;
+				if(pHGE->listener && !pHGE->listener->Exit()) return FALSE;
 				return DefWindowProc(hwnd, msg, wparam, lparam);
 			}
 			else if(wparam == VK_RETURN)
@@ -858,14 +875,14 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 
 		case WM_SIZE:
 			if(pHGE->pD3D && wparam==SIZE_RESTORED) pHGE->_Resize(LOWORD(lparam), HIWORD(lparam));
-			if(pHGE->procResizeFunc)pHGE->procResizeFunc();
+			if(pHGE->listener)pHGE->listener->Resize();
 			//return FALSE;
 			break;
 
 		case WM_SYSCOMMAND:
 			if(wparam==SC_CLOSE)
 			{
-				if(pHGE->procExitFunc && !pHGE->procExitFunc()) return FALSE;
+				if(pHGE->listener && !pHGE->listener->Exit()) return FALSE;
 				pHGE->bActive=false;
 				return DefWindowProc(hwnd, msg, wparam, lparam);
 			}
