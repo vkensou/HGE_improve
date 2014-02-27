@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="tut_show"
-	ProjectGUID="{AA74488F-214D-4EA9-8B80-A0BA05C6C49C}"
-	RootNamespace="tut_show"
+	Name="MyGUI.HGEPlatForm"
+	ProjectGUID="{D7F151B8-7F60-49E1-8EBA-7B8944B9565A}"
+	RootNamespace="MyGUIHGEPlatForm"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -20,7 +20,7 @@
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="1"
+			ConfigurationType="4"
 			CharacterSet="1"
 			>
 			<Tool
@@ -41,8 +41,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
+				AdditionalIncludeDirectories="E:\myroom\SDKS\MyGUI_3.2.0\MyGUIEngine\include;E:\myroom\SDKS\MyGUI_3.2.0\Common;..\..\include;..\..\include\myguihgeplatform"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -60,20 +60,12 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="hge_d.lib hgehelp_d.lib"
-				OutputFile="..\precompiled\$(ProjectName).exe"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\lib\vc"
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				TargetMachine="1"
+				Name="VCLibrarianTool"
+				OutputFile="..\..\lib\vc\$(ProjectName)_d.lib"
+				AdditionalLibraryDirectories=""
 			/>
 			<Tool
 				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -85,9 +77,6 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -95,7 +84,7 @@
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="1"
+			ConfigurationType="4"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -118,8 +107,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\..\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
+				AdditionalIncludeDirectories="E:\myroom\SDKS\MyGUI_3.2.0\MyGUIEngine\include;E:\myroom\SDKS\MyGUI_3.2.0\Common;..\..\include;..\..\include\myguihgeplatform"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -136,22 +125,12 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="hge.lib hgehelp.lib"
-				OutputFile="..\precompiled\$(ProjectName).exe"
-				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\lib\vc"
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				TargetMachine="1"
+				Name="VCLibrarianTool"
+				OutputFile="..\..\lib\vc\$(ProjectName).lib"
+				AdditionalLibraryDirectories="E:\myroom\SDKS\MyGUI_3.2.0\MyGUIEngine\include;..\..\include"
 			/>
 			<Tool
 				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -161,9 +140,6 @@
 			/>
 			<Tool
 				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -179,7 +155,39 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\main.cpp"
+				RelativePath=".\BaseManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\InputManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MyGUI_HGEDataManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MyGUI_HGEFileStream.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MyGUI_HGERenderManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MyGUI_HGERTTexture.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MyGUI_HGETexture.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MyGUI_HGEVertexBuffer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PointerManager.cpp"
 				>
 			</File>
 		</Filter>
@@ -188,12 +196,62 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-		</Filter>
-		<Filter
-			Name="资源文件"
-			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
-			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
-			>
+			<File
+				RelativePath="..\..\include\myguihgeplatform\Attribute.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\myguihgeplatform\BaseLayout.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\myguihgeplatform\BaseManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\myguihgeplatform\InputManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\myguihgeplatform\MyGUI_HGEDataManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\myguihgeplatform\MyGUI_HGEDiagnostic.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\myguihgeplatform\MyGUI_HGEFileStream.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\myguihgeplatform\MyGUI_HGEPlatform.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\myguihgeplatform\MyGUI_HGERenderManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\myguihgeplatform\MyGUI_HGERTTexture.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\myguihgeplatform\MyGUI_HGETexture.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\myguihgeplatform\MyGUI_HGEVertexBuffer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\myguihgeplatform\PointerManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\myguihgeplatform\WrapsAttribute.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

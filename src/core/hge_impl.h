@@ -65,7 +65,15 @@ struct CInputEventList
 
 void DInit();
 void DDone();
-bool DFrame();
+
+class Demo:
+	public HGEEventListener
+{
+public:
+	virtual ~Demo(){};
+
+	virtual bool Frame();
+};
 
 
 /*
@@ -86,12 +94,14 @@ public:
 
 
 	virtual void		CALL	System_SetStateBool  (hgeBoolState   state, bool        value);
-	virtual void		CALL	System_SetStateFunc  (hgeFuncState   state, hgeCallback value);
+	virtual void		CALL	System_SetStateLisener  (hgeListenerState   state, HGEEventListener* value);
+	//virtual void		CALL	System_SetStateFunc  (hgeFuncState   state, hgeCallback value);
 	virtual void		CALL	System_SetStateHwnd  (hgeHwndState   state, HWND        value);
 	virtual void		CALL	System_SetStateInt   (hgeIntState    state, int         value);
 	virtual void		CALL	System_SetStateString(hgeStringState state, const wchar_t *value);
 	virtual bool		CALL	System_GetStateBool  (hgeBoolState   state);
-	virtual hgeCallback	CALL	System_GetStateFunc  (hgeFuncState   state);
+	//virtual hgeCallback	CALL	System_GetStateFunc  (hgeFuncState   state);
+	virtual HGEEventListener*	CALL	System_GetStateLisener  (hgeListenerState   state);
 	virtual HWND		CALL	System_GetStateHwnd  (hgeHwndState   state);
 	virtual int			CALL	System_GetStateInt   (hgeIntState    state);
 	virtual const wchar_t*	CALL	System_GetStateString(hgeStringState state);
@@ -234,13 +244,14 @@ public:
 
 
 	// System States
-	bool				(*procFrameFunc)();
-	bool				(*procRenderFunc)();
-	bool				(*procFocusLostFunc)();
-	bool				(*procFocusGainFunc)();
-	bool				(*procGfxRestoreFunc)();
-	bool				(*procExitFunc)();
-	bool				(*procResizeFunc)();
+	HGEEventListener* listener;
+	//bool				(*procFrameFunc)();
+	//bool				(*procRenderFunc)();
+	//bool				(*procFocusLostFunc)();
+	//bool				(*procFocusGainFunc)();
+	//bool				(*procGfxRestoreFunc)();
+	//bool				(*procExitFunc)();
+	//bool				(*procResizeFunc)();
 	const wchar_t*		szIcon;
 	wchar_t				szWinTitle[256];
 	int					nScreenWidth;

@@ -188,7 +188,8 @@ void DDone() {
 	pHGE->Texture_Free(dquad.tex);
 }
 
-bool DFrame() {
+bool Demo::Frame()
+{
 	BYTE alpha;
 	DWORD col;
 
