@@ -69,47 +69,32 @@ namespace MyGUI
 		hgeTriple Triple;
 		Triple.tex = dxTex->getHGETexture();
 		Triple.blend = BLEND_DEFAULT;
-		for (size_t t = 0;t<_count;t+=3)
-		{
-			memcpy(Triple.v, pVertex+t, 3*sizeof(Vertex));
-			mpHGE->Gfx_RenderTriple(&Triple);
-		}
-		//int maxPrim = 0,numPrims = 0,numPrims2 = 0;
-		//hgeVertex *vt = mpHGE->Gfx_StartBatch(HGEPRIM_TRIPLES,dxTex->getHGETexture(),BLEND_DEFAULT,&maxPrim);
 		//for (size_t t = 0;t<_count;t+=3)
 		//{
-		//	//memcpy(vt+numPrims, pVertex+t, 3*sizeof(Vertex));
-		//	vt[numPrims].x = pVertex[t].x ;
-		//	vt[numPrims].y = pVertex[t].y ;
-		//	vt[numPrims].z = pVertex[t].z ;
-		//	vt[numPrims].col = pVertex[t].colour ;
-		//	vt[numPrims].tx = pVertex[t].u ;
-		//	vt[numPrims].ty = pVertex[t].v ;
-
-		//	vt[numPrims+1].x = pVertex[t+1].x ;
-		//	vt[numPrims+1].y = pVertex[t+1].y ;
-		//	vt[numPrims+1].z = pVertex[t+1].z ;
-		//	vt[numPrims+1].col = pVertex[t+1].colour ;
-		//	vt[numPrims+1].tx = pVertex[t+1].u ;
-		//	vt[numPrims+1].ty = pVertex[t+1].v ;
-
-		//	vt[numPrims+2].x = pVertex[t+2].x ;
-		//	vt[numPrims+2].y = pVertex[t+2].y ;
-		//	vt[numPrims+2].z = pVertex[t+2].z ;
-		//	vt[numPrims+2].col = pVertex[t+2].colour ;
-		//	vt[numPrims+2].tx = pVertex[t+2].u ;
-		//	vt[numPrims+2].ty = pVertex[t+2].v ;
-
-		//	numPrims+=3;
-		//	numPrims2++;
-		//	if(numPrims2>=maxPrim)
-		//	{
-		//		mpHGE->Gfx_FinishBatch( numPrims2 );
-		//		hgeVertex *vt = mpHGE->Gfx_StartBatch(HGEPRIM_TRIPLES,dxTex->getHGETexture(),BLEND_DEFAULT,&maxPrim);
-		//		numPrims = numPrims2 = 0;
-		//	}
+		//	memcpy(Triple.v, pVertex+t, 3*sizeof(Vertex));
+		//	Triple.v[0].y = -Triple.v[0].y;
+		//	Triple.v[1].y = -Triple.v[1].y;
+		//	Triple.v[2].y = -Triple.v[2].y;
+		//	mpHGE->Gfx_RenderTriple(&Triple);
 		//}
-		//mpHGE->Gfx_FinishBatch( numPrims2 );
+		int maxPrim = 0,numPrims = 0,numPrims2 = 0;
+		hgeVertex *vt = mpHGE->Gfx_StartBatch(HGEPRIM_TRIPLES,dxTex->getHGETexture(),BLEND_DEFAULT,&maxPrim);
+		for (size_t t = 0;t<_count;t+=3)
+		{
+			memcpy(vt+numPrims, pVertex+t, 3*sizeof(Vertex));
+			vt[numPrims].y = - vt[numPrims].y;
+			vt[numPrims+1].y = - vt[numPrims+1].y;
+			vt[numPrims+2].y = - vt[numPrims+2].y;
+			numPrims+=3;
+			numPrims2++;
+			if(numPrims2>=maxPrim)
+			{
+				mpHGE->Gfx_FinishBatch( numPrims2 );
+				hgeVertex *vt = mpHGE->Gfx_StartBatch(HGEPRIM_TRIPLES,dxTex->getHGETexture(),BLEND_DEFAULT,&maxPrim);
+				numPrims = numPrims2 = 0;
+			}
+		}
+		mpHGE->Gfx_FinishBatch( numPrims2 );
 	}
 
 	void HGERenderManager::drawOneFrame()
@@ -204,7 +189,8 @@ namespace MyGUI
 		mInfo.vOffset = 0.5f;
 		mInfo.aspectCoef = float(mViewSize.width) / float(mViewSize.height);
 		mInfo.pixScaleX = 0.5f;
-		mInfo.pixScaleY = -0.5f;
+		//mInfo.pixScaleY = -0.5f;
+		mInfo.pixScaleY = 0.5f;
 
 		onResizeView(mViewSize);
 

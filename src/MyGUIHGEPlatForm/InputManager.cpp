@@ -15,18 +15,14 @@
 namespace input
 {
 
-	// указател?на менеджер, куда транслирують? сообщения
 	InputManager* InputManager::msInputManager = 0;
 
-	// стар? процедур? котору?мы заменили
 	LRESULT InputManager::msOldWindowProc = NULL;
 
 	bool InputManager::msSkipMove = false;
 
-	// наша процедур?для фильтрации сообщени?
 	LRESULT CALLBACK InputManager::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-		// если колесо не определенн?
 #ifndef WM_MOUSEWHEEL
 #define WM_MOUSEWHEEL 0x020A
 #define __WM_REALMOUSELAST WM_MOUSEWHEEL
@@ -34,7 +30,6 @@ namespace input
 #define __WM_REALMOUSELAST WM_MOUSELAST
 #endif // WM_MOUSEWHEEL
 
-		// для взятия знаковых значений
 #define GET_HIWORD(param) ((short)HIWORD(param))
 #define GET_LOWORD(param) ((short)LOWORD(param))
 
@@ -44,7 +39,6 @@ namespace input
 		static bool left_button = false;
 		static bool right_button = false;
 
-		// на на?кидают файл?
 		if (WM_DROPFILES == uMsg)
 		{
 			HDROP hDrop = (HDROP)wParam;
@@ -60,7 +54,6 @@ namespace input
 			DragFinish(hDrop);
 			return 0;
 		}
-		// на?пытают? закрыт?
 		else if (WM_CLOSE == uMsg)
 		{
 			if (!msInputManager->onWinodwClose((size_t)hWnd))
@@ -165,7 +158,6 @@ namespace input
 			msInputManager->injectKeyRelease(MyGUI::KeyCode::Enum(scan_code));
 		}
 
-		// вызываем полюбому
 		return CallWindowProc((WNDPROC)msOldWindowProc, hWnd, uMsg, wParam, lParam);
 	}
 
@@ -192,14 +184,12 @@ namespace input
 	{
 		mHwnd = (HWND)_handle;
 
-		// подсовывае?нашу функци?калбеков
 		if (!msOldWindowProc)
 		{
 			msOldWindowProc = GetWindowLong(mHwnd, GWL_WNDPROC);
 			SetWindowLong(mHwnd, GWL_WNDPROC, (long)windowProc);
 		}
 
-		// устанавливае?поддержк?дроп?файлов
 		LONG_PTR style = GetWindowLongPtr(mHwnd, GWL_EXSTYLE);
 		SetWindowLongPtr(mHwnd, GWL_EXSTYLE, style | WS_EX_ACCEPTFILES);
 
@@ -210,7 +200,6 @@ namespace input
 	{
 		MyGUI::Gui::getInstance().eventFrameStart -= MyGUI::newDelegate(this, &InputManager::frameEvent);
 
-		// если мы подменил?процедур? то вернем на мест?
 		if (msOldWindowProc)
 		{
 			SetWindowLong((HWND)mHwnd, GWL_WNDPROC, (long)msOldWindowProc);

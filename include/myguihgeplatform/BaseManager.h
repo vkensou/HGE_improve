@@ -38,9 +38,9 @@ namespace base
 		BaseManager();
 		virtual ~BaseManager();
 
-		virtual void prepare() = 0; // инициализация коммандной строки
-		bool create(); // создае?начальну?точк?каркас?приложен?
-		void destroy(); // очищае?вс?параметр?каркас?приложен?
+		virtual void prepare() = 0;
+		bool create();
+		void destroy();
 		void run();
 		void quit();
 
@@ -56,7 +56,6 @@ namespace base
 
 		/*internal:*/
 		void _windowResized();
-		virtual bool Frame();
 	protected:
 		virtual void createScene() { }
 		virtual void destroyScene() { }
@@ -68,22 +67,19 @@ namespace base
 		virtual void injectMouseRelease(int _absx, int _absy, MyGUI::MouseButton _id);
 		virtual void injectKeyPress(MyGUI::KeyCode _key, MyGUI::Char _text);
 		virtual void injectKeyRelease(MyGUI::KeyCode _key);
+		void drawOneFrame();
 
 	private:
 		void createGui();
 		void destroyGui();
 
 		void windowAdjustSettings(HWND hWnd, int width, int height, bool fullScreen);
-		void updateFPS();
 
 		void resizeRender(int _width, int _height);
 		bool createRender(int _width, int _height, bool _windowed);
-		void drawOneFrame();
 		void destroyRender();
 
 	private:
-		MyGUI::Gui* mGUI;
-		MyGUI::HGEPlatform* mPlatform;
 		diagnostic::StatisticInfo* mInfo;
 		diagnostic::InputFocusInfo* mFocusInfo;
 
@@ -93,12 +89,16 @@ namespace base
 		bool mExit;
 
 		std::string mRootMedia;
-		std::string mResourceFileName;
 		bool mIsDeviceLost;
 	protected:
+		MyGUI::Gui* mGUI;
+		MyGUI::HGEPlatform* mPlatform;
 		HGE* hge;
+		std::string mResourceFileName;
+		bool GUIAccessInput;
 	};
 
 } // namespace base
 
 #endif // __BASE_MANAGER_H__
+

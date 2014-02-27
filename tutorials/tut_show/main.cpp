@@ -24,12 +24,22 @@ PictureData *data;
 PictureData *data2;
 hgeSkeleton *skt;
 hgeSkeleton *skt2;
-bool FrameFunc()
+
+class EventListener:public HGEEventListener
+{
+public:
+	EventListener(){};
+	virtual ~EventListener(){};
+	virtual bool Frame();
+	virtual bool Render();
+};
+
+bool EventListener::Frame()
 {
 	return false;
 }
 
-bool RenderFunc()
+bool EventListener::Render()
 {
 	hge->Gfx_BeginScene();
 	hge->Gfx_Clear(0);
@@ -61,12 +71,13 @@ bool RenderFunc()
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	// Get HGE interface
+	
 	hge = hgeCreate(HGE_VERSION);
 
 	// Set up log file, frame function, render function and window title
 	hge->System_SetState(HGE_LOGFILE, L"hge_tut_show.log");
-	hge->System_SetState(HGE_FRAMEFUNC, FrameFunc);
-	hge->System_SetState(HGE_RENDERFUNC, RenderFunc);
+	EventListener listener;
+	hge->System_SetState(HGE_EVENTLISTENER, &listener);
 	hge->System_SetState(HGE_TITLE, L"HGEV Show库用法展示");
 	hge->System_SetState(HGE_WINDOWED, true);
 	hge->System_SetState(HGE_USESOUND, false);

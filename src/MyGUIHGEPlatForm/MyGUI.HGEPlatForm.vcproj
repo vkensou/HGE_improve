@@ -107,6 +107,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="E:\myroom\SDKS\MyGUI_3.2.0\MyGUIEngine\include;E:\myroom\SDKS\MyGUI_3.2.0\Common;..\..\include;..\..\include\myguihgeplatform"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -125,6 +126,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				OutputFile="..\..\lib\vc\$(ProjectName).lib"
 				AdditionalLibraryDirectories="E:\myroom\SDKS\MyGUI_3.2.0\MyGUIEngine\include;..\..\include"
 			/>
 			<Tool
@@ -195,6 +197,14 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\..\include\myguihgeplatform\Attribute.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\myguihgeplatform\BaseLayout.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\include\myguihgeplatform\BaseManager.h"
 				>
 			</File>
@@ -236,6 +246,10 @@
 			</File>
 			<File
 				RelativePath="..\..\include\myguihgeplatform\PointerManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\myguihgeplatform\WrapsAttribute.h"
 				>
 			</File>
 		</Filter>

@@ -24,17 +24,17 @@ namespace input
 		void setPointerVisible(bool _value);
 		void setPointerName(const std::string& _name);
 
-	private:
-		void notifyChangeMousePointer(const std::string& _name);
-		void setPointerHandle(size_t _id);
-		bool isMouseInClient();
-		void setPointer(const std::string& _name);
+	//private:
+	//	void notifyChangeMousePointer(const std::string& _name);
+	//	void setPointerHandle(size_t _id);
+	//	bool isMouseInClient();
+	//	void setPointer(const std::string& _name);
 
-	private:
-		typedef std::map<std::string, size_t> MapPointer;
-		MapPointer mMapGuiPointer;
-		size_t mHwnd;
-		bool mManagerPointer;
+	//private:
+	//	typedef std::map<std::string, size_t> MapPointer;
+	//	MapPointer mMapGuiPointer;
+	//	size_t mHwnd;
+	//	bool mManagerPointer;
 	};
 
 } // namespace input

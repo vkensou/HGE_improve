@@ -13,4 +13,6 @@ public:
 
 	virtual void createScene();
 	virtual void destroyScene();
+
+	virtual bool Frame();
 };

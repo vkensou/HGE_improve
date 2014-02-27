@@ -1,4 +1,4 @@
-/*!
+/*
 @file
 @author		Albert Semenov
 @date		05/2009
@@ -13,7 +13,7 @@
 #	include <winuser.h>
 #endif
 
-// имя класса окна
+
 
 namespace base
 {
@@ -27,7 +27,8 @@ namespace base
 		hInstance(nullptr),
 		mExit(false),
 		mResourceFileName("MyGUI_Core.xml"),
-		mIsDeviceLost(false)
+		mIsDeviceLost(false),
+		GUIAccessInput(true)
 	{
 	}
 
@@ -75,12 +76,9 @@ namespace base
 		hWnd = hge->System_GetState(HGE_HWND);
 
 //#if MYGUI_PLATFORM == MYGUI_PLATFORM_WIN32
-//		// бере?имя нашего экзешник?
 //		char buf[MAX_PATH];
 //		::GetModuleFileNameA(0, (LPCH)&buf, MAX_PATH);
-//		// бере?инстан?нашего моду?
 //		HINSTANCE instance = ::GetModuleHandleA(buf);
-//		// побыстрому грузим иконку
 //		HICON hIcon = ::LoadIcon(instance, MAKEINTRESOURCE(1001));
 //		if (hIcon)
 //		{
@@ -130,12 +128,6 @@ namespace base
 			hge->System_Shutdown();
 			hge->Release();
 		}
-	}
-
-	bool BaseManager::Frame()
-	{
-		drawOneFrame();
-		return false;
 	}
 
 	void BaseManager::setupResources()
@@ -222,7 +214,6 @@ namespace base
 
 	void BaseManager::windowAdjustSettings(HWND hWnd, int width, int height, bool fullScreen)
 	{
-		// стил?окна
 		HWND hwndAfter = 0;
 		unsigned long style = 0;
 		unsigned long style_ex = 0;
@@ -257,76 +248,34 @@ namespace base
 		SetWindowPos(hWnd, hwndAfter, x, y, w, h, SWP_FRAMECHANGED | SWP_SHOWWINDOW);
 	}
 
-	void BaseManager::updateFPS()
-	{
-		if (mInfo)
-		{
-			// calc FPS
-			static MyGUI::Timer timer;
-			const unsigned long interval = 1000;
-			static int count_frames = 0;
-			int accumulate = timer.getMilliseconds();
-			if (accumulate > interval)
-			{
-				mInfo->change("FPS", (int)((unsigned long)count_frames * 1000 / accumulate));
-				mInfo->update();
-
-				count_frames = 0;
-				timer.reset();
-			}
-			count_frames ++;
-		}
-	}
-
 	void BaseManager::injectMouseMove(int _absx, int _absy, int _absz)
 	{
-		if (!mGUI)
-			return;
-
-		MyGUI::InputManager::getInstance().injectMouseMove(_absx, _absy, _absz);
+		if (mGUI && GUIAccessInput)
+			MyGUI::InputManager::getInstance().injectMouseMove(_absx, _absy, _absz);
 	}
 
 	void BaseManager::injectMousePress(int _absx, int _absy, MyGUI::MouseButton _id)
 	{
-		if (!mGUI)
-			return;
-
-		MyGUI::InputManager::getInstance().injectMousePress(_absx, _absy, _id);
+		if (mGUI && GUIAccessInput)
+			MyGUI::InputManager::getInstance().injectMousePress(_absx, _absy, _id);
 	}
 
 	void BaseManager::injectMouseRelease(int _absx, int _absy, MyGUI::MouseButton _id)
 	{
-		if (!mGUI)
-			return;
-
-		MyGUI::InputManager::getInstance().injectMouseRelease(_absx, _absy, _id);
+		if (mGUI && GUIAccessInput)
+			MyGUI::InputManager::getInstance().injectMouseRelease(_absx, _absy, _id);
 	}
 
 	void BaseManager::injectKeyPress(MyGUI::KeyCode _key, MyGUI::Char _text)
 	{
-		if (!mGUI)
-			return;
-
-		if (_key == MyGUI::KeyCode::Escape)
-		{
-			mExit = true;
-			return;
-		}
-		else if (_key == MyGUI::KeyCode::F12)
-		{
-			bool visible = mFocusInfo->getFocusVisible();
-			mFocusInfo->setFocusVisible(!visible);
-		}
-
-		MyGUI::InputManager::getInstance().injectKeyPress(_key, _text);
+		if (mGUI && GUIAccessInput)
+			MyGUI::InputManager::getInstance().injectKeyPress(_key, _text);
 	}
 
 	void BaseManager::injectKeyRelease(MyGUI::KeyCode _key)
 	{
-		if (!mGUI)
-			return;
-
-		MyGUI::InputManager::getInstance().injectKeyRelease(_key);
+		if (mGUI && GUIAccessInput)
+			MyGUI::InputManager::getInstance().injectKeyRelease(_key);
 	}
 
 	void BaseManager::resizeRender(int _width, int _height)
@@ -342,10 +291,10 @@ namespace base
 
 	void BaseManager::drawOneFrame()
 	{
-		hge->Gfx_BeginScene();
-		hge->Gfx_Clear(0);
+		//hge->Gfx_BeginScene();
+		//hge->Gfx_Clear(0);
 		mPlatform->getRenderManagerPtr()->drawOneFrame();
-		hge->Gfx_EndScene();
+		//hge->Gfx_EndScene();
 	}
 
 	void BaseManager::destroyRender()
