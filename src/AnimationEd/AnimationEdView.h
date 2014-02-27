@@ -5,8 +5,9 @@
 
 #pragma once
 #include "animationeddoc.h"
+#include "hge.h"
 
-class CAnimationEdView : public CView
+class CAnimationEdView : public CView,public HGEEventListener
 {
 protected: // 仅从序列化创建
 	CAnimationEdView();
@@ -45,6 +46,7 @@ public:
 	virtual void OnInitialUpdate();
 	afx_msg void OnDestroy();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+	virtual bool Frame();
 };
 
 #ifndef _DEBUG  // AnimationEdView.cpp 中的调试版本

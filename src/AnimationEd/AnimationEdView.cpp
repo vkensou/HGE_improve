@@ -93,7 +93,7 @@ CAnimationEdDoc* CAnimationEdView::GetDocument() const // 非调试版本是内联的
 }
 #endif //_DEBUG
 
-bool FrameFunc()
+bool CAnimationEdView::Frame()
 {
 	float mx=0,my=0;
 	float mx2=0,my2=0;
@@ -413,7 +413,7 @@ void CAnimationEdView::OnInitialUpdate()
 	}
 
 	hge = hgeCreate(HGE_VERSION);
-	hge->System_SetState(HGE_FRAMEFUNC, FrameFunc);
+	hge->System_SetState(HGE_EVENTLISTENER, this);
 	hge->System_SetState(HGE_TITLE, L"HGE Tutorial 01 - Minimal HGE application");
 	hge->System_SetState(HGE_WINDOWED, true);
 	hge->System_SetState(HGE_USESOUND, false);
