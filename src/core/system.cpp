@@ -693,7 +693,7 @@ HGE_Impl::HGE_Impl()
 	streams=0;
 
 	hSearch=0;
-	res=0;
+	//res=0;
 
 	queue=0;
 	Char=VKey=Zpos=0;
