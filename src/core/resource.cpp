@@ -23,6 +23,14 @@ struct ZipFileInfo
 	int size;
 	int offset;
 	int flag;
+	bool operator<(const ZipFileInfo& dest)const 
+	{
+		return wcscmp(path,dest.path)<0;
+	}
+	bool operator==(const ZipFileInfo& dest)const 
+	{
+		return wcscmp(path,dest.path)==0;
+	}
 };
 
 struct ZipInfo
@@ -30,20 +38,16 @@ struct ZipInfo
 	ZipInfo():zip(0){}
 	~ZipInfo();
 
-	struct strLess
-	{
-		bool operator() (const ZipFileInfo *s1, const ZipFileInfo *s2) const
-		{
-			return wcscmp(s1->path, s2->path) == 0;
-		}
-	};
-
 	wchar_t path[_MAX_PATH];
 	wchar_t password[64];
-	std::set<ZipFileInfo*,strLess>files;
+	std::set<ZipFileInfo>files;
 	int LoadZip(char* file);
 	int GetFileCount(){return files.size();}
 
+	bool operator<(const ZipInfo &item) const
+	{
+		return wcscmp(path,item.path) <0;
+	} 
 	bool operator==(const ZipInfo &item) const
 	{
 		return wcscmp(path,item.path) ==0;
@@ -53,6 +57,7 @@ struct ZipInfo
 
 ZipInfo::~ZipInfo()
 {
+	files.clear();
 	if(zip)unzClose(zip);
 }
 
@@ -64,18 +69,21 @@ int ZipInfo::LoadZip(char* file)
 		int done;
 		unz_file_info file_info;
 		done = unzGoToFirstFile(zip);
-		char path[_MAX_PATH];
+		char tp[_MAX_PATH];
+		//pHGE->System_Log(L"pack %s",path);
 		while(done==UNZ_OK)
 		{
-			ZipFileInfo *file = new ZipFileInfo;
-			unzGetCurrentFileInfo(zip, &file_info, path, sizeof(path), NULL, 0, NULL, 0);
-			if(path[file_info.size_filename-1]!='/')
+			unzGetCurrentFileInfo(zip, &file_info, tp, sizeof(tp), NULL, 0, NULL, 0);
+			if(tp[file_info.size_filename-1]!='/')
 			{
-				C2W(path,file->path,_MAX_PATH-1);
+				ZipFileInfo *file = new ZipFileInfo();
+				C2W(tp,file->path,_MAX_PATH-1);
+				wcsupr(file->path);
 				file->size = file_info.uncompressed_size;
 				file->offset = unzGetOffset(zip);
 				file->flag = file_info.flag;
-				files.insert(file);
+				//pHGE->System_Log(L"file %s, size %d, offset %d",file->path,file->size,file->offset);
+				files.insert(*file);
 			}
 			done=unzGoToNextFile(zip);
 		}
@@ -102,18 +110,22 @@ bool CALL HGE_Impl::Resource_AttachPack(const wchar_t *filename, const wchar_t *
 	ZipInfo *zip;
 
 	szName=Resource_MakePath(filename);
-	System_Log(L"AttachPack:%s",szName);
+	System_Log(L"Attach pack:%s",szName);
 
 	wcsupr(szName);
 
 	std::list<ZipInfo*>::iterator iter = std::find_if(res.begin(),res.end(),find_in_res(szName));
 	if(iter != res.end())
+	{
+		swprintf(szName, L"Pack has been attached:%s", filename);
+		_PostError(szName);
 		return false;
+	}
 
 	zip = new ZipInfo;
 	W2C(szName,Path,_MAX_PATH-1);
-	if(zip->LoadZip(Path)==0)return false;
 	wcscpy(zip->path, szName);
+	if(zip->LoadZip(Path)==0)return false;
 	if(password)
 		wcscpy(zip->password ,password);
 	else
@@ -133,14 +145,9 @@ void CALL HGE_Impl::Resource_RemovePack(const wchar_t *filename)
 	std::list<ZipInfo*>::iterator iter = std::find_if(res.begin(),res.end(),find_in_res(szName));
 	if(iter != res.end())
 		return;
-	ZipInfo* zipi = *iter;
 
-	for(std::set<ZipFileInfo*,ZipInfo::strLess>::iterator iter2 = zipi->files.begin();iter2 != zipi->files.end();iter2++)
-		delete *iter2;
-	zipi->files.clear();
-
-	delete zipi;
-	System_Log(L"RemovePack:%s",szName);
+	delete *iter;
+	System_Log(L"Remove pack:%s",szName);
 	res.erase(iter);
 }
 
@@ -148,17 +155,9 @@ void CALL HGE_Impl::Resource_RemoveAllPacks()
 {
 	std::list<ZipInfo*>::iterator iter;
 	for(iter = res.begin();iter != res.end();iter++)
-	{
-		ZipInfo* zipi = *iter;
-
-		for(std::set<ZipFileInfo*,ZipInfo::strLess>::iterator iter2 = zipi->files.begin();iter2 != zipi->files.end();iter2++)
-			delete *iter2;
-		zipi->files.clear();
-
 		delete *iter;
-	}
 	res.clear();
-	System_Log(L"RemoveAllPacks");
+	System_Log(L"Remove all packs");
 }
 
 void* CALL HGE_Impl::Resource_Load(const wchar_t *filename, DWORD *size)
@@ -175,25 +174,26 @@ void* CALL HGE_Impl::Resource_Load(const wchar_t *filename, DWORD *size)
 
 	// Load from pack
 
-	wcscpy(szName,filename);
-	wcsupr(szName);
-	for(i=0; szName[i]; i++) { if(szName[i]==L'/') szName[i]=L'\\'; }
-
 	ZipInfo* zipi=0;
 	ZipFileInfo zipfile;
-	wcscpy(zipfile.path,szName);
+	wcscpy(zipfile.path,filename);
+	for(i=0; zipfile.path[i]; i++) { if(zipfile.path[i]==L'/') zipfile.path[i]=L'\\'; }
+	wcsupr(zipfile.path);
+
+	//System_Log(L"Load file %s",zipfile.path);
 	for(std::list<ZipInfo*>::iterator iter = res.begin();iter != res.end();iter++)
 	{
+		//System_Log(L"Load file find in pack");
 		zipi = *iter;
-		std::set<ZipFileInfo*,ZipInfo::strLess>::iterator iter2;
-		iter2 = zipi->files.find(&zipfile);
+		std::set<ZipFileInfo>::iterator iter2;
+		iter2 = zipi->files.find(zipfile);
 		if(iter2!=zipi->files.end())
 		{
-			ZipFileInfo* file =*iter2;
-			W2C(zipi->path, Path, _MAX_PATH-1);
+			ZipFileInfo* file =&*iter2;
 			unzSetOffset(zipi->zip,file->offset);
+			//System_Log(L"file name %s ,size %d, offset %d",file->path ,file->size ,file->offset );
 			W2C(zipi->password, Path, _MAX_PATH-1);
-			if(unzOpenCurrentFilePassword(zipi->zip, Path[0] ? Path : 0) != UNZ_OK)
+			if(unzOpenCurrentFilePassword(zipi->zip, 0==Path[0] ? 0 : Path) != UNZ_OK)
 			{
 				swprintf(szName, res_err, filename);
 				_PostError(szName);
@@ -224,6 +224,7 @@ void* CALL HGE_Impl::Resource_Load(const wchar_t *filename, DWORD *size)
 	}
 	// Load from file
 _fromfile:
+	//System_Log(L"Load file find file");
 	unz_file_info file_info;
 	hF = CreateFile(Resource_MakePath(filename), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS, NULL);
 	if(hF == INVALID_HANDLE_VALUE)

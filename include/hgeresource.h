@@ -18,7 +18,6 @@
 #include "hgeparticle.h"
 #include "hgedistort.h"
 #include "hgestrings.h"
-#include "hgeanim2.h"
 
 #define RESTYPES 13
 #define MAXRESCHARS 128

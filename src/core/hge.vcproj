@@ -75,7 +75,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="winmm.lib d3d9.lib d3dx9.lib"
-				OutputFile="..\..\hge_d.dll"
+				OutputFile="..\..\tutorials\precompiled\hge_d.dll"
 				ModuleDefinitionFile=".\hge.def"
 				ImportLibrary="..\..\lib\vc\hge_d.lib"
 			/>
@@ -163,7 +163,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="winmm.lib d3d9.lib d3dx9.lib"
-				OutputFile="..\..\hge.dll"
+				OutputFile="..\..\tutorials\precompiled\hge.dll"
 				ModuleDefinitionFile=".\hge.def"
 				ImportLibrary="..\..\lib\vc\hge.lib"
 			/>
