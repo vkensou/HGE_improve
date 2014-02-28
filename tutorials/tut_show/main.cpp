@@ -8,21 +8,21 @@
 using namespace Show;
 
 HGE *hge=0;
+HTEXTURE tex = 0;
 Picture *pic=0;
+HTEXTURE tex2 = 0;
 SlicedPicture *spic=0;
+PictureData *data;
 SlicedPicture *spic2=0;
+HTEXTURE tex3 = 0;
 FrameAnimation *fanim=0;
+HTEXTURE tex4 = 0;
+PictureData *data2;
 SlicedFrame *sframe=0;
 SlicedAnimation *sanim=0;
-HTEXTURE tex = 0;
-HTEXTURE tex2 = 0;
-HTEXTURE tex3 = 0;
-HTEXTURE tex4 = 0;
 HTEXTURE tex5 = 0;
-HTEXTURE tex6 = 0;
-PictureData *data;
-PictureData *data2;
 hgeSkeleton *skt;
+HTEXTURE tex6 = 0;
 hgeSkeleton *skt2;
 
 class EventListener:public HGEEventListener
@@ -56,7 +56,7 @@ bool EventListener::Render()
 
 	sanim->Update(hge->Timer_GetDelta());
 	sanim->Render();
-	
+
 	skt->Update();
 	skt->Render();
 
@@ -159,11 +159,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	hge->Texture_Free(tex5);
 	hge->Texture_Free(tex6);
 
-	delete data;
-	delete data2;
 	delete pic;
+	delete data;
 	delete spic;
 	delete spic2;
+	delete fanim;
+	delete data2;
 	delete sframe;
 	delete sanim;
 	delete skt;

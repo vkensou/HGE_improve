@@ -8,7 +8,7 @@
 
 
 #include "hge_impl.h"
-
+#include <locale.h>
 
 #define LOWORDINT(n) ((int)((signed short)(LOWORD(n))))
 #define HIWORDINT(n) ((int)((signed short)(HIWORD(n))))
@@ -72,6 +72,7 @@ bool CALL HGE_Impl::System_Initiate()
 	int				width, height;
 
 	// Log system info
+	setlocale(LC_CTYPE, "" );
 
 	System_Log(L"HGE Started..\n");
 

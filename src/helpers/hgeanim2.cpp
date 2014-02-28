@@ -62,6 +62,7 @@ int CAnimDate::LoadDate(const wchar_t* file)
 		ans.push_back(nan);
 	}
 	hge->Resource_Free(dat);
+	hge->Release();
 	return 0;
 }
 

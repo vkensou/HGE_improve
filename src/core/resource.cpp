@@ -27,6 +27,9 @@ struct ZipFileInfo
 
 struct ZipInfo
 {
+	ZipInfo():zip(0){}
+	~ZipInfo();
+
 	struct strLess
 	{
 		bool operator() (const ZipFileInfo *s1, const ZipFileInfo *s2) const
@@ -45,12 +48,16 @@ struct ZipInfo
 	{
 		return wcscmp(path,item.path) ==0;
 	} 
+	unzFile zip;
 };
+
+ZipInfo::~ZipInfo()
+{
+	if(zip)unzClose(zip);
+}
 
 int ZipInfo::LoadZip(char* file)
 {
-	HGE *hge = hgeCreate(HGE_VERSION);
-	unzFile zip;
 	zip=unzOpen(file);
 	if(zip)
 	{
@@ -72,7 +79,6 @@ int ZipInfo::LoadZip(char* file)
 			}
 			done=unzGoToNextFile(zip);
 		}
-		unzClose(zip);
 		return files.size();
 	}
 	else
@@ -112,7 +118,7 @@ bool CALL HGE_Impl::Resource_AttachPack(const wchar_t *filename, const wchar_t *
 		wcscpy(zip->password ,password);
 	else
 		zip->password[0]=0;
-	res.push_back(zip);
+	res.push_front(zip);
 	return true;
 }
 
@@ -134,6 +140,7 @@ void CALL HGE_Impl::Resource_RemovePack(const wchar_t *filename)
 	zipi->files.clear();
 
 	delete zipi;
+	System_Log(L"RemovePack:%s",szName);
 	res.erase(iter);
 }
 
@@ -151,6 +158,7 @@ void CALL HGE_Impl::Resource_RemoveAllPacks()
 		delete *iter;
 	}
 	res.clear();
+	System_Log(L"RemoveAllPacks");
 }
 
 void* CALL HGE_Impl::Resource_Load(const wchar_t *filename, DWORD *size)
@@ -160,7 +168,6 @@ void* CALL HGE_Impl::Resource_Load(const wchar_t *filename, DWORD *size)
 	wchar_t szName[_MAX_PATH];
 	wchar_t szZipName[_MAX_PATH];
 	char Path[_MAX_PATH];
-	unzFile zip;
 	int done, i;
 	void *ptr;
 	HANDLE hF;
@@ -185,14 +192,10 @@ void* CALL HGE_Impl::Resource_Load(const wchar_t *filename, DWORD *size)
 		{
 			ZipFileInfo* file =*iter2;
 			W2C(zipi->path, Path, _MAX_PATH-1);
-			zip=unzOpen(Path);
-			unzSetOffset(zip,file->offset);
-
+			unzSetOffset(zipi->zip,file->offset);
 			W2C(zipi->password, Path, _MAX_PATH-1);
-
-			if(unzOpenCurrentFilePassword(zip, Path[0] ? Path : 0) != UNZ_OK)
+			if(unzOpenCurrentFilePassword(zipi->zip, Path[0] ? Path : 0) != UNZ_OK)
 			{
-				unzClose(zip);
 				swprintf(szName, res_err, filename);
 				_PostError(szName);
 				return 0;
@@ -201,24 +204,21 @@ void* CALL HGE_Impl::Resource_Load(const wchar_t *filename, DWORD *size)
 			ptr = malloc(file->size);
 			if(!ptr)
 			{
-				unzCloseCurrentFile(zip);
-				unzClose(zip);
+				unzCloseCurrentFile(zipi->zip);
 				swprintf(szName, res_err, filename);
 				_PostError(szName);
 				return 0;
 			}
 
-			if(unzReadCurrentFile(zip, ptr, file->size) < 0)
+			if(unzReadCurrentFile(zipi->zip, ptr, file->size) < 0)
 			{
-				unzCloseCurrentFile(zip);
-				unzClose(zip);
+				unzCloseCurrentFile(zipi->zip);
 				free(ptr);
 				swprintf(szName, res_err, filename);
 				_PostError(szName);
 				return 0;
 			}
-			unzCloseCurrentFile(zip);
-			unzClose(zip);
+			unzCloseCurrentFile(zipi->zip);
 			if(size) *size=file->size;
 			return ptr;
 		}
