@@ -707,7 +707,11 @@ bool hgeSkeleton::Load(const wchar_t* path)
 	int offset = 0;
 	data = hge->Resource_Load(path);
 	zz = (char*)data;
-	if(!data)return -1;
+	if(!data)
+	{
+		hge->Release();
+		return -1;
+	}
 
 	UINT sz,sz2,sz3,sz4;
 	int t;bool bt;float ft,ft2;
@@ -1303,4 +1307,16 @@ void hgeBone::SetScaleX(float h,float v)
 	scale = abs(h);
 	if(bind.part)
 		bind.SetScale2(h,v);
+}
+
+hgeSkeleton::~hgeSkeleton(void)
+{
+	std::list<hgeBone*>::iterator iter;
+	hgeBone* vv;
+	for(iter = bones.begin();iter != bones.end();iter++)
+	{
+		delete *iter;
+	}
+
+	delete dat;
 }

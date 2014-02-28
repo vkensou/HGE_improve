@@ -14,6 +14,8 @@
 #include <stdio.h>
 #include <d3d9.h>
 #include <d3dx9.h>
+#include <list>
+
 //#include <d3dx8.h>
 
 #define DEMO
@@ -42,12 +44,12 @@ struct CTextureList
 	CTextureList*		next;
 };
 
-struct CResourceList
-{
-	wchar_t				filename[_MAX_PATH];
-	char				password[64];
-	CResourceList*		next;
-};
+//struct CResourceList
+//{
+//	wchar_t				filename[_MAX_PATH];
+//	char				password[64];
+//	CResourceList*		next;
+//};
 
 struct CStreamList
 {
@@ -75,7 +77,7 @@ public:
 	virtual bool Frame();
 };
 
-
+class ZipInfo;
 /*
 ** HGE Interface implementation
 */
@@ -362,7 +364,8 @@ public:
 
 	// Resources
 	wchar_t				szTmpFilename[_MAX_PATH];
-	CResourceList*		res;
+	//CResourceList*		res;
+	std::list<ZipInfo*>		res;
 	HANDLE				hSearch;
 	WIN32_FIND_DATA		SearchData;
 

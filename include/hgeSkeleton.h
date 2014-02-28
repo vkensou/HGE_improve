@@ -240,7 +240,7 @@ class hgeSkeleton
 {
 public:
 	hgeSkeleton(void){mainbone = 0;x = y = 0;rotate = 0;hscale = vscale = 1; ox = oy = 0;newestbi = -1;mbidx = -1;mode = true;frameindex = -1;animindex = -1;bplaying =false;dat = new PictureData();dox = doy = 0;};
-	virtual ~hgeSkeleton(void){delete dat;};
+	virtual ~hgeSkeleton(void);
 	int AddBone();
 	bool DelBone(hgeBone* bone);
 	//std::map<int,hgeBone*>bones;

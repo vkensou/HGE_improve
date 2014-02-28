@@ -49,5 +49,4 @@ namespace Show
 		std::vector<AnimationInfo> animations;
 		int LoadData(const wchar_t* file);
 	};
-
 }

@@ -11,7 +11,11 @@ namespace Show
 		int offset = 0;
 		dat = hge->Resource_Load(file);
 		zz = (char*)dat;
-		if(!dat)return -1;
+		if(!dat)
+		{
+			hge->Release();
+			return -1;
+		}
 		int mn = 0,n = 0,mm = 0,m = 0;
 		SliceInfo nqp;
 		SliceData npg;
