@@ -218,14 +218,6 @@ public:
 	virtual void		CALL	Shader_SetParaValue( HCONSTTABLE tableHandle, const char* name, int val );
 	virtual void		CALL	Shader_SetParaValue( HCONSTTABLE tableHandle, const char* name, bool val );
 
-	//jcweiran加入的时间模块
-	virtual void		CALL	Timer_StartTick(void);
-	virtual void		CALL	Timer_PauseTick(void);
-	virtual void		CALL	Timer_GoonTick(void);
-	virtual void		CALL	Timer_StopTick(void);
-	virtual int			CALL	Timer_NowTick(void);
-	virtual void		CALL	Timer_SetTick(int);
-
 
 
 
@@ -379,10 +371,6 @@ public:
 	int					cfps;
 
 	bool				shaderChanged;
-
-	int JZTick,TempTick,NowTick1,YanChi,YanChiA;
-	bool UTick,ZT;
-	int ZtTime;
 
 private:
 	HGE_Impl();

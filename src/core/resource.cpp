@@ -166,9 +166,8 @@ void* CALL HGE_Impl::Resource_Load(const wchar_t *filename, DWORD *size)
 	static wchar_t *res_err=L"Can't load resource: %s";
 
 	wchar_t szName[_MAX_PATH];
-	wchar_t szZipName[_MAX_PATH];
 	char Path[_MAX_PATH];
-	int done, i;
+	int i;
 	void *ptr;
 	HANDLE hF;
 

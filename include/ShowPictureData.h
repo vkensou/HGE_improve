@@ -27,7 +27,7 @@ namespace Show
 	struct FrameData
 	{
 		int index;
-		int time;
+		float time;
 		//帧的偏移值，目前尚没有用
 		int x ,y;
 	};

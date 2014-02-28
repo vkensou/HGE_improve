@@ -15,7 +15,7 @@ void hgeTimer::StartTick(void)
 	if(t)
 		JZTick = t->NowTick ();
 	else
-		JZTick = hge->Timer_NowTick();
+		JZTick = hge->Timer_GetTime();
 	UTick = true;
 	ZT = false;
 }
@@ -27,7 +27,7 @@ void hgeTimer::PauseTick(void)
 		if(t)
 			YanChiA = t->NowTick ();
 		else
-			YanChiA = hge->Timer_NowTick();
+			YanChiA = hge->Timer_GetTime();
 		//YanChiA = GetTickCount();
 		ZT = true;
 	}
@@ -39,7 +39,7 @@ void hgeTimer::GoonTick(void)
 		if(t)
 			TempTick = t->NowTick ();
 		else
-			TempTick = hge->Timer_NowTick();
+			TempTick = hge->Timer_GetTime();
 		//TempTick = GetTickCount();
 		YanChi = TempTick - YanChiA + YanChi;
 		ZT = false;
@@ -52,7 +52,7 @@ void hgeTimer::StopTick(void)
 	ZT = true;
 	ZtTime = 0;
 }
-int hgeTimer::NowTick(void)
+float hgeTimer::NowTick(void)
 {
 	if(UTick == false)return 0;
 	if(ZT == false)
@@ -60,7 +60,7 @@ int hgeTimer::NowTick(void)
 		if(t)
 			TempTick = t->NowTick ();
 		else
-			TempTick = hge->Timer_NowTick();
+			TempTick = hge->Timer_GetTime();
 		//TempTick = GetTickCount();
 		NowTick1 = TempTick - JZTick - YanChi;
 		return NowTick1;
@@ -76,7 +76,7 @@ void hgeTimer::SetTick(int aa)
 		if(t)
 			TempTick = t->NowTick ();
 		else
-			TempTick = hge->Timer_NowTick();
+			TempTick = hge->Timer_GetTime();
 		//TempTick = GetTickCount();
 		YanChi = TempTick - JZTick - aa;
 	}
@@ -100,7 +100,7 @@ void hgeTimer::Resume(void)
 		if(t)
 			TempTick = t->NowTick ();
 		else
-			TempTick = hge->Timer_NowTick();
+			TempTick = hge->Timer_GetTime();
 		//TempTick = GetTickCount();
 		YanChi = TempTick - YanChiA + YanChi;
 		ZT = false;

@@ -9,6 +9,7 @@ namespace Show
 		void *dat;
 		char *zz;
 		int offset = 0;
+		int temp = 0;
 		dat = hge->Resource_Load(file);
 		zz = (char*)dat;
 		if(!dat)
@@ -56,8 +57,15 @@ namespace Show
 			offset+=sizeof(mm);
 			for(m = 0; m<mm;m++)
 			{
-				memcpy(&nfme, zz + offset, sizeof(nfme));
-				offset+=sizeof(nfme);
+				memcpy(&nfme.index, zz + offset, sizeof(nfme.index));
+				offset+=sizeof(nfme.index);
+				memcpy(&temp, zz + offset, sizeof(temp));
+				offset+=sizeof(temp);
+				nfme.time = (float)temp / 1000.f;
+				memcpy(&nfme.x, zz + offset, sizeof(nfme.x));
+				offset+=sizeof(nfme.x);
+				memcpy(&nfme.y, zz + offset, sizeof(nfme.y));
+				offset+=sizeof(nfme.y);
 				nfme.index --;
 				nan.frames.push_back(nfme);
 			}

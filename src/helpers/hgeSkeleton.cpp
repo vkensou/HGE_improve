@@ -1112,7 +1112,7 @@ void hgeSkeleton::SetAnimIndex(int index)
 	}
 
 	if(animindex>-1 && anims[animindex].fps>0)
-		time = 1000.f / (float)anims[animindex].fps;
+		time = 1.f / (float)anims[animindex].fps;
 	else
 		time = 99999999999.f;
 
@@ -1186,7 +1186,7 @@ void hgeSkeleton::SetFps(UINT _fps)
 	if(animindex == -1)return;
 	anims[animindex].fps = _fps;
 	if(anims[animindex].fps>0)
-		time = 1000.f / (float)anims[animindex].fps;
+		time = 1.f / (float)anims[animindex].fps;
 	else
 		time = 99999999999.f;
 }

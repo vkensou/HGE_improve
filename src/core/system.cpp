@@ -162,7 +162,6 @@ bool CALL HGE_Impl::System_Initiate()
 
 	System_Log(L"Init done.\n");
 
-	Timer_StartTick();
 	fTime=0.0f;
 	t0=t0fps=timeGetTime();
 	dt=cfps=0;

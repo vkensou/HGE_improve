@@ -494,15 +494,6 @@ public:
 	virtual void		CALL	Shader_SetParaValue( HCONSTTABLE tableHandle, const char* name, float val ) = 0;
 	virtual void		CALL	Shader_SetParaValue( HCONSTTABLE tableHandle, const char* name, int val ) = 0;
 	virtual void		CALL	Shader_SetParaValue( HCONSTTABLE tableHandle, const char* name, bool val ) = 0;
-
-	//jcweiran加入的时间模块
-	virtual void		CALL	Timer_StartTick(void) = 0;
-	virtual void		CALL	Timer_PauseTick(void) = 0;
-	virtual void		CALL	Timer_GoonTick(void) = 0;
-	virtual void		CALL	Timer_StopTick(void) = 0;
-	virtual int			CALL	Timer_NowTick(void) = 0;
-	virtual void		CALL	Timer_SetTick(int) = 0;
-
 };
 
 extern "C" { EXPORT HGE * CALL hgeCreate(int ver); }

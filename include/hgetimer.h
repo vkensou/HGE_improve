@@ -12,15 +12,13 @@ public:
 	void GoonTick(void);
 	void Resume(void);
 	void StopTick(void);
-	int NowTick(void);
+	float NowTick(void);
 	void SetTick(int aa);
 	void SetBaseTimer(hgeTimer* b);
 protected:
 	static HGE	*hge;
 
 	hgeTimer* t;
-	int JZTick,TempTick,NowTick1,YanChi,YanChiA;
+	float JZTick,TempTick,NowTick1,YanChi,YanChiA,ZtTime;
 	bool UTick,ZT;
-	int ZtTime;
-
 };
