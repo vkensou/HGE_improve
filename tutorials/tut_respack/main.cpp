@@ -32,7 +32,7 @@ bool EventListener::Render()
 
 	pic->Render();
 
-	spr->Render(0,0);
+	spr->Render(200,200);
 	hge->Gfx_EndScene();
 	return false;
 }
@@ -60,7 +60,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	{
 		hge->Resource_AttachPack(L"1.zip");
 		hge->Resource_AttachPack(L"2.zip");
-		tex = hge->Texture_Load(L"2.jpg");
+		//优先读取后面添加的资源包中的资源，即1.zip和2.zip里面都有1.jpg。但2.zip是后添加的，所以优先度更高，所以读取的是2.zip里的1.jpg
+		tex = hge->Texture_Load(L"1.jpg");
 		pic = new Picture(tex,0,0,(float)hge->Texture_GetWidth(tex),(float)hge->Texture_GetHeight(tex));
 
 		rm = new hgeResourceManager(L"res.txt");
@@ -72,7 +73,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	hge->Texture_Free(tex);
 
 	delete pic;
-
+	rm->Purge();
+	delete rm;
 	hge->System_Shutdown();
 	hge->Release();
 	return 0;
