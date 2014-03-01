@@ -1,29 +1,26 @@
 #include "hge.h"
 #include "showpicture.h"
-#include "showslicedpicture.h"
-#include "showframeanimation.h"
-#include "showslicedframe.h"
-#include "showslicedanimation.h"
+#include "showframe.h"
+#include "showanimation.h"
 #include "hgeskeleton.h"
+
 using namespace Show;
 
 HGE *hge=0;
-HTEXTURE tex = 0;
+
+HTEXTURE tex=0;
 Picture *pic=0;
-HTEXTURE tex2 = 0;
-SlicedPicture *spic=0;
-PictureData *data;
-SlicedPicture *spic2=0;
-HTEXTURE tex3 = 0;
-FrameAnimation *fanim=0;
-HTEXTURE tex4 = 0;
-PictureData *data2;
-SlicedFrame *sframe=0;
-SlicedAnimation *sanim=0;
-HTEXTURE tex5 = 0;
-hgeSkeleton *skt;
-HTEXTURE tex6 = 0;
-hgeSkeleton *skt2;
+HTEXTURE tex2=0;
+PictureData *dat2=0;
+Picture *pic2=0;
+HTEXTURE tex3=0;
+PictureData *dat3=0;
+Frame *frame=0;
+Animation *anim=0;
+
+HTEXTURE tex4=0;
+PictureData *dat4=0;
+hgeSkeleton *skt=0;
 
 class EventListener:public HGEEventListener
 {
@@ -45,24 +42,12 @@ bool EventListener::Render()
 	hge->Gfx_Clear(0);
 
 	pic->Render();
-
-	spic->Render();
-	spic2->Render();
-
-	fanim->Update(hge->Timer_GetDelta());
-	fanim->Render();
-
-	sframe->Render();
-
-	sanim->Update(hge->Timer_GetDelta());
-	sanim->Render();
-
+	pic2->Render();
+	frame->Render();
+	anim->Update();
+	anim->Render();
 	skt->Update();
 	skt->Render();
-
-	skt2->Update();
-	skt2->Render();
-
 	hge->Gfx_EndScene();
 	return false;
 }
@@ -89,87 +74,46 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	if(hge->System_Initiate())
 	{
 		tex = hge->Texture_Load(L"texture.jpg");
-		pic = new Picture();
-		pic->SetTexture(tex);
-		pic->SetTextureRect (0,0,(float)hge->Texture_GetWidth(tex),(float)hge->Texture_GetHeight(tex));
-
+		pic = new Picture(tex,0,0,hge->Texture_GetWidth(tex),hge->Texture_GetHeight(tex),true);
 		tex2 = hge->Texture_Load(L"twohead.png");
-		data = new PictureData();
-		data->LoadData(L"twohead.dat");
-		data->tex = tex2;
-		spic = new SlicedPicture(data);
-		spic->SetSliceIndex(1);
-		spic->SetPosition(200,300);
+		dat2 = new PictureData(L"twohead.dat",tex2,true);
+		pic2 = new Picture(dat2,0,true);
+		pic2->SetPosition(200,200);
 
-		spic2 = new SlicedPicture(data);
-		spic2->SetSliceIndex(2);
-		spic2->SetPosition(600,300);
-
-		tex3 = hge->Texture_Load(L"fish.png");
-		fanim = new FrameAnimation(tex3,20,20,0,0,139,91);
-		fanim->SetMode(ANIM_LOOP);
-		fanim->Play();
-
-		tex4 = hge->Texture_Load(L"ç±ÀïÇ§Ñ°ÕıÃæ.png");
-		data2 = new PictureData();
-		data2->LoadData(L"ç±ÀïÇ§Ñ°ÕıÃæ.dat");
-		data2->tex = tex4;
-		sframe = new SlicedFrame(data2,2);
-		sframe->SetPosition(400,0);
-		sframe->SetScale(2.f,2.f);
-		sframe->SetRotation(0.5);
-
-		sanim = new SlicedAnimation(data2,1);
-		sanim->SetPosition(400,0);
-		sanim->SetScale(-2.f,2.f);
-		sanim->SetRotation(-0.5);
-		sanim->Play();
-
+		tex3 = hge->Texture_Load(L"ç±ÀïÇ§Ñ°ÕıÃæ.png");
+		dat3 = new PictureData(L"ç±ÀïÇ§Ñ°ÕıÃæ.dat",tex3);
+		frame = new Frame(dat3,0);
+		frame->SetScale(3.125f);
+		frame->SetPosition(0,0);
+		anim = new Animation(dat3,0);
+		anim->SetPosition(400,300);
+		anim->SetRotation(1);
+		anim->SetScale(-1,1);
+		anim->Play();
+		
+		tex4 = hge->Texture_Load(L"¼ôµ¶.png");
 		skt = new hgeSkeleton();
-		skt->Load(L"test.skt");
 		skt->dat->LoadData(L"¼ôµ¶.dat");
-		tex5 = hge->Texture_Load(L"¼ôµ¶.png");
-		skt->dat->tex = tex5;
+		skt->dat->SetTexture(tex4,true);
+		skt->Load(L"test.skt");
 		skt->Rec();
-		skt->SetPosition(200,300);
-		skt->SetRotate(2);
-		skt->SetScale(1,1);
-		skt->SetAnimIndex(0);	
+		skt->SetAnimIndex(0);
+		skt->SetPosition(200,200);
+		skt->SetRotate(1);
 		skt->Play();
-
-		skt2 = new hgeSkeleton();
-		skt2->Load(L"man.skt");
-		skt2->dat->LoadData(L"man.dat");
-		tex6 = hge->Texture_Load(L"man.png");
-		skt2->dat->tex = tex6;
-		skt2->Rec();
-		skt2->SetPosition(600,500);
-		skt2->SetScale(0.5,0.5);
-		skt2->SetAnimIndex(0);	
-		skt2->Play();
-
 		hge->System_Start();
 	}
-	else MessageBox(NULL, hge->System_GetErrorMessage(), L"Error", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+	else 
+		MessageBox(NULL, hge->System_GetErrorMessage(), L"Error", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
 
-	hge->Texture_Free(tex);
-	hge->Texture_Free(tex2);
-	hge->Texture_Free(tex3);
-	hge->Texture_Free(tex4);
-	hge->Texture_Free(tex5);
-	hge->Texture_Free(tex6);
-
+	//hge->Texture_Free(tex);
 	delete pic;
-	delete data;
-	delete spic;
-	delete spic2;
-	delete fanim;
-	delete data2;
-	delete sframe;
-	delete sanim;
+	delete pic2;
+	delete frame;
+	hge->Texture_Free(tex3);
+	delete dat3;
+	delete anim;
 	delete skt;
-	delete skt2;
-
 	hge->System_Shutdown();
 	hge->Release();
 	return 0;

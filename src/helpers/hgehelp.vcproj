@@ -196,10 +196,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\hgeanim2.cpp"
-				>
-			</File>
-			<File
 				RelativePath="hgecolor.cpp"
 				>
 				<FileConfiguration
@@ -500,31 +496,23 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\ShowAnimation.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ShowBase.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ShowFrameAnimation.cpp"
+				RelativePath=".\ShowFrame.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\showpicture.cpp"
+				RelativePath=".\ShowPicture.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\ShowPictureData.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ShowSlicedAnimation.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ShowSlicedFrame.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ShowSlicedPicture.cpp"
 				>
 			</File>
 		</Filter>
@@ -534,10 +522,6 @@
 			>
 			<File
 				RelativePath="..\..\include\hgeanim.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\hgeanim2.h"
 				>
 			</File>
 			<File
@@ -613,11 +597,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\ShowAnimation.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\include\ShowBase.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\ShowFrameAnimation.h"
+				RelativePath="..\..\include\ShowFrame.h"
 				>
 			</File>
 			<File
@@ -626,18 +614,6 @@
 			</File>
 			<File
 				RelativePath="..\..\include\ShowPictureData.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\ShowSlicedAnimation.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\ShowSlicedFrame.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\ShowSlicedPicture.h"
 				>
 			</File>
 		</Filter>

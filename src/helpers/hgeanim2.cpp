@@ -79,7 +79,7 @@ hgeAnimation2::hgeAnimation2()
 
 void hgeAnimation2::Play()
 {
-	if(m_data && m_anim>=0 && m_anim<m_data->ans.size() && m_data->ans[m_anim].fms.size() > 0)
+	if(m_data && m_anim>=0 && m_anim<(int)m_data->ans.size() && m_data->ans[m_anim].fms.size() > 0)
 	{
 		bPlaying = true;
 		m_frame = 0;
@@ -171,7 +171,7 @@ void hgeAnimation2::SetAnimData(CAnimDate* na)
 void hgeAnimation2::SetAnim(int n)
 {
 	n--;
-	if(m_data && m_data->ans.size()>0 && n >=0 && n<m_data->ans.size())
+	if(m_data && (int)m_data->ans.size()>0 && n >=0 && n<(int)m_data->ans.size())
 	{
 		m_anim = n;
 		m_frame = 0;
@@ -185,7 +185,7 @@ void hgeAnimation2::SetAnimFrame(int n)
 	if(!m_data)return;
 	if(m_anim == -1)return ;
 	if(m_data->ans[m_anim].fms.size()==0)return;
-	if(n<0 || n>=m_data->ans[m_anim].fms.size())return ;
+	if(n<0 || n>=(int)m_data->ans[m_anim].fms.size())return ;
 	//if(n<0)n=0;
 	//if(n>=m_data->ans[m_anim].fms.size())n=m_data->ans[m_anim].fms.size();
 	m_frame = n;
@@ -196,7 +196,7 @@ void hgeAnimation2::SetFrame(int n)
 {
 	n--;
 	if(!m_data)return;
-	if(n<0 || n>=m_data->fms.size())return ;
+	if(n<0 || n>=(int)m_data->fms.size())return ;
 	bPlaying = false;
 	StopTick();
 	m_anim = -1;

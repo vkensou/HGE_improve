@@ -42,11 +42,16 @@ namespace Show
 	class PictureData
 	{
 	public:
-		PictureData(){tex = 0;};
+		PictureData(){tex = 0;_autodel = false;}
+		PictureData(const wchar_t* file,HTEXTURE tex = 0,bool autodel = false);
+		~PictureData();
 		HTEXTURE tex;
 		std::vector<SliceInfo> slices;
 		std::vector<FrameInfo> frames;
 		std::vector<AnimationInfo> animations;
 		int LoadData(const wchar_t* file);
+		void SetTexture(HTEXTURE tex,bool autodel = false);
+	private:
+		bool _autodel;
 	};
 }

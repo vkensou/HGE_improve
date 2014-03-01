@@ -3,6 +3,11 @@
 
 namespace Show
 {
+	PictureData::PictureData(const wchar_t* file,HTEXTURE tex,bool autodel)
+	{
+		LoadData(file);
+		SetTexture(tex,autodel);
+	}
 	int PictureData::LoadData(const wchar_t* file)
 	{
 		HGE *hge = hgeCreate(HGE_VERSION);
@@ -76,5 +81,22 @@ namespace Show
 		hge->Resource_Free(dat);
 		hge->Release();
 		return 0;
+	}
+
+	void PictureData::SetTexture(HTEXTURE _tex,bool autodel)
+	{
+		tex = _tex;
+		_autodel = autodel;
+	}
+
+	PictureData::~PictureData()
+	{
+		if(_autodel)
+			if(tex)
+			{
+				HGE *hge = hgeCreate(HGE_VERSION);
+				hge->Texture_Free(tex);
+				hge->Release();
+			}
 	}
 }

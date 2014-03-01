@@ -441,7 +441,7 @@ int hgeSkeleton::AddBone()
 	hgeBone*  nb = new hgeBone();
 	bones.push_back(nb);
 	newestbi = nb->GetID();
-	for(int i = 0 ;i<anims.size();i++)
+	for(UINT i = 0 ;i<anims.size();i++)
 	{
 		nb->AddAnim();
 		nb->SetAnimIndex(anims.size()-1);
@@ -676,7 +676,7 @@ bool hgeSkeleton::Save(const wchar_t* path)
 	fwrite(&sz3,sizeof(sz3),1,f);
 	for(UINT k = 0;k<sz3;k++)
 	{
-		ft = anims[k].fps ;
+		ft = (float)anims[k].fps ;
 		fwrite(&ft,sizeof(ft),1,f);
 		sz4 = anims[k].frames.size();
 		fwrite(&sz4,sizeof(sz4),1,f);
@@ -775,12 +775,12 @@ bool hgeSkeleton::Load(const wchar_t* path)
 			//fread(&t,sizeof(t),1,f);
 			memcpy(&t, zz + offset, sizeof(t));
 			offset+=sizeof(t);
-			tb->BindPoint().part = new SlicedPicture();
+			tb->BindPoint().part = new Picture();
 			tb->BindPoint().SetScale(tb->BindPoint().GetHScale(),tb->BindPoint().GetVScale());
 			tb->BindPoint().SetRotation(tb->BindPoint().GetRotation());
-			SlicedPicture* p = (SlicedPicture*)tb->bind.part;
+			Picture* p = (Picture*)tb->bind.part;
 			p->SetPictureData(dat);
-			tb->BindPoint().ls = t;
+			tb->BindPoint().ls = t-1;
 		}
 		//fread(&ft,sizeof(ft),1,f);
 		memcpy(&ft, zz + offset, sizeof(ft));
@@ -1207,34 +1207,34 @@ void hgeSkeleton::Play()
 	if(animindex!=-1 && GetFrameNum()>0)
 	{
 		bplaying = true;
-		timer.StartTick();
+		timer.Start();
 		SetFrameIndex(0);
 	}
 	else
 	{
 		bplaying = false;
-		timer.StopTick();
+		timer.Stop();
 	}
 }
 
 void hgeSkeleton::Stop()
 {
 	bplaying = false;
-	timer.StopTick();
+	timer.Stop();
 	dox = doy = 0;
 }
 
 void hgeSkeleton::Update()
 {
 	if(!bplaying)return;
-	float t = (float)timer.NowTick();
+	float t = (float)timer.Now();
 	if(t>time)
 	{
 		if(GetFrameIndex() + 1 >= GetFrameNum())
 			SetFrameIndex(0);
 		else
 			SetFrameIndex(GetFrameIndex()+1);
-		timer.StartTick();
+		timer.Start();
 		t = 0;
 	}
 		
@@ -1262,9 +1262,9 @@ void hgeSkeleton::Rec()
 		vv = *ritor;
 		if(vv->BindPoint().part)
 		{
-			SlicedPicture* p = (SlicedPicture*)vv->BindPoint().part;
+			Picture* p = (Picture*)vv->BindPoint().part;
 			p->SetPictureData(dat);
-			p->SetSliceIndex(vv->BindPoint().ls);
+			p->SetIndex(vv->BindPoint().ls);
 		}
 	}
 }
@@ -1312,7 +1312,6 @@ void hgeBone::SetScaleX(float h,float v)
 hgeSkeleton::~hgeSkeleton(void)
 {
 	std::list<hgeBone*>::iterator iter;
-	hgeBone* vv;
 	for(iter = bones.begin();iter != bones.end();iter++)
 	{
 		delete *iter;
