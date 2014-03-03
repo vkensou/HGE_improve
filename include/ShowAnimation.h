@@ -29,19 +29,19 @@ namespace Show
 		virtual int GetFrameIndex(){return m_frame;}
 
 		void Play();
-		void Stop(){ bPlaying=false;time.Pause(); }
-		void Resume(){ bPlaying=true;time.Resume(); }
-		void Update();
+		void Stop(){ bPlaying=false; }
+		void Resume(){ bPlaying=true; }
+		void Update(float delta);
 		bool IsPlaying() const { return bPlaying; }
 		void SetSpeed(float speed);
-		float GetSpeed(){return time.GetSpeed();}
+		float GetSpeed(){return 1.0;}
 		void SetMode(int mode);
 		int GetMode(){return _mode;}
 	protected:
 		int _aidx;
 		int m_frame,m_frame2;
 		bool bPlaying;
-		hgeTimer time;
+		float _time;
 		int times;
 		int _mode;
 	};

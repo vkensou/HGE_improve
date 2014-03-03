@@ -10,6 +10,7 @@ namespace Show
 	}
 	int PictureData::LoadData(const wchar_t* file)
 	{
+		if(!file)return -1;
 		HGE *hge = hgeCreate(HGE_VERSION);
 		void *dat;
 		char *zz;
@@ -98,5 +99,52 @@ namespace Show
 				hge->Texture_Free(tex);
 				hge->Release();
 			}
+	}
+
+	bool PictureData::SetAnimation(int nframes, float DeltaTime, int mode, float w, float h, float x, float y)
+	{
+		if(0==tex)return false;
+		HGE *hge = hgeCreate(HGE_VERSION);
+		animations.clear();
+		frames.clear();
+		slices.clear();
+		float tw = (float)hge->Texture_GetWidth(tex,true),th=(float)hge->Texture_GetHeight(tex,true);
+		int xn =tw/w,yn=th/h;;
+		DeltaTime/=1000.f;
+		SliceInfo *slice;
+		FrameInfo *frame;
+		SliceData *slicedata;
+		AnimationInfo *anim;
+		FrameData *framedata;
+		animations.push_back(AnimationInfo());
+		anim = &animations.back();
+		anim->mode = mode;
+		anim->w = w;anim->h = h;
+		for(int i = 0;i<nframes;i++)
+		{
+			slices.push_back(SliceInfo());
+			slice = &slices.back();
+			slice->x = x;slice->y = y;
+			slice->left = (i % xn) * w;
+			slice->top = (i / xn) * h;
+			slice->width = w;
+			slice->height = h;
+			frames.push_back(FrameInfo());
+			frame = &frames.back();
+			frame->w = slice->width;frame->h = slice->height;
+			frame->slices.push_back(SliceData());
+			slicedata=&frame->slices.back();
+			slicedata->index=i;
+			slicedata->x=0;
+			slicedata->y=0;
+			anim->frames.push_back(FrameData());
+			framedata=&anim->frames.back();
+			framedata->index=i;
+			framedata->time = DeltaTime;
+			framedata->x = 0;framedata->y = 0;
+		}
+
+		hge->Release();
+		return true;
 	}
 }

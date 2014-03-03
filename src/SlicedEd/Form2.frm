@@ -1,28 +1,28 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "Mscomctl.ocx"
+Object = "{6B7E6392-850A-101B-AFC0-4210102A8DA7}#1.3#0"; "COMCTL32.OCX"
 Begin VB.Form Form2 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Form2"
-   ClientHeight    =   240
+   ClientHeight    =   495
    ClientLeft      =   45
    ClientTop       =   375
-   ClientWidth     =   2055
+   ClientWidth     =   1710
    ControlBox      =   0   'False
    LinkTopic       =   "Form2"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   240
-   ScaleWidth      =   2055
-   StartUpPosition =   1  'CenterOwner
-   Begin MSComctlLib.ProgressBar pgrbar 
-      Height          =   255
+   ScaleHeight     =   495
+   ScaleWidth      =   1710
+   StartUpPosition =   1  '所有者中心
+   Begin ComctlLib.ProgressBar pgrbar 
+      Height          =   495
       Left            =   0
       TabIndex        =   0
       Top             =   0
-      Width           =   2055
-      _ExtentX        =   3625
-      _ExtentY        =   450
-      _Version        =   393216
+      Width           =   1695
+      _ExtentX        =   2990
+      _ExtentY        =   873
+      _Version        =   327682
       Appearance      =   1
    End
 End
@@ -32,5 +32,5 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Private Sub Form_Load()
-  pgrbar.value = 0
+  pgrbar.Value = 0
 End Sub

@@ -613,8 +613,8 @@ bool hgeSkeleton::Save(const wchar_t* path)
 			fwrite(&ft,sizeof(ft),1,f);
 			ft = tb->BindPoint().GetRotation();
 			fwrite(&ft,sizeof(ft),1,f);
-			SlicedPicture* p = (SlicedPicture*)tb->BindPoint().part;
-			t = p->GetSliceIndex();
+			Picture* p = (Picture*)tb->BindPoint().part;
+			t = p->GetIndex();
 			fwrite(&t,sizeof(t),1,f);
 		}
 		ft = tb->GetHeadX();

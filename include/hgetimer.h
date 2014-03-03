@@ -25,7 +25,7 @@ protected:
 	float lastnow,lasttick,_speed,temp;
 	bool UTick,ZT;
 private:
-	inline float GetTempTick();
+	float GetTempTick();
 };
 
 inline float hgeTimer::GetTempTick()

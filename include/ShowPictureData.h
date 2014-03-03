@@ -51,6 +51,10 @@ namespace Show
 		std::vector<AnimationInfo> animations;
 		int LoadData(const wchar_t* file);
 		void SetTexture(HTEXTURE tex,bool autodel = false);
+		//此函数仅仅生成最简单的动画，且会清除已经当前已有的各种信息。
+		//当前已设置纹理才有用
+		//DeltaTime单位毫秒，内部会转换为秒
+		bool SetAnimation(int nframes, float DeltaTime, int mode, float w, float h, float x=0, float y=0);
 	private:
 		bool _autodel;
 	};

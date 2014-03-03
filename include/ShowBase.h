@@ -51,8 +51,8 @@ namespace Show
 		virtual void SetTexture(HTEXTURE tex){};
 		virtual HTEXTURE GetTexture(){return 0;}
 
-		float GetWidth(){return 0;};
-		float GetHeight(){return 0;};
+		virtual float GetWidth(){return 0;};
+		virtual float GetHeight(){return 0;};
 
 		virtual void GetBoundingBox(float *x1,float *y1, float *x2,float *y2){}
 		//virtual void GetCenterSpot(float *x,float *y){};		//不确定是否加入该函数

@@ -6,7 +6,7 @@
 #include <list>
 #include <cmath>
 #include "showpicturedata.h"
-#include "showslicedpicture.h"
+#include "showpicture.h"
 
 using namespace Show;
 

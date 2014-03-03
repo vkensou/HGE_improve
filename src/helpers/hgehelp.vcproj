@@ -408,10 +408,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\hgesprite2.cpp"
-				>
-			</File>
-			<File
 				RelativePath="hgestrings.cpp"
 				>
 				<FileConfiguration
@@ -570,10 +566,6 @@
 			</File>
 			<File
 				RelativePath="..\..\include\hgesprite.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\hgesprite2.h"
 				>
 			</File>
 			<File

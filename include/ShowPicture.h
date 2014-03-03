@@ -32,10 +32,17 @@ namespace Show
 		virtual void SetAlpha(BYTE alpha, int i=-1);
 		virtual BYTE GetAlpha(int i=0){return GETA(quad.v[i].col);};
 	
+		virtual void SetBlendMode(int blend){quad.blend = blend;};
+		virtual int GetBlendMode(){return quad.blend;};
+
+		virtual float GetWidth(){return width;};
+		virtual float GetHeight(){return height;};
+
 		void SetPictureData(PictureData *data, bool autodel=false);
-		void SetIndex(int index);
 		PictureData *GetData(){return _data;}
-		UINT GetSliceIndex(){return _sidx;}
+
+		void SetIndex(int index);
+		UINT GetIndex(){return _sidx;}
 
 	protected:
 		Picture(ShowType st);

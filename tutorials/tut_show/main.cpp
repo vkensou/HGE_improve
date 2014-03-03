@@ -3,6 +3,7 @@
 #include "showframe.h"
 #include "showanimation.h"
 #include "hgeskeleton.h"
+#include "hgefont2.h"
 
 using namespace Show;
 
@@ -17,10 +18,15 @@ HTEXTURE tex3=0;
 PictureData *dat3=0;
 Frame *frame=0;
 Animation *anim=0;
-
 HTEXTURE tex4=0;
 PictureData *dat4=0;
 hgeSkeleton *skt=0;
+HTEXTURE tex5=0;
+PictureData *dat5=0;
+Animation *anim2=0;
+
+
+hgeFont2 *fnt = 0;
 
 class EventListener:public HGEEventListener
 {
@@ -44,10 +50,13 @@ bool EventListener::Render()
 	pic->Render();
 	pic2->Render();
 	frame->Render();
-	anim->Update();
+	anim->Update(hge->Timer_GetDelta());
 	anim->Render();
 	skt->Update();
 	skt->Render();
+	anim2->Update(hge->Timer_GetDelta());
+	anim2->Render();
+	fnt->Print(0,0,0,L"fps:%d",hge->Timer_GetFPS());
 	hge->Gfx_EndScene();
 	return false;
 }
@@ -71,6 +80,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	hge->System_SetState(HGE_SCREENBPP, 32);
 	hge->System_SetState(HGE_HIDEMOUSE, false);
 	hge->System_SetState(HGE_SHOWSPLASH, false);
+	hge->System_SetState(HGE_FPS, HGEFPS_VSYNC);
 	if(hge->System_Initiate())
 	{
 		tex = hge->Texture_Load(L"texture.jpg");
@@ -101,6 +111,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		skt->SetPosition(200,200);
 		skt->SetRotate(1);
 		skt->Play();
+		tex5 = hge->Texture_Load(L"manstand.png");
+		dat5 = new PictureData(0,tex5,true);
+		float w5=hge->Texture_GetWidth(tex5,true),h5=hge->Texture_GetHeight(tex5,true);
+		dat5->SetAnimation(4,100,SHOWANIM_LOOP,w5/4,h5,w5/8,h5);
+		anim2 = new Animation(dat5,0,true);
+		anim2->Play();
+		anim2->SetPosition(400,300);
+		fnt = new hgeFont2(L"ËÎÌå",12);
 		hge->System_Start();
 	}
 	else 
@@ -114,6 +132,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	delete dat3;
 	delete anim;
 	delete skt;
+	delete anim2;
+	delete fnt;
 	hge->System_Shutdown();
 	hge->Release();
 	return 0;
