@@ -4,6 +4,7 @@
 #include "showanimation.h"
 #include "hgeskeleton.h"
 #include "hgefont2.h"
+#include "showparticle.h"
 
 using namespace Show;
 
@@ -24,7 +25,8 @@ hgeSkeleton *skt=0;
 HTEXTURE tex5=0;
 PictureData *dat5=0;
 Animation *anim2=0;
-
+Picture *spt=0;
+ParticleSystem*	par=0;
 
 hgeFont2 *fnt = 0;
 
@@ -56,6 +58,8 @@ bool EventListener::Render()
 	skt->Render();
 	anim2->Update(hge->Timer_GetDelta());
 	anim2->Render();
+	par->Update(hge->Timer_GetDelta());
+	par->Render();
 	fnt->Print(0,0,0,L"fps:%d",hge->Timer_GetFPS());
 	hge->Gfx_EndScene();
 	return false;
@@ -80,7 +84,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	hge->System_SetState(HGE_SCREENBPP, 32);
 	hge->System_SetState(HGE_HIDEMOUSE, false);
 	hge->System_SetState(HGE_SHOWSPLASH, false);
-	hge->System_SetState(HGE_FPS, HGEFPS_VSYNC);
+	hge->System_SetState(HGE_FPS, 0);
 	if(hge->System_Initiate())
 	{
 		tex = hge->Texture_Load(L"texture.jpg");
@@ -119,6 +123,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		anim2->Play();
 		anim2->SetPosition(400,300);
 		fnt = new hgeFont2(L"ËÎÌå",12);
+
+		spt=new Picture(hge->Texture_Load(L"particles.png"),32,32,32,32,true);
+		spt->SetBlendMode(BLEND_COLORMUL | BLEND_ALPHAADD | BLEND_NOZWRITE);
+		spt->SetCenterPoint(16,16);
+		par=new ParticleSystem(L"particle1.psi",spt);
+		par->PlayAt(600,100);
+
 		hge->System_Start();
 	}
 	else 
@@ -134,6 +145,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	delete skt;
 	delete anim2;
 	delete fnt;
+	delete par;
+	delete spt;
 	hge->System_Shutdown();
 	hge->Release();
 	return 0;

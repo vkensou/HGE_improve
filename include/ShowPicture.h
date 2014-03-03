@@ -22,6 +22,8 @@ namespace Show
 
 		virtual void SetPosition(float x,float y);
 		void SetCenterPoint(float x,float y);
+		float GetCenterX(){return _cx;}
+		float GetCenterY(){return _cy;}
 		virtual void SetRotation(float rot =0);
 		virtual void SetScale(float hscale=1.0f, float vscale=0.0f);
 		virtual void SetEx(float x,float y,float cx =0.f,float cy=0.f,float rot =0,float hscale=1.f, float vscale=0.f);

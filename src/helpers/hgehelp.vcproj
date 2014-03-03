@@ -504,6 +504,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ShowParticle.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ShowPicture.cpp"
 				>
 			</File>
@@ -593,11 +597,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\ShowAnimBase.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\include\ShowBase.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\include\ShowFrame.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\ShowParticle.h"
 				>
 			</File>
 			<File
