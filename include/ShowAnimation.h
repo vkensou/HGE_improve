@@ -1,7 +1,7 @@
 #pragma once
 
 #include "showframe.h"
-#include "hgetimer.h"
+#include "ShowAnimBase.h"
 
 namespace Show
 {
@@ -16,7 +16,8 @@ namespace Show
 		SHOWANIM_TIME = 0,
 		SHOWANIM_FRAME = 8,
 	};
-	class Animation:public Frame
+	class Animation:
+		public Frame,public AnimBase
 	{
 	public:
 		Animation();
@@ -28,10 +29,10 @@ namespace Show
 		virtual void SetFrameIndex(int index){};
 		virtual int GetFrameIndex(){return m_frame;}
 
-		void Play();
-		void Stop(){ bPlaying=false; }
-		void Resume(){ bPlaying=true; }
-		void Update(float delta);
+		virtual void Play();
+		virtual void Stop(){ bPlaying=false; }
+		virtual void Resume(){ bPlaying=true; }
+		virtual void Update(float delta);
 		bool IsPlaying() const { return bPlaying; }
 		void SetSpeed(float speed);
 		float GetSpeed(){return 1.0;}
