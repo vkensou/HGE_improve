@@ -22,7 +22,7 @@ namespace Show
 
 		psi=hge->Resource_Load(filename);
 		if(!psi) return;
-		memcpy(&info, psi, sizeof(ParticleSystemInfo));
+		memcpy(&info, psi, sizeof(ParticleData));
 		hge->Resource_Free(psi);
 		info.sprite=sprite;
 
@@ -38,11 +38,11 @@ namespace Show
 		bUpdateBoundingBox=false;
 	}
 
-	ParticleSystem::ParticleSystem(ParticleSystemInfo *psi)
+	ParticleSystem::ParticleSystem(ParticleData *psi)
 	{
 		hge=hgeCreate(HGE_VERSION);
 
-		memcpy(&info, psi, sizeof(ParticleSystemInfo));
+		memcpy(&info, psi, sizeof(ParticleData));
 
 		vecLocation.x=vecPrevLocation.x=0.0f;
 		vecLocation.y=vecPrevLocation.y=0.0f;

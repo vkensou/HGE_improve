@@ -10,29 +10,7 @@
 const int SHOWMAXPARTICLES = 500;
 namespace Show
 {
-	struct Particle
-	{
-		hgeVector	vecLocation;
-		hgeVector	vecVelocity;
-
-		float		fGravity;
-		float		fRadialAccel;
-		float		fTangentialAccel;
-
-		float		fSpin;
-		float		fSpinDelta;
-
-		float		fSize;
-		float		fSizeDelta;
-
-		hgeColor	colColor;		// + alpha
-		hgeColor	colColorDelta;
-
-		float		fAge;
-		float		fTerminalAge;
-	};
-
-	struct ParticleSystemInfo
+	struct ParticleData
 	{
 		Picture*	sprite;    // texture + blend mode
 		int			nEmission; // particles per sec
@@ -75,10 +53,10 @@ namespace Show
 		:public Base,public AnimBase
 	{
 	public:
-		ParticleSystemInfo info;
+		ParticleData info;
 
 		ParticleSystem(const wchar_t *filename, Picture *sprite);
-		ParticleSystem(ParticleSystemInfo *psi);
+		ParticleSystem(ParticleData *psi);
 		ParticleSystem(const ParticleSystem &ps);
 		virtual ~ParticleSystem() { hge->Release(); }
 
@@ -122,7 +100,29 @@ namespace Show
 		hgeRect				rectBoundingBox;
 		bool				bUpdateBoundingBox;
 
+		struct Particle
+		{
+			hgeVector	vecLocation;
+			hgeVector	vecVelocity;
+
+			float		fGravity;
+			float		fRadialAccel;
+			float		fTangentialAccel;
+
+			float		fSpin;
+			float		fSpinDelta;
+
+			float		fSize;
+			float		fSizeDelta;
+
+			hgeColor	colColor;		// + alpha
+			hgeColor	colColorDelta;
+
+			float		fAge;
+			float		fTerminalAge;
+		};
 		Particle			particles[SHOWMAXPARTICLES];
+
 	};
 
 }
