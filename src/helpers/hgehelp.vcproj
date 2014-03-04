@@ -45,9 +45,10 @@
 				AdditionalOptions="/QIfist "
 				Optimization="2"
 				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="..\..\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				StringPooling="true"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				PrecompiledHeaderFile=".\Release/hgehelp.pch"
 				AssemblerListingLocation=".\Release/"
@@ -119,10 +120,11 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/QIfist "
 				Optimization="0"
+				AdditionalIncludeDirectories="..\..\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="0"
-				RuntimeLibrary="1"
+				RuntimeLibrary="3"
 				PrecompiledHeaderFile=".\Debug/hgehelp.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
@@ -194,7 +196,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\hgeanim2.cpp"
+				RelativePath=".\hgeBox2dDraw.cpp"
 				>
 			</File>
 			<File
@@ -386,6 +388,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\hgeSkeleton.cpp"
+				>
+			</File>
+			<File
 				RelativePath="hgesprite.cpp"
 				>
 				<FileConfiguration
@@ -404,10 +410,6 @@
 						PreprocessorDefinitions=""
 					/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\hgesprite2.cpp"
-				>
 			</File>
 			<File
 				RelativePath="hgestrings.cpp"
@@ -493,6 +495,30 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\ShowAnimation.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ShowBase.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ShowFrame.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ShowParticle.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ShowPicture.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ShowPictureData.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -503,7 +529,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\hgeanim2.h"
+				RelativePath="..\..\include\hgeBox2dDraw.h"
 				>
 			</File>
 			<File
@@ -547,11 +573,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\hgesprite.h"
+				RelativePath="..\..\include\hgeSkeleton.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\hgesprite2.h"
+				RelativePath="..\..\include\hgesprite.h"
 				>
 			</File>
 			<File
@@ -572,6 +598,34 @@
 			</File>
 			<File
 				RelativePath="resources.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\ShowAnimation.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\ShowAnimBase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\ShowBase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\ShowFrame.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\ShowParticle.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\ShowPicture.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\ShowPictureData.h"
 				>
 			</File>
 		</Filter>

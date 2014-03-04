@@ -52,7 +52,7 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;HGEDLL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="0"
-				RuntimeLibrary="1"
+				RuntimeLibrary="3"
 				PrecompiledHeaderFile=".\Debug/hge.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
@@ -75,7 +75,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="winmm.lib d3d9.lib d3dx9.lib"
-				OutputFile="..\..\hge_d.dll"
+				OutputFile="..\..\tutorials\precompiled\hge_d.dll"
 				ModuleDefinitionFile=".\hge.def"
 				ImportLibrary="..\..\lib\vc\hge_d.lib"
 			/>
@@ -140,7 +140,7 @@
 				InlineFunctionExpansion="1"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;HGEDLL"
 				StringPooling="true"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				PrecompiledHeaderFile=".\Release/hge.pch"
 				AssemblerListingLocation=".\Release/"
@@ -163,7 +163,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="winmm.lib d3d9.lib d3dx9.lib"
-				OutputFile="..\..\hge.dll"
+				OutputFile="..\..\tutorials\precompiled\hge.dll"
 				ModuleDefinitionFile=".\hge.def"
 				ImportLibrary="..\..\lib\vc\hge.lib"
 			/>
@@ -393,204 +393,80 @@
 				Name="ZLIB"
 				>
 				<File
-					RelativePath="ZLIB\adler32.c"
+					RelativePath=".\ZLIB\adler32.c"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="ZLIB\crc32.c"
+					RelativePath=".\ZLIB\crc32.c"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="ZLIB\inffast.c"
+					RelativePath=".\ZLIB\crc32.h"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="ZLIB\inflate.c"
+					RelativePath=".\ZLIB\gzguts.h"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="ZLIB\inftrees.c"
+					RelativePath=".\ZLIB\inffast.c"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="ZLIB\ioapi.c"
+					RelativePath=".\ZLIB\inffast.h"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="ZLIB\trees.c"
+					RelativePath=".\ZLIB\inffixed.h"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="ZLIB\uncompr.c"
+					RelativePath=".\ZLIB\inflate.c"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="ZLIB\unzip.c"
+					RelativePath=".\ZLIB\inflate.h"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="ZLIB\zutil.c"
+					RelativePath=".\ZLIB\inftrees.c"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\ZLIB\inftrees.h"
+					>
+				</File>
+				<File
+					RelativePath=".\ZLIB\ioapi.c"
+					>
+				</File>
+				<File
+					RelativePath=".\ZLIB\ioapi.h"
+					>
+				</File>
+				<File
+					RelativePath=".\ZLIB\unzip.c"
+					>
+				</File>
+				<File
+					RelativePath=".\ZLIB\unzip.h"
+					>
+				</File>
+				<File
+					RelativePath=".\ZLIB\zconf.h"
+					>
+				</File>
+				<File
+					RelativePath=".\ZLIB\zlib.h"
+					>
+				</File>
+				<File
+					RelativePath=".\ZLIB\zutil.c"
+					>
+				</File>
+				<File
+					RelativePath=".\ZLIB\zutil.h"
+					>
 				</File>
 			</Filter>
 		</Filter>

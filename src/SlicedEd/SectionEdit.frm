@@ -270,7 +270,7 @@ Private Sub Command2_Click()
   If Check2.Value = 1 Then
     qps(dqq).cx = qps(dqq).oWidth / 2 - qps(dqq).ox
   Else
-    qps(dqq).cx = (qps(dqq).Width - 1) / 2
+    qps(dqq).cx = qps(dqq).Width / 2
   End If
   Dim n As Long
   If Check1.Value = 1 Then
@@ -279,7 +279,7 @@ Private Sub Command2_Click()
         qps(n).cx = qps(n).oWidth / 2 - qps(n).ox
         Debug.Print qps(n).cx + qps(n).ox
       Else
-        qps(n).cx = (qps(n).Width - 1) / 2
+        qps(n).cx = qps(n).Width / 2
       End If
     Next n
   End If
@@ -340,7 +340,7 @@ Private Sub Command5_Click()
   If Check2.Value = 1 Then
     qps(dqq).cy = qps(dqq).oHeight / 2 - qps(dqq).oy
   Else
-    qps(dqq).cy = (qps(dqq).Height - 1) / 2
+    qps(dqq).cy = qps(dqq).Height / 2
   End If
   Dim n As Long
   If Check1.Value = 1 Then
@@ -348,7 +348,7 @@ Private Sub Command5_Click()
       If Check2.Value = 1 Then
         qps(n).cy = qps(n).oHeight / 2 - qps(n).oy
       Else
-        qps(n).cy = (qps(n).Height - 1) / 2
+        qps(n).cy = qps(n).Height / 2
       End If
     Next n
   End If

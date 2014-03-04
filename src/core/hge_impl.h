@@ -14,6 +14,8 @@
 #include <stdio.h>
 #include <d3d9.h>
 #include <d3dx9.h>
+#include <list>
+
 //#include <d3dx8.h>
 
 #define DEMO
@@ -42,12 +44,12 @@ struct CTextureList
 	CTextureList*		next;
 };
 
-struct CResourceList
-{
-	wchar_t				filename[_MAX_PATH];
-	char				password[64];
-	CResourceList*		next;
-};
+//struct CResourceList
+//{
+//	wchar_t				filename[_MAX_PATH];
+//	char				password[64];
+//	CResourceList*		next;
+//};
 
 struct CStreamList
 {
@@ -65,9 +67,17 @@ struct CInputEventList
 
 void DInit();
 void DDone();
-bool DFrame();
 
+class Demo:
+	public HGEEventListener
+{
+public:
+	virtual ~Demo(){};
 
+	virtual bool Frame();
+};
+
+class ZipInfo;
 /*
 ** HGE Interface implementation
 */
@@ -86,12 +96,14 @@ public:
 
 
 	virtual void		CALL	System_SetStateBool  (hgeBoolState   state, bool        value);
-	virtual void		CALL	System_SetStateFunc  (hgeFuncState   state, hgeCallback value);
+	virtual void		CALL	System_SetStateLisener  (hgeListenerState   state, HGEEventListener* value);
+	//virtual void		CALL	System_SetStateFunc  (hgeFuncState   state, hgeCallback value);
 	virtual void		CALL	System_SetStateHwnd  (hgeHwndState   state, HWND        value);
 	virtual void		CALL	System_SetStateInt   (hgeIntState    state, int         value);
 	virtual void		CALL	System_SetStateString(hgeStringState state, const wchar_t *value);
 	virtual bool		CALL	System_GetStateBool  (hgeBoolState   state);
-	virtual hgeCallback	CALL	System_GetStateFunc  (hgeFuncState   state);
+	//virtual hgeCallback	CALL	System_GetStateFunc  (hgeFuncState   state);
+	virtual HGEEventListener*	CALL	System_GetStateLisener  (hgeListenerState   state);
 	virtual HWND		CALL	System_GetStateHwnd  (hgeHwndState   state);
 	virtual int			CALL	System_GetStateInt   (hgeIntState    state);
 	virtual const wchar_t*	CALL	System_GetStateString(hgeStringState state);
@@ -206,14 +218,6 @@ public:
 	virtual void		CALL	Shader_SetParaValue( HCONSTTABLE tableHandle, const char* name, int val );
 	virtual void		CALL	Shader_SetParaValue( HCONSTTABLE tableHandle, const char* name, bool val );
 
-	//jcweiran加入的时间模块
-	virtual void		CALL	Timer_StartTick(void);
-	virtual void		CALL	Timer_PauseTick(void);
-	virtual void		CALL	Timer_GoonTick(void);
-	virtual void		CALL	Timer_StopTick(void);
-	virtual int			CALL	Timer_NowTick(void);
-	virtual void		CALL	Timer_SetTick(int);
-
 
 
 
@@ -234,13 +238,14 @@ public:
 
 
 	// System States
-	bool				(*procFrameFunc)();
-	bool				(*procRenderFunc)();
-	bool				(*procFocusLostFunc)();
-	bool				(*procFocusGainFunc)();
-	bool				(*procGfxRestoreFunc)();
-	bool				(*procExitFunc)();
-	bool				(*procResizeFunc)();
+	HGEEventListener* listener;
+	//bool				(*procFrameFunc)();
+	//bool				(*procRenderFunc)();
+	//bool				(*procFocusLostFunc)();
+	//bool				(*procFocusGainFunc)();
+	//bool				(*procGfxRestoreFunc)();
+	//bool				(*procExitFunc)();
+	//bool				(*procResizeFunc)();
 	const wchar_t*		szIcon;
 	wchar_t				szWinTitle[256];
 	int					nScreenWidth;
@@ -351,7 +356,8 @@ public:
 
 	// Resources
 	wchar_t				szTmpFilename[_MAX_PATH];
-	CResourceList*		res;
+	//CResourceList*		res;
+	std::list<ZipInfo*>		res;
 	HANDLE				hSearch;
 	WIN32_FIND_DATA		SearchData;
 
@@ -365,10 +371,6 @@ public:
 	int					cfps;
 
 	bool				shaderChanged;
-
-	int JZTick,TempTick,NowTick1,YanChi,YanChiA;
-	bool UTick,ZT;
-	int ZtTime;
 
 private:
 	HGE_Impl();

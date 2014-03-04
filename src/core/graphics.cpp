@@ -174,7 +174,7 @@ bool CALL HGE_Impl::Gfx_BeginScene(HTARGET targ)
 
 	pD3DDevice->BeginScene();
 	//pVB->Lock( 0, 0, (BYTE**)&VertArray, 0 );//***
-	pVB->Lock( 0, 0, (void**)&VertArray, 0 );
+	pVB->Lock( 0, 0, (void**)&VertArray, D3DLOCK_DISCARD );
 
 	return true;
 }
@@ -895,14 +895,32 @@ bool HGE_Impl::_GfxInit()
 
 	
 // Create D3D Device
-
-	if( FAILED( pD3D->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd,
-                                  D3DCREATE_SOFTWARE_VERTEXPROCESSING,
-                                  d3dpp, &pD3DDevice ) ) )
+	D3DCAPS9 caps;
+	pD3D->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &caps);
+	DWORD vp;
+	if((caps.VertexShaderVersion < D3DVS_VERSION(1,1)) || !(caps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT))
+	{
+		System_Log(L"SWVP device selected\n");
+		vp = D3DCREATE_SOFTWARE_VERTEXPROCESSING;
+	}
+	else
+	{
+		System_Log(L"HWVP device selected\n");
+		vp = D3DCREATE_HARDWARE_VERTEXPROCESSING;
+	}
+	if( FAILED( pD3D->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd, vp, d3dpp, &pD3DDevice ) ) )
 	{
 		_PostError(L"Can't create D3D device");
 		return false;
 	}
+
+	//if( FAILED( pD3D->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd,
+ //                                 D3DCREATE_SOFTWARE_VERTEXPROCESSING,
+ //                                 d3dpp, &pD3DDevice ) ) )
+	//{
+	//	_PostError(L"Can't create D3D device");
+	//	return false;
+	//}
  //   pSprite=NULL;
 	////D3DXCreateSprite( pD3DDevice, &pSprite );
 	//if(!pSprite)
@@ -1064,7 +1082,8 @@ bool HGE_Impl::_GfxRestore()
 
 	pD3DDevice->SetFVF(D3DFVF_HGEVERTEX);  //这句不加会导致  Direct3D9: (ERROR) :"Vertex shader declaration is not set" 再使得 DrawIndexedPrimitive failed 
 
-	if(procGfxRestoreFunc) return procGfxRestoreFunc();
+	if(listener)listener->GfxRestore();
+	//if(procGfxRestoreFunc) return procGfxRestoreFunc();
 
 	return true;
 }
@@ -1110,7 +1129,7 @@ bool HGE_Impl::_init_lost()
 // Create Vertex buffer
 	
 	if( FAILED (pD3DDevice->CreateVertexBuffer(VERTEX_BUFFER_SIZE*sizeof(hgeVertex),
-                                               D3DUSAGE_WRITEONLY,
+                                               D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY,
 											  D3DFVF_HGEVERTEX,
                                             /*D3DPOOL_MANAGED*/ D3DPOOL_SYSTEMMEM  /*D3DPOOL_DEFAULT*/, &pVB,NULL )))
 	{

@@ -63,12 +63,31 @@ typedef unsigned char       BYTE;
 */
 #ifndef M_PI
 #define M_PI	3.14159265358979323846f
+#define M_2PI	6.28318530717958647692f
 #define M_PI_2	1.57079632679489661923f
 #define M_PI_4	0.785398163397448309616f
 #define M_1_PI	0.318309886183790671538f
 #define M_2_PI	0.636619772367581343076f
 #endif
 
+//弧度转角度
+inline float Degree(float radian)
+{
+	return radian / M_PI * 180.f;
+}
+//角度转弧度
+inline float Radian(float degree)
+{
+	return degree * M_PI / 180.f;
+}
+
+inline int sgn(float num)
+{
+	if(num>=0)
+		return 1;
+	else
+		return -1;
+}
 
 /*
 ** HGE Handle types
@@ -160,17 +179,33 @@ enum hgeBoolState
 	HGEBOOLSTATE_FORCE_DWORD = 0x7FFFFFFF
 };
 
-enum hgeFuncState
+//enum hgeFuncState
+enum hgeListenerState
 {
-	HGE_FRAMEFUNC		= 8,    // bool*()	frame function		(default: NULL) (you MUST set this)
-	HGE_RENDERFUNC		= 9,    // bool*()	render function		(default: NULL)
-	HGE_FOCUSLOSTFUNC	= 10,   // bool*()	focus lost function	(default: NULL)
-	HGE_FOCUSGAINFUNC	= 11,   // bool*()	focus gain function	(default: NULL)
-	HGE_GFXRESTOREFUNC	= 12,   // bool*()	exit function		(default: NULL)
-	HGE_EXITFUNC		= 13,   // bool*()	exit function		(default: NULL)
-	HGE_RESIZE			= 14,	// bool*()	window resize function (default: NULL)
+	HGE_EVENTLISTENER	= 8,
+	//HGE_FRAMEFUNC		= 8,    // bool*()	frame function		(default: NULL) (you MUST set this)
+	//HGE_RENDERFUNC		= 9,    // bool*()	render function		(default: NULL)
+	//HGE_FOCUSLOSTFUNC	= 10,   // bool*()	focus lost function	(default: NULL)
+	//HGE_FOCUSGAINFUNC	= 11,   // bool*()	focus gain function	(default: NULL)
+	//HGE_GFXRESTOREFUNC	= 12,   // bool*()	exit function		(default: NULL)
+	//HGE_EXITFUNC		= 13,   // bool*()	exit function		(default: NULL)
+	//HGE_RESIZE			= 14,	// bool*()	window resize function (default: NULL)
 
-	HGEFUNCSTATE_FORCE_DWORD = 0x7FFFFFFF
+	HGELISTENERSTATE_FORCE_DWORD = 0x7FFFFFFF
+};
+
+class HGEEventListener
+{
+public:
+	HGEEventListener(){};
+	virtual ~HGEEventListener(){};
+	virtual bool Frame() = 0;
+	virtual bool Render(){return false;};
+	virtual bool FocusLost(){return false;};
+	virtual bool FocusGain(){return false;};
+	virtual bool GfxRestore(){return true;};
+	virtual bool Resize(){return false;};
+	virtual bool Exit(){return true;};
 };
 
 enum hgeHwndState
@@ -328,24 +363,25 @@ public:
 
 private:
 	virtual void		CALL	System_SetStateBool  (hgeBoolState   state, bool        value) = 0;
-	virtual void		CALL	System_SetStateFunc  (hgeFuncState   state, hgeCallback value) = 0;
+	//virtual void		CALL	System_SetStateFunc  (hgeFuncState   state, hgeCallback value) = 0;
+	virtual void		CALL	System_SetStateLisener  (hgeListenerState   state, HGEEventListener* value) = 0;
 	virtual void		CALL	System_SetStateHwnd  (hgeHwndState   state, HWND        value) = 0;
 	virtual void		CALL	System_SetStateInt   (hgeIntState    state, int         value) = 0;
 	virtual void		CALL	System_SetStateString(hgeStringState state, const wchar_t *value) = 0;
 	virtual bool		CALL	System_GetStateBool  (hgeBoolState   state) = 0;
-	virtual hgeCallback	CALL	System_GetStateFunc  (hgeFuncState   state) = 0;
+	virtual HGEEventListener*	CALL	System_GetStateLisener  (hgeListenerState   state) = 0;
 	virtual HWND		CALL	System_GetStateHwnd  (hgeHwndState   state) = 0;
 	virtual int			CALL	System_GetStateInt   (hgeIntState    state) = 0;
 	virtual const wchar_t*	CALL	System_GetStateString(hgeStringState state) = 0;
 
 public:
 	inline void					System_SetState(hgeBoolState   state, bool        value) { System_SetStateBool  (state, value); }
-	inline void					System_SetState(hgeFuncState   state, hgeCallback value) { System_SetStateFunc  (state, value); }
+	inline void					System_SetState(hgeListenerState   state, HGEEventListener * value) { System_SetStateLisener  (state, value); }
 	inline void					System_SetState(hgeHwndState   state, HWND        value) { System_SetStateHwnd  (state, value); }
 	inline void					System_SetState(hgeIntState    state, int         value) { System_SetStateInt   (state, value); }
 	inline void					System_SetState(hgeStringState state, const wchar_t *value) { System_SetStateString(state, value); }
 	inline bool					System_GetState(hgeBoolState   state) { return System_GetStateBool  (state); }
-	inline hgeCallback			System_GetState(hgeFuncState   state) { return System_GetStateFunc  (state); }
+	inline HGEEventListener*	System_GetState(hgeListenerState   state) { return System_GetStateLisener  (state); }
 	inline HWND					System_GetState(hgeHwndState   state) { return System_GetStateHwnd  (state); }
 	inline int					System_GetState(hgeIntState    state) { return System_GetStateInt   (state); }
 	inline const wchar_t*		System_GetState(hgeStringState state) { return System_GetStateString(state); }
@@ -458,15 +494,6 @@ public:
 	virtual void		CALL	Shader_SetParaValue( HCONSTTABLE tableHandle, const char* name, float val ) = 0;
 	virtual void		CALL	Shader_SetParaValue( HCONSTTABLE tableHandle, const char* name, int val ) = 0;
 	virtual void		CALL	Shader_SetParaValue( HCONSTTABLE tableHandle, const char* name, bool val ) = 0;
-
-	//jcweiran加入的时间模块
-	virtual void		CALL	Timer_StartTick(void) = 0;
-	virtual void		CALL	Timer_PauseTick(void) = 0;
-	virtual void		CALL	Timer_GoonTick(void) = 0;
-	virtual void		CALL	Timer_StopTick(void) = 0;
-	virtual int			CALL	Timer_NowTick(void) = 0;
-	virtual void		CALL	Timer_SetTick(int) = 0;
-
 };
 
 extern "C" { EXPORT HGE * CALL hgeCreate(int ver); }

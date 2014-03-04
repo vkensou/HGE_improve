@@ -293,9 +293,9 @@ void RScript::Parse(hgeResourceManager *rm, RScriptParser *sp, const wchar_t *sn
 		}
 		else
 		{
-			script= new wchar_t[size+1];
-			memcpy(script, data, size);
-			script[size]=0;
+			script= new wchar_t[size/2];
+			memcpy(script, (char*)data+2, size-2);
+			script[size/2-1]=0;
 			hge->Resource_Free(data);
 
 			wcscpy(res_script->name, sname);

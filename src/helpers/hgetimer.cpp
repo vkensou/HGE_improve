@@ -6,89 +6,71 @@ hgeTimer::hgeTimer(void)
 {
 	hge=hgeCreate(HGE_VERSION);
 	t = 0;
-	StopTick();
+	_speed = 1.f;
+	Stop();
 }
 
-void hgeTimer::StartTick(void)
+void hgeTimer::Start(void)
 {
-	StopTick();
-	if(t)
-		JZTick = t->NowTick ();
-	else
-		JZTick = hge->Timer_NowTick();
+	Stop();
+	lastnow = GetTempTick();
 	UTick = true;
 	ZT = false;
 }
-void hgeTimer::PauseTick(void)
+
+void hgeTimer::Pause(void)
 {
 	if((UTick == true) &&(ZT == false))
 	{
-		ZtTime = NowTick();
-		if(t)
-			YanChiA = t->NowTick ();
-		else
-			YanChiA = hge->Timer_NowTick();
-		//YanChiA = GetTickCount();
 		ZT = true;
 	}
 }
-void hgeTimer::GoonTick(void)
+
+void hgeTimer::Resume(void)
 {
 	if((UTick == true) &&(ZT == true))
 	{
-		if(t)
-			TempTick = t->NowTick ();
-		else
-			TempTick = hge->Timer_NowTick();
-		//TempTick = GetTickCount();
-		YanChi = TempTick - YanChiA + YanChi;
+		lastnow = GetTempTick();
 		ZT = false;
 	}
 }
-void hgeTimer::StopTick(void)
+
+void hgeTimer::Stop(void)
 {
-	JZTick = TempTick = NowTick1 = YanChi = YanChiA = 0;
+	lastnow = lasttick = 0.f;
 	UTick = false;
 	ZT = true;
-	ZtTime = 0;
 }
-int hgeTimer::NowTick(void)
+float hgeTimer::Now(void)
 {
 	if(UTick == false)return 0;
 	if(ZT == false)
 	{
-		if(t)
-			TempTick = t->NowTick ();
-		else
-			TempTick = hge->Timer_NowTick();
-		//TempTick = GetTickCount();
-		NowTick1 = TempTick - JZTick - YanChi;
-		return NowTick1;
+		temp = GetTempTick();
+		lasttick = (temp - lastnow ) * _speed + lasttick;
+		lastnow = temp;
+		return lasttick;
 	}
 	else
-		return ZtTime;
+		return lasttick;
 }
-void hgeTimer::SetTick(int aa)
+
+void hgeTimer::Set(float aa)
 {
 	if(UTick == false)return ;
+	lasttick = aa;
 	if(ZT == false)
-	{
-		if(t)
-			TempTick = t->NowTick ();
-		else
-			TempTick = hge->Timer_NowTick();
-		//TempTick = GetTickCount();
-		YanChi = TempTick - JZTick - aa;
-	}
-	else
-	{
-		GoonTick() ;
-		SetTick(aa) ;
-		PauseTick() ;
-	}
+		lastnow = GetTempTick();
+}
+
+void hgeTimer::SetSpeed(float speed)
+{
+	_speed = speed;
 }
 
 void hgeTimer::SetBaseTimer(hgeTimer* b)
 {
+	if(b == this || t == b)return;
 	t = b;
 }
+
