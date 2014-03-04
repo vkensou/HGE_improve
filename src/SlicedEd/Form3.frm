@@ -19,7 +19,7 @@ Begin VB.Form FrameEdit
    MaxButton       =   0   'False
    ScaleHeight     =   8370
    ScaleWidth      =   10920
-   StartUpPosition =   1  'CenterOwner
+   StartUpPosition =   1  '所有者中心
    Begin VB.Frame Frame1 
       Caption         =   "编辑"
       Enabled         =   0   'False
@@ -34,7 +34,6 @@ Begin VB.Form FrameEdit
          Left            =   180
          TabIndex        =   20
          Top             =   4080
-         Value           =   1  'Checked
          Width           =   1560
       End
       Begin VB.TextBox Text2 

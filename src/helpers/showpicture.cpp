@@ -21,27 +21,60 @@ namespace Show
 			quad.v[1].col = 
 			quad.v[2].col = 
 			quad.v[3].col = 0xffffffff;
-		_alpha = 0xff;
 
 		quad.blend=BLEND_DEFAULT;
-		_type = PICTURE;
+
+		_data = 0;
+		_sidx = -1;
+		_autodel = _autodelt = false;
 	}
 
 	Picture::Picture()
-		:Base()
+		:Base(PICTURE)
 	{
 		_init();
 	}
 
-	Picture::Picture(HTEXTURE texture, float x, float y, float w, float h)
-		:Base()
+	Picture::Picture(HTEXTURE texture, float x, float y, float w, float h, bool autodel)
+		:Base(PICTURE)
 	{
 		_init();
-		SetTexture(texture);
-		SetTextureRect(x,y,w,h);
+		if(texture)
+		{
+			SetTexture(texture);
+			SetTextureRect(x,y,w,h);
+			_autodelt = autodel;
+		}
 	}
 
-	void Picture::SetTexture(HTEXTURE tex)
+	Picture::Picture(PictureData *data, int index, bool autodel)
+		:Base(PICTURE)
+	{
+		_init();
+		if(data)
+		{
+			SetPictureData(data);
+			SetIndex(index);
+			_autodel = autodel;
+			_autodelt = false;
+		}
+	}
+
+	Picture::Picture(ShowType st)
+		:Base(st)
+	{
+		_init();
+	}
+
+	Picture::~Picture()
+	{
+		if(_autodelt)
+			if(quad.tex)hge->Texture_Free(quad.tex);
+		if(_autodel)
+			if(_data)delete _data;
+	}
+
+	void Picture::SetTexture(HTEXTURE tex, bool autodel)
 	{
 		if(quad.tex == tex)return;
 		quad.tex=tex;
@@ -50,11 +83,13 @@ namespace Show
 		{
 			tex_width = (float)hge->Texture_GetWidth(tex);
 			tex_height = (float)hge->Texture_GetHeight(tex);
+			_autodelt = autodel;
 		}
 		else
 		{
 			tex_width = 1.0f;
 			tex_height = 1.0f;
+			_autodelt = false;
 		}
 	}
 
@@ -127,6 +162,22 @@ namespace Show
 		}
 	}
 
+	void Picture::SetEx(float x,float y,float cx,float cy,float rot,float hscale, float vscale)
+	{
+		if(vscale==0) vscale=hscale;
+
+		if(_x != x || _y != y || _cx != cx || _cy != cy || _rot!=rot || _hscale != hscale || _vscale != vscale)
+		{
+			_x = x;
+			_y = y;
+			_cx = cx;_cy = cy;
+			_rot = rot;
+			rcos = cos(_rot); rsin = sin(_rot);
+			_hscale = hscale; _vscale = vscale;
+			SetXYOffset();
+		}
+	}
+
 	void Picture::SetXYOffset()
 	{
 		float tx1, ty1, tx2, ty2;
@@ -168,13 +219,45 @@ namespace Show
 
 	void Picture::SetAlpha(BYTE alpha, int i)
 	{
-		_alpha = alpha;
 		if(i!=-1)
-			quad.v[i].col = ((_alpha & 0xff) << 24) | 0xffffff;
+			SETA(quad.v[i].col, alpha);
 		else
 			quad.v[0].col = 
 			quad.v[1].col = 
 			quad.v[2].col = 
-			quad.v[3].col = ((_alpha & 0xff) << 24) | 0xffffff;
+			quad.v[3].col = ((alpha & 0xff) << 24) | 0xffffff;
 	}
+
+	void Picture::SetPictureData(PictureData *data, bool autodel)
+	{
+		_data = data;
+		_autodel = autodel;
+		_autodelt = false;
+		SetTexture(_data->tex);
+		_sidx = -1;
+		SetTextureRect(0,0,0,0);
+		SetCenterPoint(0,0);
+	}
+
+	void Picture::SetIndex(int index)
+	{
+		if(_data ==0 )return ;
+		if(index < -1 || index >(int)_data->slices.size() -1)return ;
+		_sidx = index;
+		if(_sidx>-1)
+		{
+			SliceInfo slice = _data->slices[_sidx];
+			SetTextureRect(slice.left,slice.top,slice.width,slice.height);
+			SetCenterPoint(slice.x,slice.y);
+		}
+		else
+		{
+			SetTextureRect(0,0,0,0);
+			SetCenterPoint(0,0);
+		}
+	}
+
+
+
 }
+

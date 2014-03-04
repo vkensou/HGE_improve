@@ -6,7 +6,7 @@
 #include <list>
 #include <cmath>
 #include "showpicturedata.h"
-#include "showslicedpicture.h"
+#include "showpicture.h"
 
 using namespace Show;
 
@@ -159,10 +159,12 @@ protected:
 class hgeBone:public hgeLine
 {
 public:
+#pragma warning (disable: 4355)
 	hgeBone():hgeLine(),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;animindex = -1;dj = 0.f;er = 0;scale = 1;hflip = vflip = true;};
 	hgeBone(float x1,float y1,float x2,float y2):hgeLine(x1,y1,x2,y2),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;animindex = -1;dj = 0.f;er = 0;scale = 1;hflip = vflip = true;};
 	hgeBone(hgePoint point1,hgePoint point2):hgeLine(point1,point2),bind(this),control(this){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;animindex = -1;dj = 0.f;er = 0;scale = 1;hflip = vflip = true;};
 	hgeBone(int id):hgeLine(),bind(this),control(this),mid(id){bind.bone = this;bind.UpdatePosition();control.UpdatePosition();father = -1;ftrb = 0;mode = true;frameindex = -1;yrotate = 0;animindex = -1;dj = 0.f;er = 0;scale = 1;hflip = vflip = true;};
+#pragma warning (default: 4355)
 	~hgeBone();
 	hgeBindPoint bind;//用于绑定图片的节点
 	hgeLinePoint control;

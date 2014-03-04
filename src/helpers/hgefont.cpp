@@ -119,7 +119,7 @@ hgeFont::hgeFont(const wchar_t *szFont, bool bMipmap)
 		//if(letid[i] == '\n') iN = i;
 		//if(letid[i] == '\r') iR = i;
 
-		let[i] = new hgeSprite(tex[page], x, y, (float)width, (float)height);
+		let[i] = new hgeSprite(tex[page], (float)x, (float)y, (float)width, (float)height);
 		//let[i]->SetHotSpot(0, height);
 	}
 
@@ -286,7 +286,7 @@ void hgeFont::Render(float x, float y, int align, const wchar_t *string)
 			if(let[i])
 			{
 				fx += xoff[i]*fScale*fProportion;
-				let[i]->RenderEx((int)fx, (int)(y+yoff[i]*fScale), fRot, fScale*fProportion, fScale);
+				let[i]->RenderEx((float)(int)fx, (float)(int)(y+yoff[i]*fScale), fRot, fScale*fProportion, fScale);
 				/*if(*string == TXT(' '))
 					fx += (/ * let[i]->GetWidth()* /xadv[i]+fTracking)*fScale*fProportion*2;
 				else*/
