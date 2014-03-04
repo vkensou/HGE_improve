@@ -233,6 +233,13 @@ void HGE_Impl::_BuildEvent(int type, int key, int scan, int flags, int x, int y)
 	{
 		Zpos+=eptr->event.wheel;
 	}
+	else if(eptr->event.type==7)
+	{
+		eptr->event.type=INPUT_KEYDOWN;
+		eptr->event.key=0;
+		eptr->event.chr=scan;
+		VKey =0;Char =scan;
+	}
 }
 
 void HGE_Impl::_ClearQueue()

@@ -832,7 +832,32 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		case WM_KEYUP:
 			pHGE->_BuildEvent(INPUT_KEYUP, wparam, HIWORD(lparam) & 0xFF, 0, -1, -1);
 			return FALSE;
+		case WM_IME_CHAR:
+#ifdef _UNICODE
+#else
+			int text = 0;
+			text = wParam;
+			char mbstr[3];
+			BYTE hiByte = wParam >> 8;
+			BYTE loByte = wParam & 0x000000FF;
+			if (hiByte == 0)
+			{
+				mbstr[0] = loByte;
+				mbstr[1] = '\0';
+			}
+			else
+			{
+				mbstr[0] = hiByte;
+				mbstr[1] = loByte;
+				mbstr[2] = '\0';
+			}
 
+			wchar_t wstr[2];
+			/*int num = */MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, mbstr, -1, wstr, _countof(wstr));
+			text = wstr[0];
+#endif // _UNICODE
+			pHGE->_BuildEvent(7, 0, wparam, (lparam & 0x40000000) ? HGEINP_REPEAT:0, -1, -1);
+			return FALSE;
 		case WM_LBUTTONDOWN:
 			SetFocus(hwnd);
 			pHGE->_BuildEvent(INPUT_MBUTTONDOWN, HGEK_LBUTTON, 0, 0, LOWORDINT(lparam), HIWORDINT(lparam));
@@ -869,7 +894,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		case WM_MOUSEMOVE:
 			pHGE->_BuildEvent(INPUT_MOUSEMOVE, 0, 0, 0, LOWORDINT(lparam), HIWORDINT(lparam));
 			return FALSE;
-		case 0x020A: // WM_MOUSEWHEEL, GET_WHEEL_DELTA_WPARAM(wparam);
+		case WM_MOUSEWHEEL: // WM_MOUSEWHEEL, GET_WHEEL_DELTA_WPARAM(wparam);
 			pHGE->_BuildEvent(INPUT_MOUSEWHEEL, short(HIWORD(wparam))/120, 0, 0, LOWORDINT(lparam), HIWORDINT(lparam));
 			return FALSE;
 

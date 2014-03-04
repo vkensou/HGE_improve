@@ -16,7 +16,7 @@ void tut_mygui::prepare()
 	hge->System_SetState(HGE_SHOWSPLASH, false);
 	hge->System_SetState(HGE_FPS, 100);
 	//hge->System_SetState(HGE_ZBUFFER,true);
-	hge->System_SetState(HGE_LOGFILE, L"hge.log");
+	hge->System_SetState(HGE_LOGFILE, L"hge_tut_mygui.log");
 
 	mResourceFileName = "MyGUI_Media\\MyGUI_Core.xml";
 }
@@ -49,6 +49,11 @@ void tut_mygui::destroyScene()
 
 bool tut_mygui::Frame()
 {
+	while(GetInputEvent(0))
+	{
+	}
+
+
 	hge->Gfx_BeginScene();
 	hge->Gfx_Clear(0);
 

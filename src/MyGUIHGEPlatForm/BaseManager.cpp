@@ -7,6 +7,7 @@
 #include "Precompiled.h"
 #include "BaseManager.h"
 #include <MyGUI_HGEPlatform.h>
+#include "InputConverter.h"
 
 #if MYGUI_PLATFORM == MYGUI_PLATFORM_WIN32
 #	include <windows.h>
@@ -48,7 +49,7 @@ namespace base
 		if (mPlatform)
 			mPlatform->getRenderManagerPtr()->setViewSize(width, height);
 
-		setInputViewSize(width, height);
+		//setInputViewSize(width, height);
 	}
 
 	bool BaseManager::create()
@@ -95,7 +96,7 @@ namespace base
 
 		createGui();
 
-		createInput((size_t)hWnd);
+		//createInput((size_t)hWnd);
 
 		createPointerManager((size_t)hWnd);
 
@@ -117,7 +118,7 @@ namespace base
 
 		destroyPointerManager();
 
-		destroyInput();
+		//destroyInput();
 
 		destroyGui();
 
@@ -248,35 +249,93 @@ namespace base
 		SetWindowPos(hWnd, hwndAfter, x, y, w, h, SWP_FRAMECHANGED | SWP_SHOWWINDOW);
 	}
 
-	void BaseManager::injectMouseMove(int _absx, int _absy, int _absz)
+	bool BaseManager::GetInputEvent(hgeInputEvent* event)
 	{
-		if (mGUI && GUIAccessInput)
-			MyGUI::InputManager::getInstance().injectMouseMove(_absx, _absy, _absz);
-	}
+		bool rel=false;
+		hgeInputEvent evt;
+		while(true)
+		{
+			if(!hge->Input_GetEvent(&evt))
+				return false;
+			if (mGUI && GUIAccessInput)
+			{
+				if(evt.type <=2)
+				{
 
-	void BaseManager::injectMousePress(int _absx, int _absy, MyGUI::MouseButton _id)
-	{
-		if (mGUI && GUIAccessInput)
-			MyGUI::InputManager::getInstance().injectMousePress(_absx, _absy, _id);
+				}
+				switch(evt.type)
+				{
+				case INPUT_KEYDOWN:
+					rel = MyGUI::InputManager::getInstance().injectKeyPress(MyGUI::KeyCode::Enum(input::VirtualKeyToScanCode(evt.key)), evt.chr);
+					break;
+				case INPUT_KEYUP:
+					rel = MyGUI::InputManager::getInstance().injectKeyRelease(MyGUI::KeyCode::Enum(input::VirtualKeyToScanCode(evt.key)));
+					break;
+				case INPUT_MBUTTONDOWN:
+					if(HGEK_LBUTTON==evt.key)
+						rel = MyGUI::InputManager::getInstance().injectMousePress(evt.x , evt.y, MyGUI::MouseButton::Left);
+					else if(HGEK_RBUTTON==evt.key)
+						rel = MyGUI::InputManager::getInstance().injectMousePress(evt.x , evt.y, MyGUI::MouseButton::Right);
+					else if(HGEK_MBUTTON==evt.key)
+						rel = MyGUI::InputManager::getInstance().injectMousePress(evt.x , evt.y, MyGUI::MouseButton::Middle);
+					break;
+				case INPUT_MBUTTONUP:
+					if(HGEK_LBUTTON==evt.key)
+						rel = MyGUI::InputManager::getInstance().injectMouseRelease(evt.x , evt.y, MyGUI::MouseButton::Left);
+					else if(HGEK_RBUTTON==evt.key)
+						rel = MyGUI::InputManager::getInstance().injectMouseRelease(evt.x , evt.y, MyGUI::MouseButton::Right);
+					else if(HGEK_MBUTTON==evt.key)
+						rel = MyGUI::InputManager::getInstance().injectMouseRelease(evt.x , evt.y, MyGUI::MouseButton::Middle);
+					break;
+				case INPUT_MOUSEMOVE:
+					rel = MyGUI::InputManager::getInstance().injectMouseMove(evt.x , evt.y , evt.wheel );
+					break;
+				case INPUT_MOUSEWHEEL:
+					rel = MyGUI::InputManager::getInstance().injectMouseMove(evt.x , evt.y , evt.wheel );
+					break;
+				}
+				if(!rel)
+					break;
+			}
+			else
+				break;
+		};
+		if(event)
+		{
+			memcpy(event, &evt, sizeof(hgeInputEvent));
+			return true;
+		}
+		return false;
 	}
+	//void BaseManager::injectMouseMove(int _absx, int _absy, int _absz)
+	//{
+	//	if (mGUI && GUIAccessInput)
+	//		MyGUI::InputManager::getInstance().injectMouseMove(_absx, _absy, _absz);
+	//}
 
-	void BaseManager::injectMouseRelease(int _absx, int _absy, MyGUI::MouseButton _id)
-	{
-		if (mGUI && GUIAccessInput)
-			MyGUI::InputManager::getInstance().injectMouseRelease(_absx, _absy, _id);
-	}
+	//void BaseManager::injectMousePress(int _absx, int _absy, MyGUI::MouseButton _id)
+	//{
+	//	if (mGUI && GUIAccessInput)
+	//		MyGUI::InputManager::getInstance().injectMousePress(_absx, _absy, _id);
+	//}
 
-	void BaseManager::injectKeyPress(MyGUI::KeyCode _key, MyGUI::Char _text)
-	{
-		if (mGUI && GUIAccessInput)
-			MyGUI::InputManager::getInstance().injectKeyPress(_key, _text);
-	}
+	//void BaseManager::injectMouseRelease(int _absx, int _absy, MyGUI::MouseButton _id)
+	//{
+	//	if (mGUI && GUIAccessInput)
+	//		MyGUI::InputManager::getInstance().injectMouseRelease(_absx, _absy, _id);
+	//}
 
-	void BaseManager::injectKeyRelease(MyGUI::KeyCode _key)
-	{
-		if (mGUI && GUIAccessInput)
-			MyGUI::InputManager::getInstance().injectKeyRelease(_key);
-	}
+	//void BaseManager::injectKeyPress(MyGUI::KeyCode _key, MyGUI::Char _text)
+	//{
+	//	if (mGUI && GUIAccessInput)
+	//		MyGUI::InputManager::getInstance().injectKeyPress(_key, _text);
+	//}
+
+	//void BaseManager::injectKeyRelease(MyGUI::KeyCode _key)
+	//{
+	//	if (mGUI && GUIAccessInput)
+	//		MyGUI::InputManager::getInstance().injectKeyRelease(_key);
+	//}
 
 	void BaseManager::resizeRender(int _width, int _height)
 	{

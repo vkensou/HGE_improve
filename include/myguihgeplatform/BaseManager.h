@@ -30,7 +30,7 @@ namespace base
 {
 
 	class BaseManager :
-		public input::InputManager,
+		//public input::InputManager,
 		public input::PointerManager,
 		public HGEEventListener
 	{
@@ -56,17 +56,19 @@ namespace base
 
 		/*internal:*/
 		void _windowResized();
+		
+		bool GetInputEvent(hgeInputEvent* event);
 	protected:
 		virtual void createScene() { }
 		virtual void destroyScene() { }
 
 		virtual void setupResources();
 
-		virtual void injectMouseMove(int _absx, int _absy, int _absz);
-		virtual void injectMousePress(int _absx, int _absy, MyGUI::MouseButton _id);
-		virtual void injectMouseRelease(int _absx, int _absy, MyGUI::MouseButton _id);
-		virtual void injectKeyPress(MyGUI::KeyCode _key, MyGUI::Char _text);
-		virtual void injectKeyRelease(MyGUI::KeyCode _key);
+		//virtual void injectMouseMove(int _absx, int _absy, int _absz);
+		//virtual void injectMousePress(int _absx, int _absy, MyGUI::MouseButton _id);
+		//virtual void injectMouseRelease(int _absx, int _absy, MyGUI::MouseButton _id);
+		//virtual void injectKeyPress(MyGUI::KeyCode _key, MyGUI::Char _text);
+		//virtual void injectKeyRelease(MyGUI::KeyCode _key);
 		void drawOneFrame();
 
 	private:
