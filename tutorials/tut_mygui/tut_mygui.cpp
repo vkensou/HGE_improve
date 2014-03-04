@@ -18,7 +18,7 @@ void tut_mygui::prepare()
 	//hge->System_SetState(HGE_ZBUFFER,true);
 	hge->System_SetState(HGE_LOGFILE, L"hge_tut_mygui.log");
 
-	mResourceFileName = "MyGUI_Media\\MyGUI_Core.xml";
+	mResourceFileName = "MyGUI_Core.xml";
 }
 
 void tut_mygui::createScene()

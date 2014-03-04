@@ -42,7 +42,7 @@ namespace MyGUI
 	IDataStream* HGEDataManager::getData(const std::string& _name)
 	{
 		void* ptr;DWORD size=0;
-		MyGUI::UString path = _name;
+		MyGUI::UString path = "MyGUI_Media\\" + _name;
 
 		ptr = mpHGE->Resource_Load(path.asWStr().c_str(),&size);
 

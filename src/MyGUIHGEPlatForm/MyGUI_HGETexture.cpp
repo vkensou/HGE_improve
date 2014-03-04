@@ -48,7 +48,7 @@ namespace MyGUI
 	{
 		destroy();
 		//MyGUI::UString path = HGEDataManager::getInstance().getDataPath(_filename);
-		MyGUI::UString path = _filename;
+		MyGUI::UString path = "MyGUI_Media\\" + _filename;
 		void* fptr = 0;
 		DWORD size = 0;
 		fptr = mpHGE->Resource_Load(path.asWStr().c_str(),&size);

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <MyGUI type="Resource" version="1.1">
 	<Resource type="ResourceTrueTypeFont" name="DejaVuSansFont.15">
-		<Property key="Source" value="MyGUI_Media\DejaVuSans.ttf"/>
+		<Property key="Source" value="DejaVuSans.ttf"/>
 		<Property key="Size" value="10"/>
 		<Codes>
 			<Code range="32 126"/>
@@ -12,7 +12,7 @@
 		</Codes>
 	</Resource>
 <Resource type="ResourceTrueTypeFont" name="songti"> 
-    <Property key="Source" value="MyGUI_Media\simsun.ttc"/> 
+    <Property key="Source" value="simsun.ttc"/> 
     <Property key="Size" value="19"/> 
     <Property key="Resolution" value="50"/> 
     <Property key="Antialias" value="false"/> 
